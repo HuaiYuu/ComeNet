@@ -46,22 +46,53 @@
 </div>
 
 <script>
-    document.getElementById("loginForm").addEventListener("submit", function (event) {
+
+    document.getElementById("loginForm").addEventListener("submit", function (event)
+    {
         event.preventDefault();
+
+        if (navigator.geolocation)
+        {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } 
+        else
+        {
+            alert('Geolocation is not supported by your browser.');
+        }
+
+    }
+    )
+
+    function getLocation() 
+    {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+
+    function showPosition(position) 
+    {
+       
+
+
+        const latitude = position.coords.latitude.toString();
+        const longitude = position.coords.longitude.toString();
+
 
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        
-
         var raw = JSON.stringify({
             "provider": "native",
             "email": username,
             "password": password,
             "access_token": "",
-
+            "latitude": latitude,
+            "longitude": longitude,
         });
 
         var requestOptions = {
@@ -88,7 +119,14 @@
                 }
             })
             .catch(error => console.log('error', error));
-    })
+
+        
+
+    }
+
+
+
+   
 </script>
 
 

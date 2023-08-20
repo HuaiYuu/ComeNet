@@ -10,6 +10,7 @@ using ComeNet.Models;
 using Newtonsoft.Json;
 using System.Net.Http;
 using AWSWEBAPP.Services;
+using Microsoft.AspNetCore.Cors;
 
 namespace ComeNet.Controllers
 {
@@ -19,16 +20,20 @@ namespace ComeNet.Controllers
         public string name { get; set; }
         public string email { get; set; }
         public string password { get; set; }
+
+
     }
 
 
     public class ParasUserSignIn
-    {
-        public string provider { get; set; }
+    {      
+		public string provider { get; set; }
         public string email { get; set; }
         public string password { get; set; }
         public string access_token { get; set; }
-    }
+		public string latitude { get; set; }
+		public string longitude { get; set; }
+	}
 
 
 
@@ -127,7 +132,35 @@ namespace ComeNet.Controllers
         }
 
 
-        [HttpPost("signin")]
+		[HttpPost("signup")]
+		[EnableCors("AllowDomainA")]
+		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
+		{
+			string hashedPassword;
+			try
+			{
+				//save user profile
+				User user = new User();
+				user.name = paras.name;
+				user.email = paras.email;
+				hashedPassword = _passwordHashService.HashPassword(paras.password);
+				user.password = hashedPassword;
+				user.provider = "native";
+				user.picture = "https://schoolvoyage.ga/images/123498.png";
+                
+				_context.Add(user);
+				await _context.SaveChangesAsync();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = "使用者信箱已被註冊" });
+			}
+			var token = _userService.Authenticate(paras.email, hashedPassword);
+
+			return Ok(token);
+		}
+
+		[HttpPost("signin")]
         public async Task<ActionResult<IEnumerable<User>>> UserSignin([FromBody] ParasUserSignIn paras)
         {
             if (paras.provider == "native")
@@ -141,6 +174,7 @@ namespace ComeNet.Controllers
                     string accesstoken = token.access_token.ToString();
                     string username = token.user.name.ToString();
                     string email = token.user.email.ToString();
+                    int id = token.user.id;
 
                     if (token == null)
                     {
@@ -149,12 +183,30 @@ namespace ComeNet.Controllers
                     HttpContext.Session.SetString("token", accesstoken);
                     HttpContext.Session.SetString("name", username);
                     HttpContext.Session.SetString("email", email);
-                    return Ok(token);
+
+
+					try
+					{
+                        User user = await _context.User.FirstOrDefaultAsync(u => u.id == id);							
+                        user.latitude= paras.latitude;
+						user.longitude= paras.longitude;
+
+						_context.Update(user);
+						await _context.SaveChangesAsync();
+					}
+					catch (Exception ex)
+					{
+						return BadRequest(new { message = "使用者信箱已被註冊" });
+					}
+
+					return Ok(token);
                 }
                 catch (Exception ex)
                 {
                     return BadRequest(ex.Message);
                 }
+
+
             }
             else if (paras.provider == "facebook")
             {
@@ -190,8 +242,72 @@ namespace ComeNet.Controllers
             return BadRequest(new { message = "登入失敗" });
         }
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
+
+		[HttpPost("userlist")]
+		public async Task<ActionResult<IEnumerable<User>>> UserList(ParasUserSignIn paras)
+		{
+			if (paras.provider == "native")
+			{
+				try
+				{
+					string hashedPassword = _passwordHashService.HashPassword(paras.password);
+					paras.password = hashedPassword;
+					var token = _userService.Authenticate(paras.email, paras.password);
+
+					string accesstoken = token.access_token.ToString();
+					string username = token.user.name.ToString();
+					string email = token.user.email.ToString();
+
+					if (token == null)
+					{
+						return BadRequest(new { nessage = "使用者名稱或密碼不正確" });
+					}
+					HttpContext.Session.SetString("token", accesstoken);
+					HttpContext.Session.SetString("name", username);
+					HttpContext.Session.SetString("email", email);
+					return Ok(token);
+				}
+				catch (Exception ex)
+				{
+					return BadRequest(ex.Message);
+				}
+			}
+			else if (paras.provider == "facebook")
+			{
+				using (var response = await _httpClient.GetAsync("https://graph.facebook.com/me?fields=id,name,email,picture&access_token=" + paras.access_token))
+				{
+					if (response.IsSuccessStatusCode)
+					{
+						UserProfile userProfile = new UserProfile();
+						string apiResponse = await response.Content.ReadAsStringAsync();
+						userProfile = JsonConvert.DeserializeObject<UserProfile>(apiResponse);
+						var token = _userService.Authenticate(userProfile.Email, "facebook");
+						if (token == null)
+						{
+							return BadRequest(new { nessage = "使用者名稱或密碼不正確" });
+						}
+
+						string accesstoken = token.access_token.ToString();
+						string username = token.user.name.ToString();
+						string email = token.user.email.ToString();
+
+						HttpContext.Session.SetString("token", accesstoken);
+						HttpContext.Session.SetString("name", username);
+						HttpContext.Session.SetString("email", email);
+
+						return Ok(token);
+					}
+					else
+					{
+						return BadRequest(new { message = "登入失敗" });
+					}
+				}
+			}
+			return BadRequest(new { message = "登入失敗" });
+		}
+
+		// DELETE: api/Users/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.User == null)

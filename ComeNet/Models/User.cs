@@ -16,7 +16,10 @@ namespace ComeNet.Models
         public string email { get; set; }
         public string picture { get; set; }
         public string password { get; set; }
-    }
+        public string latitude { get; set; }
+        public string longitude { get; set; }
+
+	}
     public class Jwt
     {
         public string access_token { get; set; }

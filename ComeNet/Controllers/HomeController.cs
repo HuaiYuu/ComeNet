@@ -18,6 +18,16 @@ namespace ComeNet.Controllers
             return View();
         }
 
+		public IActionResult Friends()
+		{
+			return View();
+		}
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

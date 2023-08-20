@@ -26,7 +26,7 @@
 					<li class="dropdown">
 						<a href="#" class="nav-item nav-link" data-toggle="dropdown">Services</a>
 						<div class="dropdown-menu">
-							<a asp-action="index" class="dropdown-item">Dropdown Item 1</a>
+							<a asp-action="Friends" class="dropdown-item">My Friends</a>
 							<a href="#" class="dropdown-item">Dropdown Item 2</a>
 							<a href="#" class="dropdown-item">Dropdown Item 3</a>
 						</div>
@@ -42,6 +42,8 @@
 						</div>
 					</li>
 					<li><a href="#" class="nav-item nav-link">Contact</a></li>
+                    <li style="margin-left:300px;"><a href="#" class="nav-item nav-link">Register</a></li>
+                    <li><a asp-action="LOGIN" class="nav-item nav-link">LogIn</a></li>
 				</ul>
 			</div>
 		</div>
@@ -143,7 +145,7 @@ p {
   left: 0;
   right: 0;
   top: 0;
-  background-color: rgba(0, 0, 0, .3);
+ /* background-color: rgba(0, 0, 0, .3);*/
 }
 .header-area {
   position: relative;

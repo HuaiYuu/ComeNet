@@ -1,86 +1,20 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+	
 }
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<head>
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
+</head>
+
+
 <section id="team" class="team_area section-padding">
 	<div class="container">
-		<h2 class="title_spectial">Meet creative team</h2>
-		<div class="row text-center" id="team-members">
-			
-			<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.2s; animation-name: fadeInUp;">
-				<div class="our-team">
-					<div class="single-team">
-						<img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="img-fluid" alt="">
-						<h3>Ayoub Fennouni</h3>
-						<p>Manager</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR TEAM -->
-			</div><!--- END COL -->
-			<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.3s; animation-name: fadeInUp;">
-				<div class="our-team">
-					<div class="single-team">
-						<img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="img-fluid" alt="">
-						<h3>Mark Linomit</h3>
-						<p>Python Developer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR TEAM -->
-			</div><!--- END COL -->
-			<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.4s; animation-name: fadeInUp;">
-				<div class="our-team">
-					<div class="single-team">
-						<img src="https://bootdey.com/img/Content/avatar/avatar4.png" class="img-fluid" alt="">
-						<h3>Thompson Luis</h3>
-						<p>Developer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR TEAM -->
-			</div><!--- END COL -->
-			<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.5s; animation-name: fadeInUp;">
-				<div class="our-team">
-					<div class="single-team">
-						<img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="img-fluid" alt="">
-						<h3>Amira Yerden</h3>
-						<p>UI/UX Designer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR TEAM -->
-			</div><!--- END COL -->
-			<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.6s; animation-name: fadeInUp;">
-				<div class="our-team">
-					<div class="single-team">
-						<img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-fluid" alt="">
-						<h3>Martha Valdes</h3>
-						<p>React Developer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR TEAM -->
-			</div><!--- END COL -->
-		</div><!--- END ROW -->
-	</div><!--- END CONTAINER -->
+		<h2 class="title_spectial">好友列表</h2>
+		<div class="row text-center" id="team-members">						
+		</div>
+	</div>
 </section>
 <section id="bod" class="bod_area">
 	<div class="container">
@@ -319,11 +253,30 @@ display: inline-block;
     padding: 80px 0;
     padding-top: 100px;
 }
+
+	.camera{
+		color: white !important;
+		background-color:black;
+	}
 </style>
 
 <script>
+
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+
+	var raw = JSON.stringify({
+		"userid": 7,
+	});
+
+	var requestOptions = {
+		method: 'POST',
+		headers: myHeaders,
+		body: raw,
+		redirect: 'follow'
+	};
 	
-	fetch('URL_TO_YOUR_API_ENDPOINT')
+	fetch("https://localhost:7136/api/users/friendlist", requestOptions)
 		.then(response => response.json())
 		.then(data => {
 			const teamMembersContainer = document.getElementById('team-members');
@@ -332,14 +285,14 @@ display: inline-block;
 						<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 							<div class="our-team">
 								<div class="single-team">
-									<img src="${member.avatar}" class="img-fluid" alt="${member.name}">
-									<h3>${member.name}</h3>
-									<p>${member.role}</p>
+										<img src="${member.picture}" class="img-fluid" alt="${member.name}">
+									    <h3>${member.name}</h3>
+									    <i class="fa fa-map-marker"></i><p>距離:${member.distance}公里</p>
 								</div>
-								<ul class="social">
-									<li><a href="${member.facebook}" class="fa fa-facebook facebook"></a></li>
-									<li><a href="${member.twitter}" class="fa fa-twitter twitter"></a></li>
-									<li><a href="${member.google}" class="fa fa-google google"></a></li>
+									<ul class="social">
+												<li><a href="https://localhost:7136/Home/" class="fa fa-video-camera fa-2x camera "></a></li>
+									<li><a href="https://localhost:7136/Home/" class="fa fa-twitter twitter"></a></li>
+									<li><a href="#" class="fa fa-google google"></a></li>
 								</ul>
 							</div>
 						</div>`;

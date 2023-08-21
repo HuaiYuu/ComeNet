@@ -24,7 +24,6 @@ namespace ComeNet.Controllers
 
     }
 
-
     public class ParasUserSignIn
     {      
 		public string provider { get; set; }
@@ -35,11 +34,33 @@ namespace ComeNet.Controllers
 		public string longitude { get; set; }
 	}
 
+    public class ParasUserFriendList
+    {
+        public int userid { get; set; }       
+    }
+
+	public class Userfriend
+	{
+		public int id { get; set; }
+		public string provider { get; set; }
+		public string name { get; set; }
+		public string email { get; set; }
+		public string picture { get; set; }
+		public string password { get; set; }
+		public string latitude { get; set; }
+		public string longitude { get; set; }
+        public double distance { get; set; }
+	}
+
+	
 
 
 
 
-    [Route("api/[controller]")]
+
+
+
+	[Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -67,23 +88,8 @@ namespace ComeNet.Controllers
             return await _context.User.ToListAsync();
         }
 
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            var user = await _context.User.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
+       
+       
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -243,71 +249,68 @@ namespace ComeNet.Controllers
         }
 
 
-		[HttpPost("userlist")]
-		public async Task<ActionResult<IEnumerable<User>>> UserList(ParasUserSignIn paras)
-		{
-			if (paras.provider == "native")
-			{
-				try
-				{
-					string hashedPassword = _passwordHashService.HashPassword(paras.password);
-					paras.password = hashedPassword;
-					var token = _userService.Authenticate(paras.email, paras.password);
 
-					string accesstoken = token.access_token.ToString();
-					string username = token.user.name.ToString();
-					string email = token.user.email.ToString();
+        [HttpPost("friendlist")]
+        public async Task<ActionResult<IEnumerable<Userfriend>>> UserFriendList(ParasUserFriendList paras)
+        {
+            var friendIds = await _context.Friendlist
+            .Where(f => f.userid == paras.userid)
+            .Select(f => f.friendid)
+            .ToListAsync();
 
-					if (token == null)
-					{
-						return BadRequest(new { nessage = "使用者名稱或密碼不正確" });
-					}
-					HttpContext.Session.SetString("token", accesstoken);
-					HttpContext.Session.SetString("name", username);
-					HttpContext.Session.SetString("email", email);
-					return Ok(token);
-				}
-				catch (Exception ex)
-				{
-					return BadRequest(ex.Message);
-				}
-			}
-			else if (paras.provider == "facebook")
-			{
-				using (var response = await _httpClient.GetAsync("https://graph.facebook.com/me?fields=id,name,email,picture&access_token=" + paras.access_token))
-				{
-					if (response.IsSuccessStatusCode)
-					{
-						UserProfile userProfile = new UserProfile();
-						string apiResponse = await response.Content.ReadAsStringAsync();
-						userProfile = JsonConvert.DeserializeObject<UserProfile>(apiResponse);
-						var token = _userService.Authenticate(userProfile.Email, "facebook");
-						if (token == null)
-						{
-							return BadRequest(new { nessage = "使用者名稱或密碼不正確" });
-						}
 
-						string accesstoken = token.access_token.ToString();
-						string username = token.user.name.ToString();
-						string email = token.user.email.ToString();
+			var myuser = await _context.User.FindAsync(paras.userid);
 
-						HttpContext.Session.SetString("token", accesstoken);
-						HttpContext.Session.SetString("name", username);
-						HttpContext.Session.SetString("email", email);
 
-						return Ok(token);
-					}
-					else
-					{
-						return BadRequest(new { message = "登入失敗" });
-					}
-				}
-			}
-			return BadRequest(new { message = "登入失敗" });
-		}
+			GeoCoordinate point1 = new GeoCoordinate();
+            point1.Latitude = Convert.ToDouble( myuser.latitude);
+			point1.Longitude = Convert.ToDouble(myuser.longitude);
 
-		// DELETE: api/Users/5
-		[HttpDelete("{id}")]
+
+
+			List<Userfriend> userlist = new List<Userfriend>();
+
+			foreach (var userid in friendIds)
+            {
+				Userfriend userfriend = new Userfriend();
+
+				var users = await _context.User.FindAsync(userid);
+				
+				GeoCoordinate point2 = new GeoCoordinate();
+				point2.Latitude = Convert.ToDouble(users.latitude);
+				point2.Longitude = Convert.ToDouble(users.longitude);
+
+				double distance = GeoCalculator.CalculateDistance(point1, point2);
+
+				string formattedDistance = string.Format("{0:F1}", distance);
+
+                distance = Convert.ToDouble(formattedDistance);
+
+				userfriend.distance = distance;
+                userfriend.id = userid;
+                userfriend.email=users.email;
+                userfriend.name = users.name;
+                userfriend.picture = users.picture;
+                
+
+				
+				if (users == null )
+                {
+                    return NotFound();
+                }
+
+                userlist.Add(userfriend);
+
+            }
+
+            return userlist;
+        }
+
+
+
+
+        // DELETE: api/Users/5
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.User == null)

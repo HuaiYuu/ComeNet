@@ -20,6 +20,16 @@ namespace ComeNet.Models
         public string longitude { get; set; }
 
 	}
+
+
+    public class Friendlist
+    {
+        public int id { get; set; }
+        public int userid { get; set; }
+        public int friendid { get; set; }
+
+    }
+
     public class Jwt
     {
         public string access_token { get; set; }
@@ -127,4 +137,40 @@ namespace ComeNet.Models
             }
         }
     }
+
+
+	public class GeoCoordinate
+	{
+		public double Latitude { get; set; }
+		public double Longitude { get; set; }
+	}
+
+	public static class GeoCalculator
+	{
+		private const double EarthRadiusKm = 6371.0;
+
+		public static double CalculateDistance(GeoCoordinate point1, GeoCoordinate point2)
+		{
+			double lat1Rad = DegreeToRadian(point1.Latitude);
+			double lon1Rad = DegreeToRadian(point1.Longitude);
+			double lat2Rad = DegreeToRadian(point2.Latitude);
+			double lon2Rad = DegreeToRadian(point2.Longitude);
+
+			double deltaLat = lat2Rad - lat1Rad;
+			double deltaLon = lon2Rad - lon1Rad;
+
+			double a = Math.Pow(Math.Sin(deltaLat / 2), 2) +
+					   Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
+					   Math.Pow(Math.Sin(deltaLon / 2), 2);
+
+			double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+			return EarthRadiusKm * c;
+		}
+
+		private static double DegreeToRadian(double degree)
+		{
+			return degree * Math.PI / 180.0;
+		}
+	}
 }

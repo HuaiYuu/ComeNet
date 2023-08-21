@@ -1,0 +1,486 @@
+﻿@{
+    ViewData["Title"] = "WebRTC-Demo";
+}
+<div>
+    <p style="text-align:center">RoomID:@ViewBag.roomId</p>
+    <p id="username"></p>
+    <button id="getLocationBtn">Get My Location</button>
+    <div id="locationDisplay"></div>   
+</div>
+
+<body>
+    <div>       
+        <section style="background-color: #eee;">
+            <div video-grid style="justify-content: space-evenly;"></div>
+            <div class="container py-5">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-8 col-lg-6 col-xl-4" style="width:75%">
+                        <div class="card" id="chat1" style="border-radius: 15px;">
+                            <div class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+                                 style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                                <i class="fas fa-angle-left"></i>
+                                <p class="mb-0 fw-bold">Live chat</p>
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-outline">
+                                    <div id="chat"></div>
+                                    <textarea class="form-control" id="message" rows="4"></textarea>                                    
+                                    <button class="sendMessage" onclick="sendMessage()">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>    
+</body>
+<div class="container" id="user-list">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="people-nearby">                
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    #chat1 .form-outline .form-control ~ .form-notch div {
+        pointer-events: none;
+        border: 1px solid;
+        border-color: #eee;
+        box-sizing: border-box;
+        background: transparent;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-notch .form-notch-leading {
+        left: 0;
+        top: 0;
+        height: 100%;
+        border-right: none;
+        border-radius: .65rem 0 0 .65rem;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-notch .form-notch-middle {
+        flex: 0 0 auto;
+        max-width: calc(100% - 1rem);
+        height: 100%;
+        border-right: none;
+        border-left: none;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-notch .form-notch-trailing {
+        flex-grow: 1;
+        height: 100%;
+        border-left: none;
+        border-radius: 0 .65rem .65rem 0;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-leading {
+        border-top: 0.125rem solid #39c0ed;
+        border-bottom: 0.125rem solid #39c0ed;
+        border-left: 0.125rem solid #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-leading,
+    #chat1 .form-outline .form-control.active ~ .form-notch .form-notch-leading {
+        border-right: none;
+        transition: all 0.2s linear;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-middle {
+        border-bottom: 0.125rem solid;
+        border-color: #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-middle,
+    #chat1 .form-outline .form-control.active ~ .form-notch .form-notch-middle {
+        border-top: none;
+        border-right: none;
+        border-left: none;
+        transition: all 0.2s linear;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-trailing {
+        border-top: 0.125rem solid #39c0ed;
+        border-bottom: 0.125rem solid #39c0ed;
+        border-right: 0.125rem solid #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-trailing,
+    #chat1 .form-outline .form-control.active ~ .form-notch .form-notch-trailing {
+        border-left: none;
+        transition: all 0.2s linear;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-label {
+        color: #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-label {
+        color: #bfbfbf;
+    }
+
+    .sendMessage{
+        margin-left: 85%;
+        margin-top: 2%;
+    }
+
+
+    body {
+        margin-top: 20px;
+        background: #FAFAFA;
+    }
+    /*==================================================
+      Nearby People CSS
+      ==================================================*/
+
+    .people-nearby .google-maps {
+        background: #f8f8f8;
+        border-radius: 4px;
+        border: 1px solid #f1f2f2;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+        .people-nearby .google-maps .map {
+            height: 300px;
+            width: 100%;
+            border: none;
+        }
+
+    .people-nearby .nearby-user {
+        padding: 20px 0;
+        border-top: 1px solid #f1f2f2;
+        border-bottom: 1px solid #f1f2f2;
+        margin-bottom: 20px;
+    }
+
+    img.profile-photo-lg {
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+    }
+
+
+    .video{
+        border: solid red;       
+    }
+</style>
+<script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+
+    document.getElementById('getLocationBtn').addEventListener('click', getLocation);
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    }
+
+    function showPosition(position) 
+    {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var locationDisplay = document.getElementById('locationDisplay');
+
+        locationDisplay.innerHTML = 'Latitude: ' + latitude + '<br>Longitude: ' + longitude;
+        // Example coordinates (New York City and Los Angeles)
+
+        const lat1 = latitude;
+        const lon1 = longitude;
+        const lat2 = latitude;
+        const lon2 = longitude;
+        const distance = haversineDistance(lat1, lon1, lat2, lon2);
+       
+        console.log(`Distance between the two points: ${distance.toFixed(2)} km`);
+        //locationDisplay.innerHTML = `Distance between the two points: ${distance.toFixed(2)} km`;
+    }
+
+    function haversineDistance(lat1, lon1, lat2, lon2)
+    {
+        const earthRadius = 6371; // Earth's radius in kilometers
+
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        const distance = earthRadius * c;
+        return distance;
+    }
+
+    function toRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    }
+
+    
+
+
+    var username = null
+
+    function showUsernamePrompt() 
+    {
+        username = prompt("UserName:", "");
+        var usernameElement = document.getElementById("username");
+        usernameElement.textContent = "Username: " + username;
+    }
+    showUsernamePrompt();
+
+    const ROOM_ID = '@ViewBag.roomId'
+    let userId = null
+    let localStream = null
+    const Peers={}
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/meeting", {  
+         skipNegotiation: true,
+         transport: signalR.HttpTransportType.WebSockets
+        })
+        .build();
+    
+   const myPeer = new Peer()
+   myPeer.on('open',id =>
+   {
+        userId = id;
+        console.log(userId)
+
+        const startSignalR = async () => 
+        {
+            await connection.start();
+            await connection.invoke("JoinRoom",ROOM_ID, userId)           
+        }
+        startSignalR();
+   })
+    const videoGrid= document.querySelector('[video-grid]')
+    const myVideo = document.createElement('video')
+    myVideo.muted =false;
+    myVideo.className="video";
+
+    navigator.mediaDevices.getUserMedia({
+      audio:true,
+      video:true
+  }).then(stream =>{
+      addVideoStream(myVideo,stream)
+      localStream=stream
+  })
+
+    connection.on('user-connected', id =>
+    {
+        if(userId === id) return;
+        console.log(`User connected: ${id}`);
+        conectNewUser(id,localStream)
+      
+    })
+
+    connection.on('user-disconnected',id =>
+    {
+        console.log(`User disconnected: ${id}`)
+        if(Peers[id]) Peers[id].close();
+    })
+
+    myPeer.on('call',call =>
+    {
+        call.answer(localStream)
+        const userVideo = document.createElement('video')
+        call.on('stream',userVideoStream =>
+        {
+            addVideoStream(userVideo,userVideoStream)                 
+        })      
+    })
+
+
+  const addVideoStream = (video,stream) =>
+  {
+      video.srcObject = stream;
+      video.addEventListener('loadedmetadata',() =>
+      {
+          video.play()
+      })
+       
+      videoGrid.appendChild(video);
+
+        const existingUser = document.querySelector(`#user-list [data-stream-id="${stream.id}"]`);
+
+        if (!existingUser) {
+            var userList = document.getElementById("user-list");
+            var newUserDiv = document.createElement("div");
+            newUserDiv.classList.add("nearby-user");
+
+            newUserDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-md-2 col-sm-2">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
+                    </div>
+                    <div class="col-md-7 col-sm-7">
+                        <h5><a href="#" class="profile-link">${stream.id}</a></h5>
+                    </div>
+                        <div  id="container" class="col-md-3 col-sm-3">
+                                    <button id="toggleCam-${userId}"  class="btn btn-primary pull-right" onclick="close()">切換鏡頭</button>
+                                <button id="toggleMic-${userId}" class="btn btn-primary pull-right" >關閉麥克風</button>
+                        </div>
+                         <div  id="container1" class="col-md-3 col-sm-3">                               
+                         
+                        </div>
+                </div>
+                   
+            `;
+
+            newUserDiv.setAttribute('data-stream-id', stream.id); 
+            userList.appendChild(newUserDiv);
+        }
+
+        var button = document.createElement('input');
+        button.type = 'button';
+        button.id = 'submit';
+        button.value = '';
+        button.className = 'btn';
+        button.onclick = close();      
+        var container = document.getElementById('container');
+        container.appendChild(button);
+
+        var button1 = document.createElement('input');
+        button1.type = 'button';
+        button1.id = 'submit';
+        button1.value = '';
+        button1.className = 'btn';
+        button1.onclick = closemic();
+        var container1 = document.getElementById('container1');
+        container1.appendChild(button1);
+
+  }
+
+   
+
+
+     const conectNewUser = (userId,localStream)=>
+     {
+        
+      const userVideo = document.createElement('video')
+      const call = myPeer.call(userId,localStream)
+      call.on('stream',userVideoStream =>
+      {
+          addVideoStream(userVideo,userVideoStream)           
+      })   
+      
+      call.on('close',()=>{
+          userVideo.remove()
+      })
+      Peers[userId]= call
+
+     }
+
+    ////////chat
+
+    connection.on("ReceiveMessage", (message) =>
+    {        
+        $("#chat").append(`<p>${message}</p>`);
+
+        
+    });
+
+    connection.on("shownamelist", (message) => {
+        $("#chat").append('<p>connect!</p>');
+
+
+    });
+
+    //function sendMessage()
+    //{
+    //    const message = $("#message").val();
+    //    connection.invoke("SendMessage", message).catch((err) =>
+    //    {
+    //        console.error(err);
+    //    });
+    //    $("#message").val("");
+    //}
+
+
+    function sendMessage()
+    {
+        const message = $("#message").val();
+        const messageWithUserId = `${username}: ${message}`;
+        connection.invoke("SendMessage", messageWithUserId).catch((err) => {
+            console.error(err);
+        });
+        $("#message").val("");
+    }
+
+    //function showname() 
+    //{
+    //    const messageWithUserId = "1234";
+    //    connection.invoke("Showname", messageWithUserId).catch((err) => {
+    //        console.error(err);
+    //    });
+     
+    //}
+
+   
+    function close()
+    {
+        const cameraBtn = document.getElementById(`toggleCam-${userId}`);
+        cameraBtn.textContent = "關閉鏡頭";
+        let camEnabled = true; // 初始設定為開啟鏡頭
+
+        cameraBtn.addEventListener("click", () => {
+            if (camEnabled && localStream) {
+                // 禁用視頻軌道
+                localStream.getVideoTracks().forEach((track) => {
+                    track.enabled = false;
+                });
+                camEnabled = false;
+                cameraBtn.textContent = "開啟鏡頭";
+            } else if (!camEnabled && localStream) {
+                // 啟用視頻軌道
+                localStream.getVideoTracks().forEach((track) => {
+                    track.enabled = true;
+                });
+                camEnabled = true;
+                cameraBtn.textContent = "關閉鏡頭";
+            }
+        });
+      
+    }
+    function closemic()
+    {
+        const micBtn = document.getElementById(`toggleMic-${userId}`);
+        micBtn.textContent = "關閉麥克風";
+        let micEnabled = true; // 初始設定為開啟麥克風
+
+        micBtn.addEventListener("click", () => {
+            if (micEnabled && localStream) {
+                // 禁用音頻軌道
+                localStream.getAudioTracks().forEach((track) => {
+                    track.enabled = false;
+                });
+                micEnabled = false;
+                micBtn.textContent = "開啟麥克風";
+            } else if (!micEnabled && localStream) {
+                // 啟用音頻軌道
+                localStream.getAudioTracks().forEach((track) => {
+                    track.enabled = true;
+                });
+                micEnabled = true;
+                micBtn.textContent = "關閉麥克風";
+            }
+        });
+
+
+        console.log("關閉麥克風");
+       
+    }
+
+
+
+
+
+
+
+</script>

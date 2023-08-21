@@ -4,6 +4,7 @@ using ComeNet.Data;
 using AWSWEBAPP.Services;
 using ComeNet.Models;
 using static ComeNet.Models.UserService;
+using WebRTC.Hubs;
 
 DotNetEnv.Env.Load();
 
@@ -17,6 +18,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IAwslogService, AwslogService>();
+
+builder.Services.AddSignalR();
 
 
 
@@ -38,6 +41,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -45,6 +50,8 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthorization();
+
+app.MapHub<DefaultHubs>("/meeting");
 
 app.MapControllerRoute(
     name: "default",

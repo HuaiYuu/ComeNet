@@ -258,6 +258,22 @@ display: inline-block;
 		color: white !important;
 		background-color:black;
 	}
+
+	.chat
+	{
+		color: white !important;
+		background-color: red;
+	}
+	.phone{
+		color: white !important;
+		background-color: aqua;
+
+	}
+	.distance{
+		margin-left: 20%;
+		color: orange;
+		display: flex;
+	}
 </style>
 
 <script>
@@ -287,12 +303,16 @@ display: inline-block;
 								<div class="single-team">
 										<img src="${member.picture}" class="img-fluid" alt="${member.name}">
 									    <h3>${member.name}</h3>
-									    <i class="fa fa-map-marker"></i><p>距離:${member.distance}公里</p>
+										<div class="distance">
+											  <i class="fa fa-map-marker"></i>
+											  <p>距離:${member.distance}公里</p>
+										</div>
+									  
 								</div>
 									<ul class="social">
-												<li><a href="https://localhost:7136/Home/" class="fa fa-video-camera fa-2x camera "></a></li>
-									<li><a href="https://localhost:7136/Home/" class="fa fa-twitter twitter"></a></li>
-									<li><a href="#" class="fa fa-google google"></a></li>
+												<li><a href="https://localhost:7136/Home/StartVideoChat" class="fa fa-video-camera fa-2x camera "></a></li>
+											<li><a href="https://localhost:7136/Home/" class="fa fa-phone fa-2x phone"></a></li>
+											<li><a href="https://localhost:7136/Home/" class="fa fa-commenting fa-2x chat"></a></li>
 								</ul>
 							</div>
 						</div>`;

@@ -1,17 +1,31 @@
-﻿using ComeNet.Models;
+﻿using ComeNet.Hubs;
+using ComeNet.Models;
+using ComeNet.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 
 namespace ComeNet.Controllers
 {
-    public class HomeController : Controller
+
+	
+
+	public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+		
+		private readonly IHubContext<NotificationUserHub> _notificationUserHubContext;
+		private readonly IUserConnectionManager _userConnectionManager;
+
+		public HomeController(ILogger<HomeController> logger,IHubContext<NotificationUserHub> notificationUserHubContext, IUserConnectionManager userConnectionManager)
         {
             _logger = logger;
-        }
+
+			
+			_notificationUserHubContext = notificationUserHubContext;
+			_userConnectionManager = userConnectionManager;
+		}
 
         public IActionResult Index()
         {
@@ -32,6 +46,33 @@ namespace ComeNet.Controllers
         {
             return View();
         }
+        public IActionResult User()
+        {
+            return View();
+        }
+
+
+        public IActionResult SendToSpecificUser()
+		{
+			
+			return View();
+		}
+
+
+		[HttpPost]
+		public async Task<ActionResult> SendToSpecificUser(Article model)
+		{
+			var connections = _userConnectionManager.GetUserConnections(model.userId);
+			if (connections != null && connections.Count > 0)
+			{
+				foreach (var connectionId in connections)
+				{
+					await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
+				}
+			}
+			return View();
+		}
+
 
 		public IActionResult StartVideoChat()
 		{

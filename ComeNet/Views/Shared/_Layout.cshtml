@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 
    
 </head>
@@ -20,6 +21,8 @@
 				<span class="menu-icon-bar"></span>
 				<span class="menu-icon-bar"></span>
 			</button>
+
+           
 
 			<div id="main-nav" class="collapse navbar-collapse">
 				<ul class="navbar-nav ml-auto">
@@ -44,6 +47,17 @@
 						</div>
 					</li>
 					<li><a href="#" class="nav-item nav-link">Contact</a></li>
+                    <li class="nav-item me-3 me-lg-0">
+                        <div class="dropdown">
+                            <a class="nav-link link-white me-3  hidden-arrow" data-bs-toggle="dropdown" href="#" id="navbarDropdownMenuLink" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-envelope-open"></i>
+                                <span id="notificationBadge" class="badge rounded-pill badge-notification bg-danger"></span>
+                            </a>
+                            <ul id="dropdownMenu" class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            </ul>
+                        </div>
+                    </li>
                     <li style="margin-left:300px;"><a href="#" class="nav-item nav-link">Register</a></li>
                     <li><a asp-action="LOGIN" class="nav-item nav-link">LogIn</a></li>
 				</ul>
@@ -419,8 +433,14 @@ p {
 		
 		if (winWidth >= 768) {
 			dropdown.on('mouseenter', function() {
+
+                
+
 				$(this).addClass('show')
 					.children(dropdownMenu).addClass('show');
+
+                    var notificationBadge = document.querySelector('#notificationBadge');
+                    notificationBadge.classList.remove('bg-danger'); // 移除紅色背景
 			});
 			
 			dropdown.on('mouseleave', function() {
@@ -435,6 +455,7 @@ p {
 	$(window).on('resize', adjustNav);
 	
 	adjustNav();
+
 }); 
 
 </script>

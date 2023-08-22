@@ -5,6 +5,10 @@ using AWSWEBAPP.Services;
 using ComeNet.Models;
 using static ComeNet.Models.UserService;
 using WebRTC.Hubs;
+using ComeNet.Hubs;
+using ComeNet.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 DotNetEnv.Env.Load();
 
@@ -18,6 +22,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IAwslogService, AwslogService>();
+builder.Services.AddScoped<IUserConnectionManager, UserConnectionManager>();
 
 builder.Services.AddSignalR();
 
@@ -52,9 +57,12 @@ app.UseSession();
 app.UseAuthorization();
 
 app.MapHub<DefaultHubs>("/meeting");
+app.MapHub<NotificationUserHub>("/NotificationUserHub");
 
-app.MapControllerRoute(
+app.MapControllerRoute
+    (
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
 
 app.Run();

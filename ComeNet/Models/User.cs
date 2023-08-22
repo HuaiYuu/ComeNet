@@ -173,4 +173,12 @@ namespace ComeNet.Models
 			return degree * Math.PI / 180.0;
 		}
 	}
+
+
+    public class Article
+    {
+        public string articleHeading { get; set; }
+        public string articleContent { get; set; }
+        public string userId { get; set; }
+    }
 }

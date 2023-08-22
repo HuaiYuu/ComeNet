@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "User";
+   
+}
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
+</head>
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p id="user"></p>
+    <div id="articleList"></div>
+</div>
+<input type="hidden" id="signalRConnectionId" />
+<script>
+    function ready() 
+    {
+
+    }
+    var userId = Math.floor((Math.random() * 100) + 1);
+    document.addEventListener("DOMContentLoaded", ready);
+
+    document.getElementById("user").innerHTML = "UserId: " + userId;
+    document.addEventListener('DOMContentLoaded', function () {
+            var dropdown = document.querySelector('.dropdown');
+            var dropdownMenu = document.querySelector('#dropdownMenu');
+            var notificationBadge = document.querySelector('#notificationBadge');
+
+            // 監聽按鈕點擊事件
+            dropdown.addEventListener('click', function () 
+            {
+                dropdownMenu.classList.toggle('show'); // 切換選單的顯示狀態
+                notificationBadge.classList.remove('bg-danger'); // 移除紅色背景
+            });
+
+            // 點擊其他地方時隱藏選單
+            document.addEventListener('click', function (event) {
+                if (!dropdown.contains(event.target)) {
+                    dropdownMenu.classList.remove('show'); // 隱藏選單
+                }
+            });
+        });
+
+</script>
+
+
+<script src="/js/signalr/dist/browser/signalr.js"></script>
+<script src="/js/usernotification.js"></script>
+
+
+
+

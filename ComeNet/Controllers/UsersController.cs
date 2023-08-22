@@ -11,6 +11,10 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using AWSWEBAPP.Services;
 using Microsoft.AspNetCore.Cors;
+using ComeNet.Services;
+using ComeNet.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using NuGet.Common;
 
 namespace ComeNet.Controllers
 {
@@ -68,13 +72,17 @@ namespace ComeNet.Controllers
         private readonly HttpClient _httpClient;
         private IPasswordHashService _passwordHashService;
         private IUserService _userService;
+        private readonly IHubContext<NotificationUserHub> _notificationUserHubContext;
+        private readonly IUserConnectionManager _userConnectionManager;
 
-        public UsersController(ComeNetContext context, HttpClient httpClient, IPasswordHashService passwordHashService, IUserService userService)
+        public UsersController(ComeNetContext context, HttpClient httpClient, IPasswordHashService passwordHashService, IUserService userService, IHubContext<NotificationUserHub> notificationUserHubContext, IUserConnectionManager userConnectionManager)
         {
             _context = context;
             _httpClient = httpClient;
             _passwordHashService = passwordHashService;
             _userService = userService;
+            _notificationUserHubContext = notificationUserHubContext;
+            _userConnectionManager = userConnectionManager;
         }
 
         // GET: api/Users
@@ -137,9 +145,22 @@ namespace ComeNet.Controllers
             return CreatedAtAction("GetUser", new { id = user.id }, user);
         }
 
+        [HttpPost("SendToSpecificUser")]
+        public async Task<ActionResult> SendToSpecificUser(Article model)
+        {
+            var connections = _userConnectionManager.GetUserConnections(model.userId);
+            if (connections != null && connections.Count > 0)
+            {
+                foreach (var connectionId in connections)
+                {
+                    await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
+                }
+            }
+            return Ok(model);
+        }
 
-		[HttpPost("signup")]
-		[EnableCors("AllowDomainA")]
+
+        [HttpPost("signup")]		
 		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
 		{
 			string hashedPassword;
@@ -188,7 +209,7 @@ namespace ComeNet.Controllers
                     }
                     HttpContext.Session.SetString("token", accesstoken);
                     HttpContext.Session.SetString("name", username);
-                    HttpContext.Session.SetString("email", email);
+                    HttpContext.Session.SetString("id", id.ToString());
 
 
 					try

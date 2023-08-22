@@ -8,8 +8,6 @@ using System.Diagnostics;
 namespace ComeNet.Controllers
 {
 
-	
-
 	public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -29,15 +27,29 @@ namespace ComeNet.Controllers
 
         public IActionResult Index()
         {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+
             return View();
         }
 
 		public IActionResult Friends()
 		{
-			return View();
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+            return View();
 		}
 
         public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult Signup()
         {
             return View();
         }
@@ -59,19 +71,7 @@ namespace ComeNet.Controllers
 		}
 
 
-		[HttpPost]
-		public async Task<ActionResult> SendToSpecificUser(Article model)
-		{
-			var connections = _userConnectionManager.GetUserConnections(model.userId);
-			if (connections != null && connections.Count > 0)
-			{
-				foreach (var connectionId in connections)
-				{
-					await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
-				}
-			}
-			return View();
-		}
+		
 
 
 		public IActionResult StartVideoChat()

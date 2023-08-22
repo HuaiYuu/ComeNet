@@ -1,5 +1,5 @@
 ﻿@{
-	
+	var id = ViewBag.id;
 }
 <head>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -282,7 +282,7 @@ display: inline-block;
 	myHeaders.append("Content-Type", "application/json");
 
 	var raw = JSON.stringify({
-		"userid": 7,
+		"userid": @id,
 	});
 
 	var requestOptions = {
@@ -310,7 +310,7 @@ display: inline-block;
 									  
 								</div>
 									<ul class="social">
-											<li><a href="https://localhost:7136/Home/StartVideoChat" class="fa fa-video-camera fa-2x camera "></a></li>
+											<li><a id="videochat" href="https://localhost:7136/Home/StartVideoChat" class="fa fa-video-camera fa-2x camera "></a></li>
 											<li><a href="https://localhost:7136/Home/" class="fa fa-phone fa-2x phone"></a></li>
 											<li><a href="https://localhost:7136/Home/" class="fa fa-commenting fa-2x chat"></a></li>
 								</ul>
@@ -323,4 +323,48 @@ display: inline-block;
 		.catch(error => {
 			console.error('Error fetching team member data:', error);
 		});
+
+	var myHeaders = new Headers();
+	myHeaders.append("Content-Type", "application/json");
+
+	var rawvideo = JSON.stringify({
+		"name": username,
+		"email": email,
+		"password": password,
+
+	});
+
+	var requestvideo = {
+		method: 'POST',
+		headers: myHeaders,
+		body: rawvideo,
+		redirect: 'follow'
+	};
+
+
+	document.getElementById("videochat").addEventListener("click", function (event) 
+	{
+		event.preventDefault(); // 防止連結的默認行為（導航）
+
+		fetch("https://localhost:7136/api/users/signup", requestvideo)
+			.then(response => response.json())
+			.then(result => {
+				if (result.access_token != null) {
+					alert('註冊成功');
+					window.location.href = 'https://localhost:7136/home/index';
+				}
+				else {
+					alert('註冊失敗');
+					window.location.reload();
+				}
+			})
+			.catch(error => console.log('error', error));
+	});
+	
+
+
+
+
+
+
 </script>

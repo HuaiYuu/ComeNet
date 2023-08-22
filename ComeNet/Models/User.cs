@@ -20,8 +20,6 @@ namespace ComeNet.Models
         public string longitude { get; set; }
 
 	}
-
-
     public class Friendlist
     {
         public int id { get; set; }
@@ -29,7 +27,6 @@ namespace ComeNet.Models
         public int friendid { get; set; }
 
     }
-
     public class Jwt
     {
         public string access_token { get; set; }
@@ -62,9 +59,6 @@ namespace ComeNet.Models
         public string Url { get; set; }
         public int Width { get; set; }
     }
-   
-
-
     public class UserService : IUserService
     {
 
@@ -137,14 +131,11 @@ namespace ComeNet.Models
             }
         }
     }
-
-
 	public class GeoCoordinate
 	{
 		public double Latitude { get; set; }
 		public double Longitude { get; set; }
 	}
-
 	public static class GeoCalculator
 	{
 		private const double EarthRadiusKm = 6371.0;
@@ -173,8 +164,6 @@ namespace ComeNet.Models
 			return degree * Math.PI / 180.0;
 		}
 	}
-
-
     public class Article
     {
         public string articleHeading { get; set; }

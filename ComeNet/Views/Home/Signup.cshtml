@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     Layout = null;
 }
 
@@ -9,14 +10,14 @@
 
 <div class="login-container animated fadeInDown bootstrap snippets bootdeys">
     <div class="loginbox bg-white">
-        <div class="loginbox-title">SIGN IN</div>
+        <div class="loginbox-title">SIGN UP</div>
         <div class="loginbox-social">
             <div class="social-title ">Connect with Your Social Accounts</div>
             <div class="social-buttons">
-                <a href="https://www.facebook.com/v17.0/dialog/oauth?client_id=152727527773584&redirect_uri=https://localhost:7176/admin/fblogin&auth_type=rerequest&scope=email&public_profile"  class="button-facebook">
+                <a href="https://www.facebook.com/v17.0/dialog/oauth?client_id=152727527773584&redirect_uri=https://localhost:7176/admin/fblogin&auth_type=rerequest&scope=email&public_profile" class="button-facebook">
                     <i class="social-icon fa fa-facebook"></i>
                 </a>
-               
+
             </div>
         </div>
         <div class="loginbox-or">
@@ -24,75 +25,47 @@
             <div class="or">OR</div>
         </div>
         <form id="loginForm">
-        <div class="loginbox-textbox">
-                <input type="text" id="username" class="form-control" placeholder="Email">
-        </div>
-        <div class="loginbox-textbox">
+            <div class="loginbox-textbox">
+                <input type="text" id="username" class="form-control" placeholder="Name">
+            </div>
+            <div class="loginbox-textbox">
+                <input type="text" id="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="loginbox-textbox">
                 <input type="text" id="password" class="form-control" placeholder="Password">
-        </div>
-        <div class="loginbox-forgot">
-            <a href="">Forgot Password?</a>
-        </div>
-        <div class="loginbox-submit">
-                <input  type="submit" class="btn btn-primary btn-block" value="Login">
-        </div>
+            </div>
+            <div class="loginbox-forgot">
+                <a href=""></a>
+            </div>
+            <div class="loginbox-submit">
+                <input type="submit" class="btn btn-primary btn-block" value="SignUp">
+            </div>
         </form>
         <div class="loginbox-signup">
-            <a href="#register.html">Sign Up With Email</a>
+            <a href="#register.html"></a>
         </div>
     </div>
     <div class="logobox">
     </div>
 </div>
-
 <script>
-
-    document.getElementById("loginForm").addEventListener("submit", function (event)
-    {
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
-
-        if (navigator.geolocation)
-        {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } 
-        else
-        {
-            alert('Geolocation is not supported by your browser.');
-        }
-
-    }
-    )
-
-    function getLocation() 
-    {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
-    }
-
-    function showPosition(position) 
-    {
-       
-
-
-        const latitude = position.coords.latitude.toString();
-        const longitude = position.coords.longitude.toString();
 
 
         var username = document.getElementById("username").value;
+        var email = document.getElementById("email").value;
         var password = document.getElementById("password").value;
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
+
+
         var raw = JSON.stringify({
-            "provider": "native",
-            "email": username,
+            "name": username,
+            "email": email,
             "password": password,
-            "access_token": "",
-            "latitude": latitude,
-            "longitude": longitude,
+
         });
 
         var requestOptions = {
@@ -101,39 +74,22 @@
             body: raw,
             redirect: 'follow'
         };
-        //shttps://localhost:44364/api/user/signin
-        //shttp://13.228.116.210/api/user/signin
-        //      fetch("shttp://13.228.116.210/api/user/signin", requestOptions)
-        fetch("https://localhost:7136/api/users/signin", requestOptions)
+
+        fetch("https://localhost:7136/api/users/signup", requestOptions)
             .then(response => response.json())
             .then(result => {
-                if (result.access_token != null) 
-                {
-                    alert('登入成功');
-                    //window.location.href = 'shttp://13.228.116.210/store/index';
+                if (result.access_token != null) {
+                    alert('註冊成功');
                     window.location.href = 'https://localhost:7136/home/index';
-                  
-
-                    console.log(result.token.user.name);
                 }
                 else {
-                    alert('登入失敗');
+                    alert('註冊失敗');
                     window.location.reload();
                 }
             })
             .catch(error => console.log('error', error));
-
-        
-
-    }
-
-
-
-   
+    })
 </script>
-
-
-
 <style>
     body {
         margin-top: 20px;

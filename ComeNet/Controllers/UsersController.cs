@@ -151,8 +151,23 @@ namespace ComeNet.Controllers
             return Ok(model);
         }
 
+		[HttpPost("ChatToSpecificUser")]
+		public async Task<ActionResult> ChatToSpecificUser(ChatContext model)
+		{
+			var connections = _userConnectionManager.GetUserConnections(model.userId);
+			if (connections != null && connections.Count > 0)
+			{
+				foreach (var connectionId in connections)
+				{
+                    //await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatToUser", model.name, model.message);
+                    await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
+                }
+			}
+			return Ok(model);
+		}
 
-        [HttpPost("signup")]		
+
+		[HttpPost("signup")]		
 		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
 		{
 			string hashedPassword;

@@ -314,10 +314,10 @@ display: inline-block;
 									  
 								</div>
 									<ul class="social">
-
+										
 											<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
 											<li><a href="https://localhost:7136/Home/" class="fa fa-phone fa-2x phone"></a></li>
-											<li><a href="https://localhost:7136/Home/" class="fa fa-commenting fa-2x chat"></a></li>
+												<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
 								</ul>
 							</div>
 						</div>`;
@@ -381,6 +381,11 @@ display: inline-block;
 				.catch(error => console.log('error', error));
 
 
+
+		}
+		if (event.target.id === 'chat') {
+
+			window.open('https://localhost:7136/Home/chat2user', '_blank');
 
 		}
 	});

@@ -170,4 +170,11 @@ namespace ComeNet.Models
         public string articleContent { get; set; }
         public string userId { get; set; }
     }
+
+	public class ChatContext
+	{
+		public string name { get; set; }
+		public string message { get; set; }
+		public string userId { get; set; }
+	}
 }

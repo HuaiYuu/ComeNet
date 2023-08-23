@@ -56,14 +56,6 @@ namespace ComeNet.Controllers
         public double distance { get; set; }
 	}
 
-	
-
-
-
-
-
-
-
 	[Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -207,12 +199,13 @@ namespace ComeNet.Controllers
                     {
                         return BadRequest(new { nessage = "使用者名稱或密碼不正確" });
                     }
+
                     HttpContext.Session.SetString("token", accesstoken);
                     HttpContext.Session.SetString("name", username);
                     HttpContext.Session.SetString("id", id.ToString());
 
 
-					try
+                    try
 					{
                         User user = await _context.User.FirstOrDefaultAsync(u => u.id == id);							
                         user.latitude= paras.latitude;

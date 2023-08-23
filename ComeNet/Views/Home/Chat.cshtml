@@ -1,0 +1,266 @@
+﻿@{
+    ViewData["Title"] = "視訊";
+}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <div>       
+        <p id="username" style="display:none"></p>        
+    </div>
+
+
+    <body>
+        <div>
+            <section>
+                <div class="container py-5">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-md-8 col-lg-6 col-xl-4" style="width:75%;margin-top:10%">
+                            <div class="card" id="chat1" style="border-radius: 15px;">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+                                     style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                                    <i class="fas fa-angle-left"></i>
+                                    <p class="mb-0 fw-bold">Live chat</p>
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-outline">
+                                        <div id="chat"></div>
+                                        <textarea class="form-control" id="message" rows="4"></textarea>
+                                        <button class="sendMessage" onclick="sendMessage()">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </body>
+    <div class="container" id="user-list">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="people-nearby">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+<style>
+    #chat1 .form-outline .form-control ~ .form-notch div {
+        pointer-events: none;
+        border: 1px solid;
+        border-color: #eee;
+        box-sizing: border-box;
+        background: transparent;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-notch .form-notch-leading {
+        left: 0;
+        top: 0;
+        height: 100%;
+        border-right: none;
+        border-radius: .65rem 0 0 .65rem;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-notch .form-notch-middle {
+        flex: 0 0 auto;
+        max-width: calc(100% - 1rem);
+        height: 100%;
+        border-right: none;
+        border-left: none;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-notch .form-notch-trailing {
+        flex-grow: 1;
+        height: 100%;
+        border-left: none;
+        border-radius: 0 .65rem .65rem 0;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-leading {
+        border-top: 0.125rem solid #39c0ed;
+        border-bottom: 0.125rem solid #39c0ed;
+        border-left: 0.125rem solid #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-leading,
+    #chat1 .form-outline .form-control.active ~ .form-notch .form-notch-leading {
+        border-right: none;
+        transition: all 0.2s linear;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-middle {
+        border-bottom: 0.125rem solid;
+        border-color: #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-middle,
+    #chat1 .form-outline .form-control.active ~ .form-notch .form-notch-middle {
+        border-top: none;
+        border-right: none;
+        border-left: none;
+        transition: all 0.2s linear;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-trailing {
+        border-top: 0.125rem solid #39c0ed;
+        border-bottom: 0.125rem solid #39c0ed;
+        border-right: 0.125rem solid #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-notch .form-notch-trailing,
+    #chat1 .form-outline .form-control.active ~ .form-notch .form-notch-trailing {
+        border-left: none;
+        transition: all 0.2s linear;
+    }
+
+    #chat1 .form-outline .form-control:focus ~ .form-label {
+        color: #39c0ed;
+    }
+
+    #chat1 .form-outline .form-control ~ .form-label {
+        color: #bfbfbf;
+    }
+
+    .sendMessage {
+        margin-left: 85%;
+        margin-top: 2%;
+    }
+
+
+    body {
+        margin-top: 20px;
+        background: #FAFAFA;
+    }
+    /*==================================================
+          Nearby People CSS
+          ==================================================*/
+
+    .people-nearby .google-maps {
+        background: #f8f8f8;
+        border-radius: 4px;
+        border: 1px solid #f1f2f2;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+        .people-nearby .google-maps .map {
+            height: 300px;
+            width: 100%;
+            border: none;
+        }
+
+    .people-nearby .nearby-user {
+        padding: 20px 0;
+        border-top: 1px solid #f1f2f2;
+        border-bottom: 1px solid #f1f2f2;
+        margin-bottom: 20px;
+    }
+
+    img.profile-photo-lg {
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+    }
+
+
+    .video {
+        border: solid red;
+    }
+</style>
+<script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+
+    var username = null
+
+    function showUsernamePrompt() {
+        username = prompt("UserName:", "");
+        var usernameElement = document.getElementById("username");
+        usernameElement.textContent = "Username: " + username;
+    }
+    showUsernamePrompt();
+
+    const ROOM_ID = '@ViewBag.roomId'
+    let userId = null
+    let localStream = null
+    const Peers = {}
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/meeting", {
+            skipNegotiation: true,
+            transport: signalR.HttpTransportType.WebSockets
+        })
+        .build();
+
+    const myPeer = new Peer()
+    myPeer.on('open', id => {
+        userId = id;
+        console.log(userId)
+
+        const startSignalR = async () => {
+            await connection.start();
+            await connection.invoke("JoinRoom", ROOM_ID, userId)
+        }
+        startSignalR();
+    })
+   
+
+    
+
+    connection.on('user-connected', id => {
+        if (userId === id) return;
+        console.log(`User connected: ${id}`);
+        conectNewUser(id, localStream)
+
+    })
+
+    connection.on('user-disconnected', id => {
+        console.log(`User disconnected: ${id}`)
+        if (Peers[id]) Peers[id].close();
+    })
+
+    myPeer.on('call', call => {
+        call.answer(localStream)
+        const userVideo = document.createElement('video')
+        call.on('stream', userVideoStream => {
+            addVideoStream(userVideo, userVideoStream)
+        })
+    })
+
+    const conectNewUser = (userId, localStream) => {
+
+        const userVideo = document.createElement('video')
+        const call = myPeer.call(userId, localStream)
+        call.on('stream', userVideoStream => {
+            addVideoStream(userVideo, userVideoStream)
+        })
+
+        call.on('close', () => {
+            userVideo.remove()
+        })
+        Peers[userId] = call
+
+    }
+
+    ////////chat
+
+    connection.on("ReceiveMessage", (message) => 
+    {
+        $("#chat").append(`<p>${message}</p>`);
+    });
+
+
+    function sendMessage() {
+        const message = $("#message").val();
+        const messageWithUserId = `${username}: ${message}`;
+        connection.invoke("SendMessage", messageWithUserId).catch((err) => {
+            console.error(err);
+        });
+        $("#message").val("");
+    }
+
+</script>

@@ -23,7 +23,6 @@
 				<span class="menu-icon-bar"></span>
 			</button>
 
-           
 
 			<div id="main-nav" class="collapse navbar-collapse">
 				<ul class="navbar-nav ml-auto">
@@ -64,13 +63,15 @@
                     {
                         <li style="margin-left:300px; color:black"><a class="nav-item nav-link">Welcome!</a></li>
                         <li ><a asp-action="#" id="username" style="color:orange" class="nav-item nav-link">@name</a></li>
+                        <li><a asp-action="LOGOUT" class="nav-item nav-link">Log Out</a></li>
                     }
                     else
                     {
                         <li style="margin-left:300px;"><a asp-action="Signup" class="nav-item nav-link">Sign Up</a></li>
                         <li><a asp-action="LOGIN" class="nav-item nav-link">Log In</a></li>
+                        
                     }
-                    <p id="user"></p>
+                    <p  style="display:none"id="user"></p>
 				</ul>
 			</div>
 		</div>

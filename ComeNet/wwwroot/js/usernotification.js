@@ -28,15 +28,12 @@ connection.on("sendToUser", (articleHeading, articleContent) => {
     // 創建內容元素
     var p = document.createElement("h2");
     var a = document.createElement("a");
-    p.innerText = articleContent;
-    // 設定 <a> 標籤的 href 屬性
-    a.setAttribute("href", "目標連結的URL");
-    // 將 <a> 標籤添加到 <h2> 標籤中
+    a.innerText = "點選";
+    a.setAttribute("href", articleContent);
+    a.setAttribute("target", "_blank");
     p.appendChild(a);
-    // 將 <h2> 標籤添加到你的目標元素（例如 li）
     li.appendChild(p);
 
-    // 將 li 元素添加到選單中的 dropdownMenu 元素中
     var dropdownMenu = document.getElementById("dropdownMenu");
     dropdownMenu.appendChild(li);
 

@@ -15,6 +15,13 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationUserHu
 //    document.getElementById("articleList").appendChild(div);
 //});
 
+connection.on('user-connected', id => {
+    if (userId === id) return;
+    console.log(`User connected: ${id}`);
+    conectNewUser(id, localStream)
+
+})
+
 connection.on("sendToUser", (articleHeading, articleContent) => {
     // 創建 li 元素來容納訊息
     var li = document.createElement("li");

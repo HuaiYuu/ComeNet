@@ -9,8 +9,7 @@ namespace WebRTC.Hubs
         {
             Users.list.Add(Context.ConnectionId, userId);
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            await Clients.Group(roomId).SendAsync("user-connected", userId);
-            
+            await Clients.Group(roomId).SendAsync("user-connected", userId);            
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)

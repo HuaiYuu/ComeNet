@@ -1,6 +1,8 @@
-﻿﻿@{
+﻿
+﻿@{
     var name = ViewBag.name;
     var id = ViewBag.id;
+    Layout = null;
 }
 
 <head>
@@ -16,11 +18,14 @@
     <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container">
             <a asp-action="index" class="navbar-brand">COME NET</a>
+
             <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#main-nav">
                 <span class="menu-icon-bar"></span>
                 <span class="menu-icon-bar"></span>
                 <span class="menu-icon-bar"></span>
             </button>
+
+
             <div id="main-nav" class="collapse navbar-collapse">
                 <ul class="navbar-nav ml-auto">
                     <li><a asp-action="index" class="nav-item nav-link active">Home</a></li>
@@ -74,49 +79,33 @@
             </div>
         </div>
     </nav>
-    <div style="display:flex">
-        <div class="col-md-4 static sidebarmenu">
-            <div class="profile-card">
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="profile-photo">
-                <h5><a href="#" class="text-white">Sarah Cruiz</a></h5>
-                <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
-            </div><!--profile card ends-->
-            <ul class="nav-news-feed">
-                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/friends">My Newsfeed</a></div></li>
-                <li><i class="fa fa-users icon2"></i><div><a href="#">People Nearby</a></div></li>
-                <li><i class="fa fa-user icon3"></i><div><a href="#">Friends</a></div></li>
-                <li><i class="fa fa-comments icon4"></i><div><a href="#">Messages</a></div></li>
-                <li><i class="fa fa-picture-o icon5"></i><div><a href="#">Images</a></div></li>
-                <li><i class="fa fa-video-camera icon6"></i><div><a href="#">Videos</a></div></li>
-            </ul><!--news-feed links ends-->
-            <div id="chat-block">
-                <div class="title">Chat online</div>
-                <ul class="online-users list-inline">
-                    <li><a href="#" title="Linda Lohan"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="Sophia Lee"><img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="John Doe"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="Alexis Clark"><img src="https://bootdey.com/img/Content/avatar/avatar5.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="James Carter"><img src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="Robert Cook"><img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="Richard Bell"><img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="Anna Young"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                    <li><a href="#" title="Julia Cox"><img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
-                </ul>
-            </div><!--chat block ends-->
+
+    <div>
+        <div class="text-center">
+            <img id="couple" src="~/picture/couple.png">
+            <img id="couple1" src="~/picture/couple1.png">
+
         </div>
-        <div>
-            @RenderBody()
+        <div id="slogan">
+            <p>Get noticed for who you are, not what you look like.</p>
+        </div>
+        <p id="context">You’re more than just a photo. You have stories to tell, and passions to share, and things to talk about that are more interesting than the weather. Because you deserve what dating deserves: better.</p>
+
+        <div class="getstart">
+            <div class="container">
+                <a href="https://localhost:7136/Home/signup" class="button button-primary">Get Start</a>
+            </div>
         </div>
     </div>
-    
-   
 </header>
+<main>
 
+</main>
 <body>
 
     <div class="container">
         <main role="main" class="pb-3">
-            @* @RenderBody()*@
+           
         </main>
     </div>
 
@@ -128,7 +117,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 <style>
 
@@ -509,11 +497,26 @@
         }
     }
 
-    
+    #couple {
+        position: absolute;
+        width: 651px;
+        height: 800px;
+        left: 679px;
+        top: 108px;
+        background-color: rgba(254, 239, 227, 1);
+    }
 
-   
+    #couple1 {
+        position: absolute;
+        width: 597px;
+        height: 818px;
+        left: 736px;
+        top: 168px;
+        opacity: 0.5;
+        filter: blur(32px);
+    }
 
-   /* div p {
+    div p {
         position: absolute;
         width: 583px;
         height: 177px;
@@ -527,9 +530,12 @@
         /* or 59px */
         letter-spacing: -0.01em;
         color: #1A1D32;
-    }*/
+    }
 
-    
+    #slogan p {
+        width: 583px;
+        height: 177px;
+    }
 
     #context {
         position: absolute;
@@ -546,238 +552,35 @@
         opacity: 0.7;
     }
 
-   
-</style>
-<style>
-    body {
-        margin-top: 20px;
-        background: #FAFAFA;
-    }
-    /*==================================================
-      Newsfeed Left Sidebar
-      ==================================================*/
-
-    /*Profile Card CSS*/
-
-    .profile-card {
-        background: linear-gradient(to bottom, rgba(39,170,225,.8), rgba(28,117,188,.8));
-        background-size: cover;
-        width: 100%;
-        min-height: 90px;
-        border-radius: 4px;
-        padding: 10px 20px;
-        color: #fff;
-        margin-bottom: 40px;
-    }
-
-        .profile-card img.profile-photo {
-            border: 7px solid #fff;
-            float: left;
-            margin-right: 20px;
-            position: relative;
-            top: -30px;
-            height: 70px;
-            width: 70px;
-            border-radius: 50%;
-        }
-
-        .profile-card h5 a {
-            font-size: 15px;
-        }
-
-        .profile-card a {
-            font-size: 12px;
-        }
-
-    /*Newsfeed Links CSS*/
-
-    ul.nav-news-feed {
-        padding-left: 20px;
-        padding-right: 20px;
-        margin: 0 0 40px 0;
-        background: #fff;
-        padding-top: 20px;
-    }
-
-        ul.nav-news-feed li {
-            list-style: none;
-            display: block;
-            padding: 15px 0;
-        }
-
-            ul.nav-news-feed li div {
-                position: relative;
-                margin-left: 30px;
-            }
-
-                ul.nav-news-feed li div::after {
-                    content: "";
-                    width: 100%;
-                    height: 1px;
-                    border-top: 1px solid #f1f2f2;
-                    position: absolute;
-                    bottom: -15px;
-                    left: 0;
-                }
-
-            ul.nav-news-feed li a {
-                color: #6d6e71;
-            }
-
-            ul.nav-news-feed li i {
-                font-size: 18px;
-                margin-right: 15px;
-                float: left;
-            }
-
-        ul.nav-news-feed i.icon1 {
-            color: #8dc63f;
-        }
-
-        ul.nav-news-feed i.icon2 {
-            color: #662d91;
-        }
-
-        ul.nav-news-feed i.icon3 {
-            color: #ee2a7b;
-        }
-
-    ul.nav-news-fee i.icon4 {
-        color: #f7941e;
-    }
-
-    ul.nav-news-fee i.con5 {
-        color: #1c75bc;
-    }
-
-    ul.nav-news-feed i.icon6 {
-        color: #9e1f63;
-    }
-
-    /*Chat Block CSS*/
-
-    #chat-block {
-        margin: 0 0 40px 0;
+    .getstart {
+        position: absolute;
+        width: 190px;
+        height: 20px;
+        left: 441px;
+        top: 624px;
+        font-family: 'Google Sans';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
         text-align: center;
-        background: #fff;
-        padding-top: 20px;
+        color: #F4EBE6;
     }
-
-        #chat-block .title {
-            background: #8dc63f;
-            padding: 2px 20px;
-            width: 70%;
-            height: 30px;
-            border-radius: 15px;
-            position: relative;
-            margin: 0 auto 20px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-    ul.online-users {
-        padding-left: 20px;
-        padding-right: 20px;
-        text-align: center;
-        margin: 0;
-    }
-
-        ul.online-users li {
-            list-style: none;
-            position: relative;
-            margin: 3px auto !important;
-            padding-left: 2px;
-            padding-right: 2px;
-        }
-
-            ul.online-users li span.online-dot {
-                background: linear-gradient(to bottom, rgba(141,198,63, 1), rgba(0,148,68, 1));
-                border: none;
-                height: 12px;
-                width: 12px;
-                border-radius: 50%;
-                position: absolute;
-                bottom: -6px;
-                border: 2px solid #fff;
-                left: 0;
-                right: 0;
-                margin: auto;
-            }
-
-    img.profile-photo {
-        height: 58px;
-        width: 58px;
-        border-radius: 50%;
-    }
-
-    ul.online-users {
-        padding-left: 20px;
-        padding-right: 20px;
-        text-align: center;
-        margin: 0;
-    }
-
-    .list-inline {
-        padding-left: 0;
-        margin-left: -5px;
-        list-style: none;
-    }
-
-        .list-inline > li {
-            display: inline-block;
-            padding-right: 5px;
-            padding-left: 5px;
-        }
-
-    .text-white {
-        color: #fff;
-    }
-
-
-    .sidebarmenu
-    {
-        padding-top:5%;
-        width: 22%;
-        height:100%;
-    }
-
-   
-
 </style>
 <script>
 
-    function ready() {
-
-    }
-
-    var userId = null;
-
-   
-
-    userId = @id;
-    document.addEventListener("DOMContentLoaded", ready);
-    document.getElementById("user").innerHTML = "UserId: " + userId;
-
-
-
-    jQuery(function ($) {
-
-       
-        $(window).on('scroll', function () 
+    var userId = '@id';   
+    jQuery(function ($) 
+    {
+        $(window).on('scroll', function ()
         {
             if ($(this).scrollTop() >= 200) {
                 $('.navbar').addClass('fixed-top');
-                //$('.sidebarmenu').addClass('fixed-top');
-            } else if ($(this).scrollTop() == 0) {
+            } else if ($(this).scrollTop() == 0) 
+            {
                 $('.navbar').removeClass('fixed-top');
-                //$('.sidebarmenu').removeClass('fixed-top');
             }
         });
-
-       
-
-       
 
         function adjustNav() {
             var winWidth = $(window).width(),
@@ -786,12 +589,8 @@
 
             if (winWidth >= 768) {
                 dropdown.on('mouseenter', function () {
-
-
-
                     $(this).addClass('show')
                         .children(dropdownMenu).addClass('show');
-
                     var notificationBadge = document.querySelector('#notificationBadge');
                     notificationBadge.classList.remove('bg-danger'); // 移除紅色背景
                     notificationBadge.textContent = "";
@@ -808,13 +607,13 @@
 
         $(window).on('resize', adjustNav);
 
-        adjustNav();
+        if (userId != '-1') 
+        {
+            adjustNav();
+        }
 
-
-
-
+      
+        
     });
 
 </script>
-<script src="/js/signalr/dist/browser/signalr.js"></script>
-<script src="/js/usernotification.js"></script>

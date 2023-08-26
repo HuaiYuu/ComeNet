@@ -1,5 +1,6 @@
 ﻿@{
 	var id = ViewBag.id;
+	ViewData["Title"] = "Friend";
 }
 <head>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -317,7 +318,7 @@ display: inline-block;
 										
 											<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
 											<li><a href="https://localhost:7136/Home/" class="fa fa-phone fa-2x phone"></a></li>
-												<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
+											<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
 								</ul>
 							</div>
 						</div>`;

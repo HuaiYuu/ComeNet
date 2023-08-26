@@ -154,16 +154,18 @@ namespace ComeNet.Controllers
 		[HttpPost("ChatToSpecificUser")]
 		public async Task<ActionResult> ChatToSpecificUser(ChatContext model)
 		{
-			var connections = _userConnectionManager.GetUserConnections(model.userId);
-			if (connections != null && connections.Count > 0)
-			{
-				foreach (var connectionId in connections)
-				{
-                    //await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatToUser", model.name, model.message);
-                    await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
-                }
-			}
-			return Ok(model);
+			//var connections = _userConnectionManager.GetUserConnections(model.userId);
+			//if (connections != null && connections.Count > 0)
+			//{
+			//	foreach (var connectionId in connections)
+			//	{
+   //                 //await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatToUser", model.name, model.message);
+   //               //  await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
+   //                 await _notificationUserHubContext.Clients.Group("18to19").SendAsync("chatToUser", model.name, model.message);
+   //             }
+			//}
+            await _notificationUserHubContext.Clients.Group("19to19").SendAsync("chatToUser", model.name, model.message);
+            return Ok(model);
 		}
 
 

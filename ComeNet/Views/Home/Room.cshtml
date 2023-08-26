@@ -2,44 +2,20 @@
     ViewData["Title"] = "視訊";    
 }
 <div>
-    <p style="text-align:center">RoomID:@ViewBag.roomId</p>
-    <p id="username" style="display:none"></p>
-    <button id="getLocationBtn">Get My Location</button>
-    <div id="locationDisplay"></div>   
+    <p style="text-align:center">RoomID:@ViewBag.roomId</p>       
 </div>
 
 <body>
     <div>       
-        <section style="background-color: #eee;">
-            <div video-grid style="justify-content: space-evenly;"></div>
-            <div class="container py-5">
-                <div class="row d-flex justify-content-center">
-                    <div class="col-md-8 col-lg-6 col-xl-4" style="width:75%">
-                        <div class="card" id="chat1" style="border-radius: 15px;">
-                            <div class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
-                                 style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                                <i class="fas fa-angle-left"></i>
-                                <p class="mb-0 fw-bold">Live chat</p>
-                                <i class="fas fa-times"></i>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-outline">
-                                    <div id="chat"></div>
-                                    <textarea class="form-control" id="message" rows="4"></textarea>                                    
-                                    <button class="sendMessage" onclick="sendMessage()">Send</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <section>
+            <div video-grid style="justify-content: space-evenly; margin-top:10%;margin-left:5%"></div>            
         </section>
     </div>    
 </body>
-<div class="container" id="user-list">
+<div class="container" id="user-list" style="margin-top:5%;background-color:white">
     <div class="row">
         <div class="col-md-8">
-            <div class="people-nearby">                
+            <div class="people-nearby" style="margin-top:5%;background-color:white">
             </div>
         </div>
     </div>
@@ -171,68 +147,7 @@
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
 
-    document.getElementById('getLocationBtn').addEventListener('click', getLocation);
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
-    }
-
-    function showPosition(position) 
-    {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        var locationDisplay = document.getElementById('locationDisplay');
-
-        locationDisplay.innerHTML = 'Latitude: ' + latitude + '<br>Longitude: ' + longitude;
-        // Example coordinates (New York City and Los Angeles)
-
-        const lat1 = latitude;
-        const lon1 = longitude;
-        const lat2 = latitude;
-        const lon2 = longitude;
-        const distance = haversineDistance(lat1, lon1, lat2, lon2);
-       
-        console.log(`Distance between the two points: ${distance.toFixed(2)} km`);
-        //locationDisplay.innerHTML = `Distance between the two points: ${distance.toFixed(2)} km`;
-    }
-
-    function haversineDistance(lat1, lon1, lat2, lon2)
-    {
-        const earthRadius = 6371; // Earth's radius in kilometers
-
-        const dLat = toRadians(lat2 - lat1);
-        const dLon = toRadians(lon2 - lon1);
-
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        const distance = earthRadius * c;
-        return distance;
-    }
-
-    function toRadians(degrees) {
-        return degrees * (Math.PI / 180);
-    }
-
-    
-
-
     var username = null
-
-    function showUsernamePrompt() 
-    {
-        username = prompt("UserName:", "");
-        var usernameElement = document.getElementById("username");
-        usernameElement.textContent = "Username: " + username;
-    }
-    showUsernamePrompt();
 
     const ROOM_ID = '@ViewBag.roomId'
     let userId = null

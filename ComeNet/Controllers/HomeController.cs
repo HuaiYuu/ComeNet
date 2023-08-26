@@ -19,9 +19,25 @@ namespace ComeNet.Controllers
 			_notificationUserHubContext = notificationUserHubContext;
 			_userConnectionManager = userConnectionManager;
 		}
+        public IActionResult home()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+
+            if(id == null)
+            {
+                id = "-1";
+            }
+
+            ViewBag.Name = name;
+            ViewBag.id = id;
 
 
-        
+
+            return View();
+        }
+
+
         public IActionResult Index()
         {
             var name = HttpContext.Session.GetString("name");
@@ -92,6 +108,10 @@ namespace ComeNet.Controllers
 		[HttpGet("/{roomId}")]
 		public IActionResult Room(string roomId)
 		{
+			var name = HttpContext.Session.GetString("name");
+			var id = HttpContext.Session.GetString("id");
+			ViewBag.Name = name;
+			ViewBag.id = id;
 			ViewBag.roomId = roomId;
 			return View();
 		}

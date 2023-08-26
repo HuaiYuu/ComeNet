@@ -1,5 +1,6 @@
 ﻿using ComeNet.Services;
 using Microsoft.AspNetCore.SignalR;
+using WebRTC.Hubs;
 
 namespace ComeNet.Hubs
 {
@@ -15,9 +16,20 @@ namespace ComeNet.Hubs
 		{
 			var httpContext = this.Context.GetHttpContext();
 			var userId = httpContext.Request.Query["userId"];
-			_userConnectionManager.KeepUserConnection(userId, Context.ConnectionId);
+			
+            _userConnectionManager.KeepUserConnection(userId, Context.ConnectionId);
+            Groups.AddToGroupAsync(Context.ConnectionId,"19to19");
 
-			return Context.ConnectionId;
+            Clients.Group( "19to19").SendAsync("user-connected", userId);
+            
+            return Context.ConnectionId;
+		}
+
+		public async Task JoinRoom(string roomId, string userId)
+		{
+			Users.list.Add(Context.ConnectionId, userId);
+			await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+			await Clients.Group(roomId).SendAsync("user-connected", userId);
 		}
 
 		//Called when a connection with the hub is terminated.

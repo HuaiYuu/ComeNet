@@ -32,12 +32,8 @@ namespace ComeNet.Controllers
             ViewBag.Name = name;
             ViewBag.id = id;
 
-
-
             return View();
         }
-
-
         public IActionResult Index()
         {
             var name = HttpContext.Session.GetString("name");
@@ -49,7 +45,6 @@ namespace ComeNet.Controllers
 
             return View();
         }
-
 		public IActionResult Friends()
 		{
             var name = HttpContext.Session.GetString("name");
@@ -57,29 +52,24 @@ namespace ComeNet.Controllers
             ViewBag.Name = name;
             ViewBag.id = id;
             return View();
-		}
-       
+		}       
         public IActionResult Login()
         {
             return View();
         }
-
         public IActionResult Chat()
         {
             return View();
         }
-
         public IActionResult LogOut()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("index", "Home");
         }
-
         public IActionResult Signup()
         {
             return View();
         }
-
         public IActionResult Privacy()
         {
             return View();
@@ -88,14 +78,11 @@ namespace ComeNet.Controllers
         {
             return View();
         }
-
-
         public IActionResult SendToSpecificUser()
 		{
 			
 			return View();
 		}
-
 		public IActionResult StartVideoChat()
 		{
 
@@ -115,6 +102,25 @@ namespace ComeNet.Controllers
 			ViewBag.roomId = roomId;
 			return View();
 		}
+
+        public IActionResult StartChat()
+        {
+            var id = HttpContext.Session.GetString("id");           
+            return Redirect($"/ChatRoom/{id}");
+        }
+
+        [HttpGet("/ChatRoom/{roomId}")]
+        public IActionResult ChatRoom(string roomId)
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+            ViewBag.roomId = roomId;
+            return View();
+           
+        }
+        
 
         [HttpGet("Chat/{Id}")]
         public IActionResult Chat(string Id)

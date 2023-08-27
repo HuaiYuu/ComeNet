@@ -1,0 +1,79 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<section style="margin-left: 30%;width:100vh">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-4" style="width:75%;margin-top:10%">
+                <div class="card" id="chat1" style="border-radius: 15px;">
+                    <div class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+                         style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+                        <i class="fas fa-angle-left"></i>
+                        <p class="mb-0 fw-bold">Live chat</p>
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-outline">
+                            <div id="chat"></div>
+                            <textarea class="form-control" id="message" rows="4"></textarea>
+                            <button id="sendbutton" onclick="sendMessage()" class="sendMessage">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function sendMessage() {
+
+        /////發送邀請api
+
+        var username = document.getElementById('username');
+        var content = username.textContent;
+        console.log(content);
+
+        const message = $("#message").val();
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var rawvideo = JSON.stringify({
+            "name": content,
+            "message": message,
+            "userId": "19",
+        });
+        var requestvideo = {
+            method: 'POST',
+            headers: myHeaders,
+            body: rawvideo,
+            redirect: 'follow'
+        };
+
+        fetch("https://localhost:7136/api/users/ChatToSpecificUser", requestvideo)
+            .then(response => response.json())
+            .then(result => {
+                if (result.userId != null) {
+                    console.log(result.userId);
+                }
+                else {
+                    alert('請稍等');
+                }
+
+            })
+            .catch(error => console.log('error', error));
+
+
+
+
+        $("#message").val("");
+
+
+    }
+
+
+
+</script>

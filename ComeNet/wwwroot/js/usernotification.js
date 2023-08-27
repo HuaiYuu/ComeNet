@@ -73,4 +73,6 @@ connection.start().catch(function (err)
      /* *//*  document.getElementById('signalRConnectionId').innerHTML = connectionId;*/
         console.log(connectionId);
     })
+
+    
 });

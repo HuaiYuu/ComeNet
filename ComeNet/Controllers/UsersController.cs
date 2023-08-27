@@ -15,6 +15,7 @@ using ComeNet.Services;
 using ComeNet.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using NuGet.Common;
+using Sprache;
 
 namespace ComeNet.Controllers
 {
@@ -55,8 +56,14 @@ namespace ComeNet.Controllers
 		public string longitude { get; set; }
         public double distance { get; set; }
 	}
+    public class ResultFriendName
+    {        
+        public string name { get; set; }       
+    }
 
-	[Route("api/[controller]")]
+
+
+    [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -66,6 +73,7 @@ namespace ComeNet.Controllers
         private IUserService _userService;
         private readonly IHubContext<NotificationUserHub> _notificationUserHubContext;
         private readonly IUserConnectionManager _userConnectionManager;
+      
 
         public UsersController(ComeNetContext context, HttpClient httpClient, IPasswordHashService passwordHashService, IUserService userService, IHubContext<NotificationUserHub> notificationUserHubContext, IUserConnectionManager userConnectionManager)
         {
@@ -75,6 +83,8 @@ namespace ComeNet.Controllers
             _userService = userService;
             _notificationUserHubContext = notificationUserHubContext;
             _userConnectionManager = userConnectionManager;
+           
+
         }
 
         // GET: api/Users
@@ -88,11 +98,6 @@ namespace ComeNet.Controllers
             return await _context.User.ToListAsync();
         }
 
-       
-       
-
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -168,8 +173,36 @@ namespace ComeNet.Controllers
             return Ok(model);
 		}
 
+        private static Dictionary<string, List<string>> OnlineUserMap = new Dictionary<string, List<string>>();
 
-		[HttpPost("signup")]		
+        private List<ResultFriendName> users = new List<ResultFriendName>();
+
+        [HttpPost("GetOnlineUser")]
+        public async Task<ActionResult> GetOnlineUser(ChatContext model)
+        {
+            var connections = _userConnectionManager.GetAllUsers();
+           
+
+            foreach (var connectionId in connections)
+            {
+                var myuser = await _context.User.FindAsync(Convert.ToInt32(connectionId) );
+                ResultFriendName resultFriendName = new ResultFriendName();
+                resultFriendName.name = myuser.name;
+
+                if (!OnlineUserMap.ContainsKey(myuser.name))
+                {
+                    OnlineUserMap[myuser.name] = new List<string>();                    
+                }
+                OnlineUserMap[myuser.name].Add(connectionId);
+
+                users.Add(resultFriendName);
+            }
+
+            return Ok(users);
+        }
+
+
+        [HttpPost("signup")]		
 		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
 		{
 			string hashedPassword;

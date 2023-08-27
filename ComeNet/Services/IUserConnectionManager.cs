@@ -5,7 +5,8 @@
 		void KeepUserConnection(string userId, string connectionId);
 		void RemoveUserConnection(string connectionId);
 		List<string> GetUserConnections(string userId);
-	}
+        List<string> GetAllUsers();
+    }
 
 
 	public class UserConnectionManager : IUserConnectionManager
@@ -24,8 +25,9 @@
 				userConnectionMap[userId].Add(connectionId);
 			}
 		}
+        
 
-		public void RemoveUserConnection(string connectionId)
+        public void RemoveUserConnection(string connectionId)
 		{
 			//Remove the connectionId of user 
 			lock (userConnectionMapLocker)
@@ -52,5 +54,15 @@
 			}
 			return conn;
 		}
-	}
+
+        public List<string> GetAllUsers()
+        {
+            List<string> allUsers;
+            lock (userConnectionMapLocker)
+            {
+                allUsers = userConnectionMap.Keys.ToList();
+            }
+            return allUsers;
+        }
+    }
 }

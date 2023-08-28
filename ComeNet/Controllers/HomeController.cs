@@ -35,6 +35,17 @@ namespace ComeNet.Controllers
 
             return View();
         }
+
+        public IActionResult ActivityList()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+
+            return View();
+        }
+        
         public IActionResult Index()
         {
             var name = HttpContext.Session.GetString("name");
@@ -64,8 +75,7 @@ namespace ComeNet.Controllers
             var id = HttpContext.Session.GetString("id");
             ViewBag.Name = name;
             ViewBag.id = id;
-            return View();
-            return View();
+            return View();            
         }
         public IActionResult Chat()
         {

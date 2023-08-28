@@ -16,10 +16,11 @@ using ComeNet.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using NuGet.Common;
 using Sprache;
+using WebRTC.Hubs;
+using User = ComeNet.Models.User;
 
 namespace ComeNet.Controllers
 {
-
     public class ParasUserSignUp
     {
         public string name { get; set; }
@@ -28,7 +29,6 @@ namespace ComeNet.Controllers
 
 
     }
-
     public class ParasUserSignIn
     {      
 		public string provider { get; set; }
@@ -38,12 +38,31 @@ namespace ComeNet.Controllers
 		public string latitude { get; set; }
 		public string longitude { get; set; }
 	}
+    public class ParasCreateActivityPeople
+    {
+        public string name { get; set; }
+        public int id { get; set; }       
+    }
+    public class ParasCreateActivity
+    {
+        public string date { get; set; }
+        public string time { get; set; }
 
+        public List<ParasCreateActivityPeople> people { get; set; }        
+        public string location { get; set; }       
+    }
+    public class ResultCreateActivity
+    {
+        public string date { get; set; }
+        public string time { get; set; }
+        public string name { get; set; }
+        public int id { get; set; }
+        public string location { get; set; }
+    }
     public class ParasUserFriendList
     {
         public int userid { get; set; }       
     }
-
 	public class Userfriend
 	{
 		public int id { get; set; }
@@ -309,6 +328,25 @@ namespace ComeNet.Controllers
                 }
             }
             return BadRequest(new { message = "登入失敗" });
+        }
+
+        [HttpPost("CreateActivity")]
+        public async Task<ActionResult<IEnumerable<ResultCreateActivity>>> CreateActivity(ParasCreateActivity paras)
+        {
+           
+                ResultCreateActivity user = new ResultCreateActivity();
+                user.date = paras.date;
+                user.time = paras.time;                
+                user.location = paras.location;
+                foreach (var person in paras.people)
+                {
+                user.name = person.name;
+                user.id = person.id;
+                }
+                 //_context.Add(user);
+                //await _context.SaveChangesAsync();
+
+                 return Ok("123");           
         }
 
         [HttpPost("friendlist")]

@@ -802,7 +802,60 @@
 
     });
 
-    setInterval(myFunction, 10000); 
+    //setInterval(myFunction, 10000); 
+    myFunction();
+   
+
+    document.addEventListener('click', function (event)
+    {        
+        if (event.target.id === 'chat')
+        {
+            sentchatrequest();
+        }
+    });
+
+
+
+
+    function sentchatrequest(){
+
+        var time = new Date();
+        var formattedDateTime = time.toLocaleString();
+
+        console.log(formattedDateTime);
+        var memberId = null;
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var rawvideo = JSON.stringify({
+                "articleHeading": formattedDateTime + " 聊天室邀請",
+                "articleContent": "https://localhost:7136/chatroom/18",
+                "userId": "19",
+            });
+            var requestvideo = {
+                method: 'POST',
+                headers: myHeaders,
+                body: rawvideo,
+                redirect: 'follow'
+            };
+
+            fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.userId != null) {
+                        console.log(result.userId);
+                    window.open('https://localhost:7136/chatroom/18', '_blank');
+                    }
+                    else {
+                        alert('請稍等');
+                       
+                    }
+
+                })
+                .catch(error => console.log('error', error));
+        
+    }
+
     function myFunction() {
 
         const teamMembersContainer = document.getElementById('onlineuser');
@@ -825,18 +878,17 @@
         fetch("https://localhost:7136/api/users/GetOnlineUser", requestOptions)
             .then(response => response.json())
             .then(data => {
-                
-                data.forEach(member => 
-                    {
+
+                data.forEach(member => {
 
                     var userHtml = `
-                                    <li>
-                                               <a href="https://localhost:7136/home/StartChat" title="${member.name}">
-                                           <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo">
-                                           <span class="online-dot"></span>
-                                        </a>
-                                    </li>
-                                `;
+                                            <li>
+                                                   <a title="${member.name}">
+                                                       <img id="chat" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo">
+                                                   <span class="online-dot"></span>
+                                                </a>
+                                            </li>
+                                        `;
 
 
                     teamMembersContainer.innerHTML += userHtml;
@@ -846,12 +898,9 @@
                 console.error('Error fetching team member data:', error);
             });
     }
-
+  
     
 
 </script>
 <script src="/js/signalr/dist/browser/signalr.js"></script>
 <script src="/js/usernotification.js"></script>
-<script>
-   
-</script>

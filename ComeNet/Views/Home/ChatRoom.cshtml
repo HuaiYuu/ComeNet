@@ -1,8 +1,6 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
 }
+
 <section style="margin-left: 30%;width:100vh">
     <div class="container py-5">
         <div class="row d-flex justify-content-center">
@@ -16,7 +14,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-outline">
-                            <div id="chat"></div>
+                            <div id="chatmsg"></div>
                             <textarea class="form-control" id="message" rows="4"></textarea>
                             <button id="sendbutton" onclick="sendMessage()" class="sendMessage">Send</button>
                         </div>
@@ -26,16 +24,76 @@
         </div>
     </div>
 </section>
+<style>
+    .welcomeword 
+    {
+        font-size: 16px;
+        color:gray;
+    }
+</style>
 
 <script>
-    function sendMessage() {
 
-        /////發送邀請api
+    var chat = document.getElementById("chatmsg");
+    var messageParagraph = document.createElement('p');
+    messageParagraph.textContent = '正在等待使用者進入聊天室.......';
+    messageParagraph.className = 'welcomeword'; 
+    chat.appendChild(messageParagraph);
+
+
+    const targetElement = document.getElementById('username');
+    const observer = new MutationObserver(function (showmsg, observer)
+    {        
+        console.log('目标元素的值已经变化了！');        
+    });
+
+    const config = { characterData: true, subtree: true };
+    observer.observe(targetElement, config);
+    setTimeout(function () 
+    {
+        showmsg();
+    }, 3000); 
+
+
+    function showmsg()
+    {
 
         var username = document.getElementById('username');
         var content = username.textContent;
         console.log(content);
 
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var rawvideo = JSON.stringify({
+            "name": content,
+            "message": "加入聊天室",
+            "userId": "19",
+        });
+        var requestvideo = {
+            method: 'POST',
+            headers: myHeaders,
+            body: rawvideo,
+            redirect: 'follow'
+        };
+
+        fetch("https://localhost:7136/api/users/ChatToSpecificUser", requestvideo)
+            .then(response => response.json())
+            .then(result => {
+                if (result.userId != null) {
+                    console.log("成功加入");
+                }
+                else {
+                    alert('請稍等');
+                }
+            })
+            .catch(error => console.log('error', error));
+    }
+    function sendMessage()
+    {
+        var username = document.getElementById('username');
+        var content = username.textContent;
+        console.log(content);
         const message = $("#message").val();
 
         var myHeaders = new Headers();
@@ -56,24 +114,17 @@
         fetch("https://localhost:7136/api/users/ChatToSpecificUser", requestvideo)
             .then(response => response.json())
             .then(result => {
-                if (result.userId != null) {
-                    console.log(result.userId);
+                if (result.userId != null)
+                {
+                    console.log("成功");
                 }
                 else {
                     alert('請稍等');
                 }
-
             })
             .catch(error => console.log('error', error));
-
-
-
-
-        $("#message").val("");
-
+           $("#message").val("");
 
     }
-
-
 
 </script>

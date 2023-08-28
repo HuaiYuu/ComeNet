@@ -4,6 +4,7 @@ using ComeNet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
+using WebRTC.Hubs;
 
 namespace ComeNet.Controllers
 {
@@ -105,18 +106,30 @@ namespace ComeNet.Controllers
 
         public IActionResult StartChat()
         {
-            var id = HttpContext.Session.GetString("id");           
+
+
+            var id = HttpContext.Session.GetString("id");   
+            
+
+
             return Redirect($"/ChatRoom/{id}");
         }
 
         [HttpGet("/ChatRoom/{roomId}")]
         public IActionResult ChatRoom(string roomId)
         {
+
+
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
+
+            
+
             ViewBag.Name = name;
             ViewBag.id = id;
             ViewBag.roomId = roomId;
+
+
             return View();
            
         }

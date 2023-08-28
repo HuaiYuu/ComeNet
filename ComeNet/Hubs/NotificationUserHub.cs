@@ -21,7 +21,6 @@ namespace ComeNet.Hubs
             Groups.AddToGroupAsync(Context.ConnectionId,"19to19");
 
             Clients.Group( "19to19").SendAsync("user-connected", userId);
-            
             return Context.ConnectionId;
 		}
 

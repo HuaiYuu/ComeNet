@@ -54,12 +54,19 @@ connection.on("sendToUser", (articleHeading, articleContent) => {
     console.log(notificationBadge);
 });
 
+
 connection.on("chatToUser", (name, message) =>
 {
     message = `${name}: ${message}`;
-    $("#chat").append(`<p>${message}</p>`);
+    console.log(message);
+    $("#chatmsg").append(`<p>${message}</p>`);
     $("#message").val("");
 });
+
+
+
+
+
 
 connection.start().catch(function (err)
 {
@@ -70,8 +77,10 @@ connection.start().catch(function (err)
     connection.invoke('GetConnectionId').then(function (connectionId)
     {
         console.log("連線");
-     /* *//*  document.getElementById('signalRConnectionId').innerHTML = connectionId;*/
         console.log(connectionId);
+
+
+
     })
 
     

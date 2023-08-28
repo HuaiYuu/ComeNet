@@ -24,7 +24,7 @@
 			<div class="col-lg-3 col-sm-3 col-xs-12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.1s; animation-name: fadeInLeft;">
 				<div class="our-bod">
 					<div class="single-bod">
-						<img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-fluid" alt="">
+						<img src="https://bootdey.com/img/Content/avatar/avatar6.png" style="transition: filter 0.3s ease-in-out;" class="img-fluid" alt="">
 						<h3>Gary Hunt</h3>
 						<p>Marketer</p>
 					</div>
@@ -317,7 +317,7 @@ display: inline-block;
 									<ul class="social">
 										
 											<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
-											<li><a href="https://localhost:7136/Home/" class="fa fa-phone fa-2x phone"></a></li>
+											<li><a href="https://localhost:7136/Home/"  class="fa fa-phone fa-2x phone"></a></li>
 											<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
 								</ul>
 							</div>
@@ -384,7 +384,8 @@ display: inline-block;
 
 
 		}
-		if (event.target.id === 'chat') {
+		if (event.target.id === 'chat') 
+		{
 
 			window.open('https://localhost:7136/Home/chat2user', '_blank');
 

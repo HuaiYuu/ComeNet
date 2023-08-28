@@ -201,7 +201,6 @@ namespace ComeNet.Controllers
             return Ok(users);
         }
 
-
         [HttpPost("signup")]		
 		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
 		{
@@ -312,8 +311,6 @@ namespace ComeNet.Controllers
             return BadRequest(new { message = "登入失敗" });
         }
 
-
-
         [HttpPost("friendlist")]
         public async Task<ActionResult<IEnumerable<Userfriend>>> UserFriendList(ParasUserFriendList paras)
         {
@@ -370,7 +367,62 @@ namespace ComeNet.Controllers
             return userlist;
         }
 
+        [HttpPost("GetNearbyUser")]
+        public async Task<ActionResult<IEnumerable<Userfriend>>> GetNearbyUser(ParasUserFriendList paras)
+        {
+            var friendIds = await _context.Friendlist
+            .Where(f => f.userid == paras.userid)
+            .Select(f => f.friendid)
+            .ToListAsync();
 
+
+            var myuser = await _context.User.FindAsync(paras.userid);
+
+
+            GeoCoordinate point1 = new GeoCoordinate();
+            point1.Latitude = Convert.ToDouble(myuser.latitude);
+            point1.Longitude = Convert.ToDouble(myuser.longitude);
+
+
+
+            List<Userfriend> userlist = new List<Userfriend>();
+
+            foreach (var userid in friendIds)
+            {
+                Userfriend userfriend = new Userfriend();
+
+                var users = await _context.User.FindAsync(userid);
+
+                GeoCoordinate point2 = new GeoCoordinate();
+                point2.Latitude = Convert.ToDouble(users.latitude);
+                point2.Longitude = Convert.ToDouble(users.longitude);
+
+                double distance = GeoCalculator.CalculateDistance(point1, point2);
+
+                string formattedDistance = string.Format("{0:F1}", distance);
+
+                distance = Convert.ToDouble(formattedDistance);
+
+                userfriend.distance = distance;
+                userfriend.id = userid;
+                userfriend.email = users.email;
+                userfriend.name = users.name;
+                userfriend.picture = users.picture;
+
+
+
+                if (users == null)
+                {
+                    return NotFound();
+                }
+                if(distance<1)
+                {
+                    userlist.Add(userfriend);
+                }
+            }
+
+            return userlist;
+        }
 
 
         // DELETE: api/Users/5

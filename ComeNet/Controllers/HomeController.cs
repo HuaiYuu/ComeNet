@@ -57,6 +57,15 @@ namespace ComeNet.Controllers
         public IActionResult Login()
         {
             return View();
+        }       
+        public IActionResult NearBy()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+            return View();
+            return View();
         }
         public IActionResult Chat()
         {
@@ -106,12 +115,7 @@ namespace ComeNet.Controllers
 
         public IActionResult StartChat()
         {
-
-
-            var id = HttpContext.Session.GetString("id");   
-            
-
-
+            var id = HttpContext.Session.GetString("id");               
             return Redirect($"/ChatRoom/{id}");
         }
 
@@ -119,19 +123,14 @@ namespace ComeNet.Controllers
         public IActionResult ChatRoom(string roomId)
         {
 
-
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
-
-            
 
             ViewBag.Name = name;
             ViewBag.id = id;
             ViewBag.roomId = roomId;
 
-
-            return View();
-           
+            return View();           
         }
         
 

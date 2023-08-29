@@ -1,5 +1,204 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    var name = ViewBag.name;
+    var id = ViewBag.id;
+    ViewData["Title"] = "ActivityList";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div style="margin-top:20%" class="container">
+    <div class="row">
+        <div class="col-md-6 col-lg-4 ">
+            <div id="xx" class="card bg-primary card-hover mb-9">
+                <div class="card-body text-center px-md-5 px-lg-6 my-2">
+                    <div class="card-icon-border-large border-primary mtn-80">
+                        <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" />
+                        <i class="fa fa-quote-left text-primary" aria-hidden="true"></i>
+                    </div>
+                    <blockquote class="blockquote blockquote-sm mt-2">
+                        <p class="font-normal mb-5"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
+                        <p class="font-normal mb-5">日期:</p>
+                        <p class="font-normal mb-5">時間:</p>
+                        <p class="font-normal mb-5">地點:</p>
+                        <p class="font-normal mb-5">邀請人員:</p>                           
+                        <footer class="blockquote-footer text-uppercase text-white"> James Smith <cite class="d-block text-capitalize font-size-14 opacity-80 mt-1" title="Source Title">Mary’s Father</cite></footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 ">
+            <div class="card bg-primary card-hover mb-9">
+                <div class="card-body text-center px-md-5 px-lg-6 my-2">
+                    <div class="card-icon-border-large border-primary mtn-80">
+                        <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" />
+                        <i class="fa fa-quote-left text-primary" aria-hidden="true"></i>
+                    </div>
+                    <blockquote class="blockquote blockquote-sm mt-2">
+                        <p class="font-normal mb-5"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
+                        <p class="font-normal mb-5">日期:</p>
+                        <p class="font-normal mb-5">時間:</p>
+                        <p class="font-normal mb-5">地點:</p>
+                        <p class="font-normal mb-5">邀請人員:</p>
+                        <footer class="blockquote-footer text-uppercase text-white"> James Smith <cite class="d-block text-capitalize font-size-14 opacity-80 mt-1" title="Source Title">Mary’s Father</cite></footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="toggleButton">切换</button>
+
+<style>
+    .completed {
+        background-color: #f2f2f2; /* 更改已完成活动的背景色 */
+        position: relative;
+    }
+
+        .completed::after 
+        {
+            content: '已完成'; 
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: #fff; 
+            background-color:gray;
+           
+        }
+
+   
+    /*body {
+        margin-top: 20px;
+        padding-top: 80px;
+    }*/
+
+    .card {
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 8px 0px;
+        position: relative;
+        margin-bottom: 1.56rem;
+    }
+
+    .card {
+        position: relative;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-width: 0px;
+        overflow-wrap: break-word;
+        background-color: rgb(248, 248, 248);
+        background-clip: border-box;
+        border: 0px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.57rem;
+    }
+
+    .bg-primary {
+        background-color: rgb(240, 194, 75) !important;
+    }
+
+    .mb-9 {
+        margin-bottom: 4.96rem !important;
+    }
+
+    .card-icon-border-large {
+        width: 100px;
+        height: 100px;
+        margin: -3.06rem auto 0px;
+        text-align: center;
+        background-color: rgb(255, 255, 255);
+        border: 6px solid;
+        border-radius: 50%;
+        font-size: 1.88rem;
+        line-height: 90px;
+        color: rgb(102, 102, 102);
+    }
+
+    .mtn-80 {
+        margin-top: -5rem !important;
+    }
+
+    .border-primary {
+        border-color: rgb(240, 194, 75) !important;
+    }
+
+    .text-primary {
+        color: rgb(240, 194, 75) !important;
+    }
+
+    .bg-success {
+        background-color: rgb(181, 213, 106) !important;
+    }
+
+    .border-success {
+        border-color: rgb(181, 213, 106) !important;
+    }
+
+    .text-success {
+        color: rgb(181, 213, 106) !important;
+    }
+
+    .bg-danger {
+        background-color: rgb(234, 112, 102) !important;
+    }
+
+    .border-danger {
+        border-color: rgb(234, 112, 102) !important;
+    }
+
+    .text-danger {
+        color: rgb(234, 112, 102) !important;
+    }
+
+    .bg-info {
+        background-color: rgb(132, 190, 214) !important;
+    }
+
+    .border-info {
+        border-color: rgb(132, 190, 214) !important;
+    }
+
+    .text-info {
+        color: rgb(132, 190, 214) !important;
+    }
+
+
+    .bg-purple {
+        background-color: rgb(165, 151, 231) !important;
+    }
+
+    .border-purple {
+        border-color: rgb(165, 151, 231) !important;
+    }
+
+    .text-purple {
+        color: rgb(165, 151, 231) !important;
+    }
+
+
+    .bg-pink {
+        background-color: rgb(234, 119, 173) !important;
+    }
+
+    .border-pink {
+        border-color: rgb(234, 119, 173) !important;
+    }
+
+    .text-pink {
+        color: rgb(234, 119, 173) !important;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+   
+
+    
+
+    $(document).ready(function ()
+    {
+        $('#toggleButton').on('click', function ()
+        {
+            $('#xx').toggleClass('completed');           
+        });
+    });
+</script>

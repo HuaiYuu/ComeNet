@@ -47,17 +47,11 @@ namespace ComeNet.Controllers
     {
         public string date { get; set; }
         public string time { get; set; }
-
         public List<ParasCreateActivityPeople> people { get; set; }        
-        public string location { get; set; }       
-    }
-    public class ResultCreateActivity
-    {
-        public string date { get; set; }
-        public string time { get; set; }
-        public string name { get; set; }
-        public int id { get; set; }
         public string location { get; set; }
+        public string activityname { get; set; }
+        public string creater { get; set; }
+       
     }
     public class ParasUserFriendList
     {
@@ -80,7 +74,10 @@ namespace ComeNet.Controllers
         public string name { get; set; }       
     }
 
-
+    public class ResultCreateActivity
+    {
+        public string message { get; set; }
+    }
 
     [Route("api/[controller]")]
     [ApiController]
@@ -201,7 +198,6 @@ namespace ComeNet.Controllers
         {
             var connections = _userConnectionManager.GetAllUsers();
            
-
             foreach (var connectionId in connections)
             {
                 var myuser = await _context.User.FindAsync(Convert.ToInt32(connectionId) );
@@ -331,22 +327,28 @@ namespace ComeNet.Controllers
         }
 
         [HttpPost("CreateActivity")]
-        public async Task<ActionResult<IEnumerable<ResultCreateActivity>>> CreateActivity(ParasCreateActivity paras)
+        public async Task<ActionResult<IEnumerable<ActivityList>>> CreateActivity(ParasCreateActivity paras)
         {
-           
-                ResultCreateActivity user = new ResultCreateActivity();
-                user.date = paras.date;
-                user.time = paras.time;                
-                user.location = paras.location;
-                foreach (var person in paras.people)
-                {
-                user.name = person.name;
-                user.id = person.id;
-                }
-                 //_context.Add(user);
-                //await _context.SaveChangesAsync();
 
-                 return Ok("123");           
+             foreach (var person in paras.people)
+             {
+                ActivityList user = new ActivityList();
+                user.date = paras.date;
+                user.time = paras.time;
+                user.location = paras.location;
+                user.activityname = paras.activityname;
+                user.username = person.name;
+                user.userid = person.id.ToString();
+                user.creater = paras.creater;
+                _context.ActivityList.Add(user);
+                await _context.SaveChangesAsync();
+             }
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = "ok";
+
+
+                 return Ok(result);           
         }
 
         [HttpPost("friendlist")]

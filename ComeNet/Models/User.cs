@@ -177,4 +177,16 @@ namespace ComeNet.Models
 		public string message { get; set; }
 		public string userId { get; set; }
 	}
+
+    public class ActivityList
+    {
+        public int Id { get; set; }
+        public string userid { get; set; }
+        public string username { get; set; }
+        public string activityname { get; set; }
+        public string date { get; set; }
+        public string time { get; set; }
+        public string location { get; set; }
+        public string creater { get; set; }
+    }
 }

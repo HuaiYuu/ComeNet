@@ -17,5 +17,7 @@ namespace ComeNet.Data
         public DbSet<ComeNet.Models.User> User { get; set; } = default!;
 
         public DbSet<ComeNet.Models.Friendlist> Friendlist { get; set; } = default!;
+
+        public DbSet<ComeNet.Models.ActivityList> ActivityList { get; set; } = default!;
     }
 }

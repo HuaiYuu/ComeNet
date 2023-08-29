@@ -342,7 +342,8 @@ display: inline-block;
 		{
 
 			var h4Tags = document.querySelectorAll('a');
-			h4Tags.forEach(function (h4Tag) {
+			h4Tags.forEach(function (h4Tag)
+			{
 				h4Tag.addEventListener('click', function () {
 					memberId = h4Tag.getAttribute('data-userid');
 					console.log('Member ID:', memberId);

@@ -6,8 +6,6 @@
 }
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
 <div class="container mt-3 mb-4" style="margin-top:10%!important;width:170%!important">
     <div class="col-lg-9 mt-4 mt-lg-0">
@@ -74,7 +72,6 @@
 <div id="loadingContainer">
     <div class="fa fa-spinner fa-spin"></div>
 </div>
-
 <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -542,9 +539,9 @@
             cursor: pointer;
         }
 </style>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     const openFormButton = document.getElementById('openFormButton');
     const modal = document.getElementById('modal');
@@ -580,8 +577,9 @@
         }
     });
 </script>
-<script>
 
+<script>
+   
     toastr.options = {
         "closeButton": false,
         "debug": true,
@@ -609,6 +607,7 @@
             var eventTime = document.getElementById('eventTime').value;
             var eventLocation = document.getElementById('eventLocation').value;
             var selectedPersons = [];
+            var creater=[];
             var personCheckboxes = document.querySelectorAll('input[name="person"]:checked');
 
             personCheckboxes.forEach(function (checkbox)
@@ -623,7 +622,7 @@
                 });
             });
 
-            selectedPersons.push
+            creater.push
             ({
                 name: '@name',
                 id: '@id'
@@ -638,7 +637,7 @@
                 location: eventLocation,
                 people: selectedPersons,
                 activityname: h2Content,
-            creater: '@name',
+                creater: creater,           
             });
 
             var actrequestOptions = {
@@ -658,8 +657,7 @@
                     //    alert('登入失敗');
                     //    window.location.reload();
                     //}
-                toastr["success"]("新增成功")
-                //alert('新增成功');
+                toastr["success"]("新增成功")               
                 })
                 .catch(error => console.log('error', error));
 

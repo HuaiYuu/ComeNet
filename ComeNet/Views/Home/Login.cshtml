@@ -3,6 +3,7 @@
 }
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
@@ -44,8 +45,11 @@
     <div class="logobox">
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
+
+    
 
     document.getElementById("loginForm").addEventListener("submit", function (event)
     {
@@ -109,13 +113,13 @@
             .then(result => {
                 if (result.access_token != null) 
                 {
-                    alert('登入成功');
+                    toastr["success"]("登入成功");
                     //window.location.href = 'shttp://13.228.116.210/store/index';
                     window.location.href = 'https://localhost:7136/Home/index';
                     console.log(result.user.id);
                 }
                 else {
-                    alert('登入失敗');
+                    toastr["error"]("登入失敗");
                     window.location.reload();
                 }
             })

@@ -170,23 +170,26 @@ namespace ComeNet.Models
         public string articleContent { get; set; }
         public string userId { get; set; }
     }
-
 	public class ChatContext
 	{
 		public string name { get; set; }
 		public string message { get; set; }
 		public string userId { get; set; }
 	}
-
     public class ActivityList
     {
-        public int Id { get; set; }
-        public string userid { get; set; }
-        public string username { get; set; }
+        public int Id { get; set; }       
         public string activityname { get; set; }
         public string date { get; set; }
         public string time { get; set; }
         public string location { get; set; }
         public string creater { get; set; }
+    }
+    public class ActivityDetail
+    {
+        public int Id { get; set; }
+        public int activityId { get; set; }
+        public string userId { get; set; }
+        public string username { get; set; }       
     }
 }

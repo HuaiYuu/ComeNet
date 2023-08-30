@@ -3,9 +3,10 @@
     var id = ViewBag.id;
     ViewData["Title"] = "ActivityList";
 }
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div style="margin-top:20%" class="container">
-    <div class="row">
+    <div id="people" class="row">
         <div class="col-md-6 col-lg-4 ">
             <div id="xx" class="card bg-primary card-hover mb-9">
                 <div class="card-body text-center px-md-5 px-lg-6 my-2">
@@ -23,25 +24,7 @@
                     </blockquote>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 col-lg-4 ">
-            <div class="card bg-primary card-hover mb-9">
-                <div class="card-body text-center px-md-5 px-lg-6 my-2">
-                    <div class="card-icon-border-large border-primary mtn-80">
-                        <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" />
-                        <i class="fa fa-quote-left text-primary" aria-hidden="true"></i>
-                    </div>
-                    <blockquote class="blockquote blockquote-sm mt-2">
-                        <p class="font-normal mb-5"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
-                        <p class="font-normal mb-5">日期:</p>
-                        <p class="font-normal mb-5">時間:</p>
-                        <p class="font-normal mb-5">地點:</p>
-                        <p class="font-normal mb-5">邀請人員:</p>
-                        <footer class="blockquote-footer text-uppercase text-white"> James Smith <cite class="d-block text-capitalize font-size-14 opacity-80 mt-1" title="Source Title">Mary’s Father</cite></footer>
-                    </blockquote>
-                </div>
-            </div>
-        </div>
+        </div>        
     </div>
 </div>
 
@@ -187,12 +170,9 @@
         color: rgb(234, 119, 173) !important;
     }
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
-
-   
-
-    
 
     $(document).ready(function ()
     {
@@ -201,4 +181,65 @@
             $('#xx').toggleClass('completed');           
         });
     });
+
+   
+
+    var myHeaders = new Headers();
+     myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify
+        ({
+            "id": @id,
+        });
+    var requestOptions =
+    {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    fetch("https://localhost:7136/api/users/GetActivityList", requestOptions)
+        .then(response => response.json())
+        .then(data => 
+            {
+            console.log(data);
+            const teamMembersContainer = document.getElementById('people');
+            console.log(teamMembersContainer);
+            data.forEach(member => 
+                {
+
+
+                const memberHtml = `<div class="col-md-6 col-lg-4 ">
+                          <div class="card bg-primary card-hover mb-9">
+                          <div class="card-body text-center px-md-5 px-lg-6 my-2">
+                          <div class="card-icon-border-large border-primary mtn-80">
+                          <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" />
+                          <i class="fa fa-quote-left text-primary" aria-hidden="true"></i>
+                          </div>
+                          <blockquote class="blockquote blockquote-sm mt-2">
+                                <p class="font-normal mb-5"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
+                                    <p class="font-normal mb-5">日期:${member.date}</p>
+                                    <p class="font-normal mb-5">時間:${member.time}</p>
+                                    <p class="font-normal mb-5">地點:${member.location}</p>
+                                    <p class="font-normal mb-5">邀請人員:${member.date}</p>
+                                    <footer class="blockquote-footer text-uppercase text-white">活動發起人<cite class="d-block text-capitalize font-size-14 opacity-80 mt-1" title="Source Title">${member.creater}</cite></footer>
+                          </blockquote>
+                          </div>
+                          </div>
+                          </div>
+                            `;
+
+                teamMembersContainer.innerHTML += memberHtml;
+            });
+        })
+        .catch(error => {
+            console.error('', error);
+        });
+
+
+
+
+
+
 </script>

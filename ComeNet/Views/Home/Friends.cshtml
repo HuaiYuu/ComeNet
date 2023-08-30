@@ -293,14 +293,11 @@ display: inline-block;
 		redirect: 'follow'
 	};
 
-	
-	
 	fetch("https://localhost:7136/api/users/friendlist", requestOptions)
 		.then(response => response.json())
 		.then(data => {
 			const teamMembersContainer = document.getElementById('team-members');
 			data.forEach(member => {
-
 				const memberHtml = `
 						<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 							<div class="our-team">

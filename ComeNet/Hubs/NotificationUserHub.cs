@@ -24,7 +24,16 @@ namespace ComeNet.Hubs
             return Context.ConnectionId;
 		}
 
-		public async Task JoinRoom(string roomId, string userId)
+        public string CreateGroup(string userId,string groupname)
+        {
+
+            _userConnectionManager.KeepUserConnection(userId, Context.ConnectionId);
+            Groups.AddToGroupAsync(Context.ConnectionId, groupname);
+
+            return "ok";
+        }
+
+        public async Task JoinRoom(string roomId, string userId)
 		{
 			Users.list.Add(Context.ConnectionId, userId);
 			await Groups.AddToGroupAsync(Context.ConnectionId, roomId);

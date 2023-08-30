@@ -18,6 +18,8 @@ using NuGet.Common;
 using Sprache;
 using WebRTC.Hubs;
 using User = ComeNet.Models.User;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace ComeNet.Controllers
 {
@@ -43,6 +45,16 @@ namespace ComeNet.Controllers
         public string name { get; set; }
         public int id { get; set; }       
     }
+    public class ParasCreateActivityPeopleDetail
+    {
+        public string activityid { get; set; }
+        public string name { get; set; }
+        public int id { get; set; }
+    }
+    public class ParasGetActivityList
+    {       
+        public int id { get; set; }
+    }
     public class ParasCreateActivity
     {
         public string date { get; set; }
@@ -50,7 +62,7 @@ namespace ComeNet.Controllers
         public List<ParasCreateActivityPeople> people { get; set; }        
         public string location { get; set; }
         public string activityname { get; set; }
-        public string creater { get; set; }
+        public List<ParasCreateActivityPeople> creater { get; set; }
        
     }
     public class ParasUserFriendList
@@ -69,14 +81,30 @@ namespace ComeNet.Controllers
 		public string longitude { get; set; }
         public double distance { get; set; }
 	}
+
+    public class ActivitynPeople
+    {
+        public int Id { get; set; }
+        public string activityname { get; set; }
+        public string date { get; set; }
+        public string time { get; set; }
+        public string location { get; set; }
+        public string creater { get; set; }
+
+        public List<string> people { get; set; }
+
+    }
     public class ResultFriendName
     {        
         public string name { get; set; }       
     }
-
     public class ResultCreateActivity
     {
         public string message { get; set; }
+    }
+    public class ResultGetActivityList
+    {        
+        public List<ActivitynPeople> activity { get; set; }
     }
 
     [Route("api/[controller]")]
@@ -98,12 +126,9 @@ namespace ComeNet.Controllers
             _passwordHashService = passwordHashService;
             _userService = userService;
             _notificationUserHubContext = notificationUserHubContext;
-            _userConnectionManager = userConnectionManager;
-           
-
+            _userConnectionManager = userConnectionManager;           
         }
 
-        // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
@@ -112,50 +137,6 @@ namespace ComeNet.Controllers
               return NotFound();
           }
             return await _context.User.ToListAsync();
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-          if (_context.User == null)
-          {
-              return Problem("Entity set 'ComeNetContext.User'  is null.");
-          }
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.id }, user);
         }
 
         [HttpPost("SendToSpecificUser")]
@@ -216,7 +197,7 @@ namespace ComeNet.Controllers
             return Ok(users);
         }
 
-        [HttpPost("signup")]		
+        [HttpPost("Signup")]		
 		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
 		{
 			string hashedPassword;
@@ -243,7 +224,7 @@ namespace ComeNet.Controllers
 			return Ok(token);
 		}
 
-		[HttpPost("signin")]
+		[HttpPost("Signin")]
         public async Task<ActionResult<IEnumerable<User>>> UserSignin([FromBody] ParasUserSignIn paras)
         {
             if (paras.provider == "native")
@@ -330,28 +311,82 @@ namespace ComeNet.Controllers
         public async Task<ActionResult<IEnumerable<ActivityList>>> CreateActivity(ParasCreateActivity paras)
         {
 
-             foreach (var person in paras.people)
-             {
-                ActivityList user = new ActivityList();
-                user.date = paras.date;
-                user.time = paras.time;
-                user.location = paras.location;
-                user.activityname = paras.activityname;
-                user.username = person.name;
-                user.userid = person.id.ToString();
-                user.creater = paras.creater;
-                _context.ActivityList.Add(user);
-                await _context.SaveChangesAsync();
-             }
+            ActivityList user = new ActivityList();
+            user.date = paras.date;
+            user.time = paras.time;
+            user.location = paras.location;
+            user.activityname = paras.activityname;
+            foreach (var person in paras.creater)
+            {
+                user.creater = person.name;
+            }
+               
+            _context.ActivityList.Add(user);
+            await _context.SaveChangesAsync();
+
+            var getactivityid = await _context.ActivityList
+           .Where(f => f.date == paras.date && f.time == paras.time && f.location == paras.location && f.location == paras.location)
+           .Select(f => f.Id)
+           .ToListAsync();
+
+            ActivityDetail activityDetail = new ActivityDetail();
+            activityDetail.activityId = getactivityid[0];
+            foreach (var person in paras.creater)
+            {
+                activityDetail.username = person.name;
+                activityDetail.userId = person.id.ToString();
+            }
+
+            _context.ActivityDetail.Add(activityDetail);
+            await _context.SaveChangesAsync();
+
+
+            foreach (var person in paras.people)
+            {
+                try
+                {
+                    var connections = _userConnectionManager.GetUserConnections(person.id.ToString());
+                    if (connections != null && connections.Count > 0)
+                    {
+                        foreach (var connectionId in connections)
+                        {
+                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", paras.activityname, paras.location + "," + paras.date + " " + paras.time, getactivityid[0]);
+                        }
+                    }
+                }
+                catch (Exception ex) 
+                {
+
+                    ///save into datebase
+                }                
+            }
 
             ResultCreateActivity result = new ResultCreateActivity();
             result.message = "ok";
 
-
-                 return Ok(result);           
+             return Ok(result);           
         }
 
-        [HttpPost("friendlist")]
+        [HttpPost("CreateActivityPeople")]
+        public async Task<ActionResult<IEnumerable<ActivityDetail>>> CreateActivityPeople(ParasCreateActivityPeopleDetail paras)
+        {
+
+            ActivityDetail activityDetail = new ActivityDetail();
+            activityDetail.activityId = paras.id;
+            activityDetail.username = paras.name;
+            activityDetail.userId = paras.id.ToString();
+         
+
+            _context.ActivityDetail.Add(activityDetail);
+            await _context.SaveChangesAsync();
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = "ok";
+
+            return Ok(result);
+        }
+
+        [HttpPost("Friendlist")]
         public async Task<ActionResult<IEnumerable<Userfriend>>> UserFriendList(ParasUserFriendList paras)
         {
             var friendIds = await _context.Friendlist
@@ -464,30 +499,44 @@ namespace ComeNet.Controllers
             return userlist;
         }
 
-
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpPost("GetActivityList")]
+        public async Task<ActionResult<IEnumerable<ResultGetActivityList>>> GetActivityList(ParasGetActivityList paras)
         {
-            if (_context.User == null)
+            ResultGetActivityList resultGetActivityList = new ResultGetActivityList();
+            List<ActivitynPeople> activityLists = new List<ActivitynPeople>();
+            var activitylist = await _context.ActivityList
+            .ToListAsync();
+            foreach (var activity in activitylist)
             {
-                return NotFound();
-            }
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
+                ActivitynPeople activitynPeople = new ActivitynPeople();
+                activitynPeople.Id = activity.Id;
+                activitynPeople.date=activity.date.Trim();
+                activitynPeople.time=activity.time.Trim();
+                activitynPeople.location=activity.location.Trim();
+                activitynPeople.activityname = activity.activityname.Trim();
+                activitynPeople.creater = activity.creater.Trim();
+
+                var people = await _context.ActivityDetail
+                .Where(f => f.activityId == activity.Id)
+                .Select(f => f.username)
+                .ToListAsync();
+
+                List<string> peopleList = new List<string>();
+
+                foreach (var person in people)
+                {
+                    peopleList.Add(person.Trim());
+                }
+
+                activitynPeople.people = peopleList;
+
+                activityLists.Add(activitynPeople);
             }
 
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
+            resultGetActivityList.activity = activityLists;
 
-            return NoContent();
+            return Ok(activityLists);
         }
 
-        private bool UserExists(int id)
-        {
-            return (_context.User?.Any(e => e.id == id)).GetValueOrDefault();
-        }
     }
 }

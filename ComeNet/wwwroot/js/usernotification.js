@@ -112,12 +112,6 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
             })
             .catch(error => console.log('error', error));
 
-
-
-
-
-
-
         p.removeChild(agreeButton);
         p.removeChild(rejectButton);
     });
@@ -152,12 +146,61 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
     console.log(notificationBadge);
 });
 
+var user1 = null;
+var user2 = null;
+
 connection.on("chatToUser", (name, message) =>
 {
-    message = `${name}: ${message}`;
-    console.log(message);
-    $("#chatmsg").append(`<p>${message}</p>`);
-    $("#message").val("");
+    //console.log(name);
+
+    //user1 = name;
+    //console.log(user1);
+
+    //if (user1 != name)
+    //{
+    //    message = `${name}: ${message}`;
+    //    console.log(message);
+    //    $("#chatmsg").append(`<p class="sender-demo">${message}</p>`);
+    //    $("#message").val("");
+    //}
+    //else
+    //{
+    //    message = `${name}: ${message}`;
+    //    console.log(message);
+    //    $("#chatmsg").append(`<p class="sender-demo1">${message}</p>`);
+    //    $("#message").val("");
+
+    //}
+
+    console.log(name);
+
+    if (user1 === null)
+    {
+        user1 = name;
+        console.log("User 1: " + user1);
+    }
+    else if (user2 === null && user1 !== name)
+    {
+        user2 = name;
+        console.log("User 2: " + user2);
+    }
+
+    if (name === user1)
+    {
+        message = `${name}: ${message}`;
+        console.log(message);
+        $("#chatmsg").append(`<p class="sender-demo">${message}</p>`);
+        $("#message").val("");
+    } else if (name === user2)
+    {
+        message = `${name}: ${message}`;
+        console.log(message);
+        $("#chatmsg").append(`<p class="sender-demo1">${message}</p>`);
+        $("#message").val("");
+    }
+
+    
+
 });
 
 

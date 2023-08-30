@@ -49,8 +49,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
 
-    
-
     document.getElementById("loginForm").addEventListener("submit", function (event)
     {
         event.preventDefault();
@@ -79,8 +77,6 @@
     function showPosition(position) 
     {
        
-
-
         const latitude = position.coords.latitude.toString();
         const longitude = position.coords.longitude.toString();
 
@@ -88,6 +84,27 @@
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
         var myHeaders = new Headers();
+
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": true,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": false,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+
+
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
@@ -105,20 +122,21 @@
             body: raw,
             redirect: 'follow'
         };
-        //shttps://localhost:44364/api/user/signin
-        //shttp://13.228.116.210/api/user/signin
-        //      fetch("shttp://13.228.116.210/api/user/signin", requestOptions)
+       
+
+
+
         fetch("https://localhost:7136/api/users/signin", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.access_token != null) 
-                {
+                {                                        
                     toastr["success"]("登入成功");
-                    //window.location.href = 'shttp://13.228.116.210/store/index';
-                    window.location.href = 'https://localhost:7136/Home/index';
+                    window.location.href = 'https://localhost:7136/Home/index';                           
                     console.log(result.user.id);
                 }
-                else {
+                else 
+                {
                     toastr["error"]("登入失敗");
                     window.location.reload();
                 }

@@ -5,34 +5,14 @@
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div style="margin-top:20%" class="container">
-    <div id="people" class="row">
-        <div class="col-md-6 col-lg-4 ">
-            <div id="xx" class="card bg-primary card-hover mb-9">
-                <div class="card-body text-center px-md-5 px-lg-6 my-2">
-                    <div class="card-icon-border-large border-primary mtn-80">
-                        <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" />
-                        <i class="fa fa-quote-left text-primary" aria-hidden="true"></i>
-                    </div>
-                    <blockquote class="blockquote blockquote-sm mt-2">
-                        <p class="font-normal mb-5"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
-                        <p class="font-normal mb-5">日期:</p>
-                        <p class="font-normal mb-5">時間:</p>
-                        <p class="font-normal mb-5">地點:</p>
-                        <p class="font-normal mb-5">邀請人員:</p>                           
-                        <footer class="blockquote-footer text-uppercase text-white"> James Smith <cite class="d-block text-capitalize font-size-14 opacity-80 mt-1" title="Source Title">Mary’s Father</cite></footer>
-                    </blockquote>
-                </div>
-            </div>
-        </div>        
-    </div>
+<div style="margin-top:15%;max-height:50%; overflow-y: auto;width:100vh;" class="container">
+<div id="people" class="row">
 </div>
-
+</div>
 <button id="toggleButton">切换</button>
-
 <style>
     .completed {
-        background-color: #f2f2f2; /* 更改已完成活动的背景色 */
+        background-color: #f2f2f2; 
         position: relative;
     }
 
@@ -214,15 +194,15 @@
                           <div class="card bg-primary card-hover mb-9">
                           <div class="card-body text-center px-md-5 px-lg-6 my-2">
                           <div class="card-icon-border-large border-primary mtn-80">
-                          <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" />
+                          <img class="img-fluid" src="" />
                           <i class="fa fa-quote-left text-primary" aria-hidden="true"></i>
                           </div>
                           <blockquote class="blockquote blockquote-sm mt-2">
-                                <p class="font-normal mb-5"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
+                                    <p class="font-normal mb-5">${member.activityname}</p>
                                     <p class="font-normal mb-5">日期:${member.date}</p>
                                     <p class="font-normal mb-5">時間:${member.time}</p>
                                     <p class="font-normal mb-5">地點:${member.location}</p>
-                                    <p class="font-normal mb-5">邀請人員:${member.date}</p>
+                                    <p class="font-normal mb-5">人員:${member.people}</p>
                                     <footer class="blockquote-footer text-uppercase text-white">活動發起人<cite class="d-block text-capitalize font-size-14 opacity-80 mt-1" title="Source Title">${member.creater}</cite></footer>
                           </blockquote>
                           </div>

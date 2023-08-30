@@ -20,6 +20,8 @@ using WebRTC.Hubs;
 using User = ComeNet.Models.User;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
+using System.Text;
 
 namespace ComeNet.Controllers
 {
@@ -65,11 +67,21 @@ namespace ComeNet.Controllers
         public List<ParasCreateActivityPeople> creater { get; set; }
        
     }
+    public class ParasCreateChatRoom
+    {
+        public string chater1 { get; set; }
+        public string chater2 { get; set; }
+    }
     public class ParasUserFriendList
     {
         public int userid { get; set; }       
     }
-	public class Userfriend
+    public class ParasChatContext
+    {
+        public int roomId { get; set; }
+    }
+    
+    public class Userfriend
 	{
 		public int id { get; set; }
 		public string provider { get; set; }
@@ -81,6 +93,8 @@ namespace ComeNet.Controllers
 		public string longitude { get; set; }
         public double distance { get; set; }
 	}
+
+   
 
     public class ActivitynPeople
     {
@@ -96,7 +110,11 @@ namespace ComeNet.Controllers
     }
     public class ResultFriendName
     {        
-        public string name { get; set; }       
+        public string name { get; set; }
+
+        public string picture { get; set; }
+
+        public string Id { get; set; }
     }
     public class ResultCreateActivity
     {
@@ -150,23 +168,39 @@ namespace ComeNet.Controllers
                     await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
                 }
             }
+
+
+
             return Ok(model);
         }
 
 		[HttpPost("ChatToSpecificUser")]
 		public async Task<ActionResult> ChatToSpecificUser(ChatContext model)
 		{
-			//var connections = _userConnectionManager.GetUserConnections(model.userId);
-			//if (connections != null && connections.Count > 0)
-			//{
-			//	foreach (var connectionId in connections)
-			//	{
-   //                 //await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatToUser", model.name, model.message);
-   //               //  await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
-   //                 await _notificationUserHubContext.Clients.Group("18to19").SendAsync("chatToUser", model.name, model.message);
-   //             }
-			//}
-            await _notificationUserHubContext.Clients.Group("19to19").SendAsync("chatToUser", model.name, model.message);
+            //var connections = _userConnectionManager.GetUserConnections(model.userId);
+            //if (connections != null && connections.Count > 0)
+            //{
+            //	foreach (var connectionId in connections)
+            //	{
+            //                 //await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatToUser", model.name, model.message);
+            //               //  await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
+            //                 await _notificationUserHubContext.Clients.Group("18to19").SendAsync("chatToUser", model.name, model.message);
+            //             }
+            //}
+
+            MessageContext context = new MessageContext();
+            context.message = model.message;
+            context.name = model.name;
+            context.datetime = DateTime.Now;
+            context.roomId = 19218;
+
+
+            _context.MessageContext.Add(context);
+            await _context.SaveChangesAsync();
+
+
+
+            await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
             return Ok(model);
 		}
 
@@ -175,23 +209,29 @@ namespace ComeNet.Controllers
         private List<ResultFriendName> users = new List<ResultFriendName>();
 
         [HttpPost("GetOnlineUser")]
-        public async Task<ActionResult> GetOnlineUser(ChatContext model)
+        public async Task<ActionResult> GetOnlineUser(ParasUserFriendList paras)
         {
-            var connections = _userConnectionManager.GetAllUsers();
-           
+
+
+            var connections = _userConnectionManager.GetAllUsers();           
             foreach (var connectionId in connections)
             {
-                var myuser = await _context.User.FindAsync(Convert.ToInt32(connectionId) );
-                ResultFriendName resultFriendName = new ResultFriendName();
-                resultFriendName.name = myuser.name;
-
-                if (!OnlineUserMap.ContainsKey(myuser.name))
+                
+                if(connectionId !=  paras.userid.ToString())
                 {
-                    OnlineUserMap[myuser.name] = new List<string>();                    
-                }
-                OnlineUserMap[myuser.name].Add(connectionId);
+                    var myuser = await _context.User.FindAsync(Convert.ToInt32(connectionId));
+                    ResultFriendName resultFriendName = new ResultFriendName();
+                    resultFriendName.name = myuser.name;
+                    resultFriendName.picture = myuser.picture;
+                    resultFriendName.Id = myuser.id.ToString();
 
-                users.Add(resultFriendName);
+                    if (!OnlineUserMap.ContainsKey(myuser.name))
+                    {
+                        OnlineUserMap[myuser.name] = new List<string>();
+                    }
+                    OnlineUserMap[myuser.name].Add(connectionId);
+                    users.Add(resultFriendName);
+                }
             }
 
             return Ok(users);
@@ -330,19 +370,15 @@ namespace ComeNet.Controllers
            .ToListAsync();
 
             ActivityDetail activityDetail = new ActivityDetail();
-            activityDetail.activityId = getactivityid[0];
-            foreach (var person in paras.creater)
-            {
-                activityDetail.username = person.name;
-                activityDetail.userId = person.id.ToString();
-            }
-
-            _context.ActivityDetail.Add(activityDetail);
-            await _context.SaveChangesAsync();
-
+            activityDetail.activityId = getactivityid[0];            
 
             foreach (var person in paras.people)
             {
+
+                //activityDetail.username = person.name;
+                //activityDetail.userId = person.id.ToString();
+                //_context.ActivityDetail.Add(activityDetail);
+                //await _context.SaveChangesAsync();
                 try
                 {
                     var connections = _userConnectionManager.GetUserConnections(person.id.ToString());
@@ -372,7 +408,7 @@ namespace ComeNet.Controllers
         {
 
             ActivityDetail activityDetail = new ActivityDetail();
-            activityDetail.activityId = paras.id;
+            activityDetail.activityId = Convert.ToInt32(paras.activityid);
             activityDetail.username = paras.name;
             activityDetail.userId = paras.id.ToString();
          
@@ -384,6 +420,47 @@ namespace ComeNet.Controllers
             result.message = "ok";
 
             return Ok(result);
+        }
+
+        [HttpPost("CreateChatRoom")]
+        public async Task<ActionResult<IEnumerable<ActivityDetail>>> CreateChatRoom(ParasCreateChatRoom paras)
+        {
+
+            string roomid = "";
+            string chater1 = paras.chater1;
+            string chater2 = paras.chater2;
+
+            if ( Convert.ToUInt16(chater1) > Convert.ToUInt16(chater2))
+            {
+                roomid = chater1 + "2" + chater2;
+            }
+            else
+            {
+                roomid = chater2 + "2" + chater1;
+            }
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = roomid;
+
+            return Ok(result);
+        }
+
+        [HttpPost("CreateChatContext")]
+        public async Task<ActionResult<IEnumerable<MessageContext>>> CreateChatContext(MessageContext paras)
+        {
+
+            MessageContext context = new MessageContext();
+            context.message = paras.message;
+            context.name= paras.name;
+            context.datetime = DateTime.Now;
+            context.roomId = paras.roomId;
+
+
+            _context.MessageContext.Add(context);
+            await _context.SaveChangesAsync();
+
+
+            return Ok();
         }
 
         [HttpPost("Friendlist")]
@@ -536,6 +613,43 @@ namespace ComeNet.Controllers
             resultGetActivityList.activity = activityLists;
 
             return Ok(activityLists);
+        }
+
+        [HttpPost("GetChatContext")]
+        public async Task<ActionResult<IEnumerable<MessageContext>>> GetChatContext(int paras)
+        {
+            string user1 = "Demo";
+            string user2 = "Demo1";
+            string chatcontext = "";
+
+            
+
+            StringBuilder chatHtml = new StringBuilder();
+
+            var message = await _context.MessageContext
+            .Where(f => f.roomId == 19218)           
+            .ToListAsync();
+
+            foreach (var messages in message)
+            {
+                if (messages.name.Trim()==user1)
+                {
+                     chatcontext = "<p class=\"sender-demo\">"+messages.name+":"+messages.message + "</p>";                 
+                } 
+                else if (messages.name.Trim() == user2)
+                {
+                     chatcontext = "<p class=\"sender-demo1\">" + messages.name + ":" + messages.message + "</p>";
+                }
+
+                chatHtml.Append(chatcontext);
+            }
+            string chatHtmlString = chatHtml.ToString();
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = chatHtmlString;
+
+
+            return Ok(result);
         }
 
     }

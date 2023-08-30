@@ -192,4 +192,13 @@ namespace ComeNet.Models
         public string userId { get; set; }
         public string username { get; set; }       
     }
+
+    public class MessageContext
+    {
+        public int Id { get; set; }
+        public int roomId { get; set; }
+        public DateTime datetime { get; set; }
+        public string name { get; set; }
+        public string message { get; set; }
+    }
 }

@@ -1,4 +1,5 @@
 ﻿@{
+    ViewData["Title"] = "Chat";
 }
 
 <section style="margin-left: 30%;width:100vh">
@@ -32,30 +33,40 @@
         color:gray;
     }
 
+    .sender-demo 
+    {
+        background-color: lightblue;        
+    }
+
+    .sender-demo1 {
+        background-color: lightgreen;
+        text-align: right;
+    }
+
 </style>
 
 <script>
 
-    var chat = document.getElementById("chatmsg");
-    var messageParagraph = document.createElement('p');
-    messageParagraph.textContent = '正在等待使用者進入聊天室.......';
-    messageParagraph.className = 'welcomeword'; 
-    chat.appendChild(messageParagraph);
+    //var chat = document.getElementById("chatmsg");
+    //var messageParagraph = document.createElement('p');
+    //messageParagraph.textContent = '正在等待使用者進入聊天室.......';
+    //messageParagraph.className = 'welcomeword'; 
+    //chat.appendChild(messageParagraph);
 
 
-    const targetElement = document.getElementById('username');
-    const observer = new MutationObserver(function (showmsg, observer)
-    {        
-        console.log('目标元素的值已经变化了！');        
-    });
+    //const targetElement = document.getElementById('username');
+    //const observer = new MutationObserver(function (showmsg, observer)
+    //{        
+    //    console.log('目标元素的值已经变化了！');        
+    //});
 
-    const config = { characterData: true, subtree: true };
-    observer.observe(targetElement, config);
-    setTimeout(function () 
-    {
-        showmsg();
-    }, 3000); 
-
+    //const config = { characterData: true, subtree: true };
+    //observer.observe(targetElement, config);
+    //setTimeout(function () 
+    //{
+    //    showmsg();
+    //}, 3000); 
+    getmessage();
 
     function showmsg()
     {
@@ -127,6 +138,38 @@
             .catch(error => console.log('error', error));
            $("#message").val("");
 
+    }
+    function getmessage()
+    {
+        
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var rawvideo = JSON.stringify({            
+            "userId": "19",
+        });
+        var requestvideo = {
+            method: 'POST',
+            headers: myHeaders,
+            body: rawvideo,
+            redirect: 'follow'
+        };
+
+        fetch("https://localhost:7136/api/users/GetChatContext", requestvideo)
+            .then(response => response.json())
+            .then(result => 
+                {
+                if (result.message != null) 
+                {
+                    $("#chatmsg").append(result.message);
+                }
+                else 
+                {
+                    alert('請稍等');
+                }
+            })
+            .catch(error => console.log('error', error));
+           $("#message").val("");
     }
 
 </script>

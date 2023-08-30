@@ -7,7 +7,7 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
-<div class="container mt-3 mb-4" style="margin-top:10%!important;width:170%!important">
+<div class="container mt-3 mb-4" style="margin-top:15%!important;width:170%!important">
     <div class="col-lg-9 mt-4 mt-lg-0">
         <div class="row">
             <div class="col-md-12">
@@ -21,35 +21,7 @@
                             </tr>
                         </thead>
                         <tbody  id="nearbyuser">
-                            <tr class="candidates-list">
-                                <td class="title">
-                                    <div class="thumb">
-                                        <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="">
-                                    </div>
-                                    <div class="candidate-list-details">
-                                        <div class="candidate-list-info">
-                                            <div class="candidate-list-title">
-                                                <h5 class="mb-0"><a href="#">Brooke Kelly</a></h5>
-                                            </div>
-                                            <div class="candidate-list-option">
-                                                <ul class="list-unstyled">
-                                                    <li><i class="fas fa-filter pr-1"></i>Information Technology</li>
-                                                    <li><i class="fas fa-map-marker-alt pr-1"></i>Rolling Meadows, IL 60008</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="candidate-list-favourite-time text-center">
-                                    <a class="candidate-list-favourite order-2 text-danger" href="#"><i class="fas fa-heart"></i></a>
-                                    <span class="candidate-list-time order-1">Shortlisted</span>
-                                </td>
-                                <td>
-                                    <ul class="list-unstyled mb-0 d-flex justify-content-end">
-                                        <li><a href="#" class="text-primary" data-toggle="tooltip" title="" data-original-title="view"><i class="far fa-eye"></i>邀請</a></li>
-                                    </ul>
-                                </td>
-                            </tr>                                          
+                                                             
                         </tbody>
                     </table>
                     <div class="text-center mt-3 mt-sm-3">
@@ -81,40 +53,40 @@
             <div class="container bootstrap snippets bootdey">
                 <div class="row margin-bottom-10">
                     <div class="col-md-4 col-sm-6 ">
-                        <div onclick="xx()" style="height:80%" class="servive-block servive-block-grey select">
+                        <div onclick="xx()"  class="servive-block servive-block-grey select">
                             <i class="icon-2x color-light fa fa-bell-o"></i>
                             <h2 class="heading-md">共度晚餐</h2>
-                            <p>好友相聚時刻,一起吃飯狂歡吧!</p>
+                            <p>一起吃飯吧!</p>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <div class="servive-block servive-block-yellow">
+                        <div class="servive-block servive-block-yellow select">
                             <i class="icon-2x color-light fa fa-envelope"></i>
-                            <h2 class="heading-md">Yellow Box</h2>
-                            <p>Donec id elit non mi porta gravida at eget metus id elit mi egetine usce dapibus elit nondapibus</p>
+                            <h2 class="heading-md">看點影</h2>
+                            <p>一起看電影吧!</p>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-12">
-                        <div class="servive-block servive-block-dark-blue">
+                        <div class="servive-block servive-block-dark-blue select">
                             <i class="icon-2x color-light fa fa-gift"></i>
-                            <h2 class="heading-md">Dark Blue Box</h2>
-                            <p>Donec id elit non mi porta gravida at eget metus id elit mi egetine. Fusce dapibus</p>
+                            <h2 class="heading-md">運動</h2>
+                            <p>跑步/爬山/羽毛球</p>
                         </div>
                     </div>
                 </div>
                 <div class="row margin-bottom-10">
                     <div class="col-sm-6">
-                        <div class="servive-block servive-block-purple">
+                        <div class="servive-block servive-block-purple select">
                             <i class="icon-2x color-light fa fa-globe"></i>
-                            <h2 class="heading-md">Purple Box</h2>
-                            <p>Donec id elit non mi porta gravida at eget metus id elit mi egetine. Fusce dapibus. At vero eos et accusamus et iusto odio dignissimos ducimus qui.</p>
+                            <h2 class="heading-md">購物</h2>
+                            <p>一起血拚!</p>
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="servive-block rounded servive-block-aqua">
+                        <div class="servive-block rounded servive-block-aqua select">
                             <i class="icon-2x color-light fa fa-taxi"></i>
-                            <h2 class="heading-md">Aqua Box</h2>
-                            <p>Donec id elit non mi porta gravida at eget metus id elit mi egetine. Fusce dapibus. At vero eos et accusamus et iusto odio dignissimos ducimus qui.</p>
+                            <h2 class="heading-md">出遊</h2>
+                            <p>一同去郊遊!</p>
                         </div>
                     </div>
                 </div>
@@ -142,10 +114,7 @@
 
             <label>邀請人員：</label>
             <div id="invitation">
-                <input type="checkbox" id="12" name="person" value="12">
-                <label for="12">john</label>
-                <input type="checkbox" id="13" name="person" value="13">
-                <label for="12">johk</label>
+                
             </div>
             <br>
             <button id="activitybtn" onclick="createactivity()" type="submit">提交</button>
@@ -750,9 +719,9 @@
         .then(response => response.json())
         .then(data => {
             const teamMembersContainer = document.getElementById('nearbyuser');
-            const invitation = document.getElementById('invitation');
-           
-            data.forEach(member => {
+            const invitation = document.getElementById('invitation');           
+            data.forEach(member => 
+            {
 
                 const memberHtml = `
                           <tr class="candidates-list">
@@ -784,18 +753,16 @@
                                             </ul>
                                         </td>
                                     </tr>`
-
-
                 const invitationHtml = `<input type="checkbox" id="${member.id}" name="person" value="${member.name}">
                                 <label for="${member.id}">${member.name}</label>
                              `
-
                 teamMembersContainer.innerHTML += memberHtml;
-                invitation.innerHTML += invitationHtml;
-                loadingContainer.classList.add('hidden');
+                invitation.innerHTML += invitationHtml;                
             });
+            loadingContainer.classList.add('hidden');
         })
-        .catch(error => {
+        .catch(error =>
+        {
             console.error('Error fetching team member data:', error);
         });
 

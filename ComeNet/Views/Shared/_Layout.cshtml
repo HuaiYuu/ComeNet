@@ -80,7 +80,7 @@
         <div class="col-md-4 static sidebarmenu">
             <div class="profile-card">
                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="profile-photo">
-                <h5><a href="#" class="text-white">Sarah Cruiz</a></h5>
+                <h5><a href="#" class="text-white">@name</a></h5>
                 <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
             </div><!--profile card ends-->
             <ul class="nav-news-feed">
@@ -92,9 +92,8 @@
                 <li><i class="fa fa-video-camera icon6"></i><div><a href="https://localhost:7136/home/friends">Videos</a></div></li>
             </ul><!--news-feed links ends-->
             <div id="chat-block">
-                <div class="title">Chat online</div>
-                <ul  id="onlineuser"class="online-users list-inline">
-                    <li><a href="#" title="Linda Lohan"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
+                <div class="title">online user</div>
+                <ul  id="onlineuser"class="online-users list-inline">              
                 </ul>
             </div><!--chat block ends-->
         </div>
@@ -740,10 +739,11 @@
    
 
 </style>
-
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
+
+   
 
     toastr.options = {
         "closeButton": false,
@@ -770,6 +770,10 @@
     var userId = null;
 
     userId = @id;
+
+    myFunction();
+
+
     document.addEventListener("DOMContentLoaded", ready);
     document.getElementById("user").innerHTML = "UserId: " + userId;
     jQuery(function ($) {
@@ -827,60 +831,110 @@
     });
 
     //setInterval(myFunction, 10000); 
-    myFunction();
+    
    
 
     document.addEventListener('click', function (event)
     {        
         if (event.target.id === 'chat')
         {
-            sentchatrequest();
+            var memberId = null;
+            var h4Tags = document.querySelectorAll('a');
+            h4Tags.forEach(function (h4Tag)
+            {
+                h4Tag.addEventListener('click', function ()
+                {
+                    memberId = h4Tag.getAttribute('title');
+                    console.log('Member ID:', memberId);
+                    sentchatrequest(memberId);
+                });
+            });
+
+           
         }
     });
 
-
-
-
-    function sentchatrequest(){
+    function sentchatrequest(memberId) 
+    {
+        console.log(userId);
+        console.log(memberId);
 
         var time = new Date();
         var formattedDateTime = time.toLocaleString();
-
         console.log(formattedDateTime);
-        var memberId = null;
+        var roomId = null;
 
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            var rawvideo = JSON.stringify({
-                "articleHeading": formattedDateTime + " 聊天室邀請",
-                "articleContent": "https://localhost:7136/chatroom/18",
-                "userId": "19",
-            });
-            var requestvideo = {
-                method: 'POST',
-                headers: myHeaders,
-                body: rawvideo,
-                redirect: 'follow'
-            };
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
 
-            fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.userId != null) {
-                        console.log(result.userId);
-                    window.open('https://localhost:7136/chatroom/18', '_blank');
-                    }
-                    else {
-                        alert('請稍等');
-                       
-                    }
+        var chatmember = JSON.stringify(
+            {
+                "chater1": userId.toString(),
+                "chater2": memberId.toString(),
+        });
+        var requestroomid = 
+        {
+            method: 'POST',
+            headers: myHeaders,
+            body: chatmember,
+            redirect: 'follow'
+        };
 
-                })
-                .catch(error => console.log('error', error));
+        fetch("https://localhost:7136/api/users/CreateChatRoom",requestroomid)
+            .then(response => response.json())
+            .then(result => {
+
+                if (result.message != null) 
+                {
+                    roomId = result.message;
+                    console.log(roomId);
+
+
+                    var rawvideo = JSON.stringify({
+                        "articleHeading": formattedDateTime + "您有新訊息",
+                        "articleContent": "https://localhost:7136/chatroom/" + roomId,
+                        "userId": memberId,
+                    });
+                    var requestvideo = {
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: rawvideo,
+                        redirect: 'follow'
+                    };
+
+                    fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
+                        .then(response => response.json())
+                        .then(result => {
+
+                            if (result.userId != null) {
+                                console.log(result.userId);
+                                window.open('https://localhost:7136/chatroom/' + roomId, '_blank');   //打開視窗
+                            }
+                            else {
+                                alert('請稍等');
+                            }
+
+                        })
+                        .catch(error => console.log('error', error));
+
+
+                }
+                else
+                {
+                    alert('請稍等');
+                }
+
+            })
+            .catch(error => console.log('error', error));
+
+            console.log(roomId);
+            
+           
         
     }
 
-    function myFunction() {
+    function myFunction() 
+    {
 
         const teamMembersContainer = document.getElementById('onlineuser');
         teamMembersContainer.innerHTML = "";
@@ -888,10 +942,8 @@
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        var raw = JSON.stringify({
-            "name": "native",
-            "message": "stylishtest_fjdsssss@test.com",
-            "userId": "19"
+        var raw = JSON.stringify({            
+            "userId": userId
         });
         var requestOptions = {
             method: 'POST',
@@ -901,15 +953,16 @@
         };
         fetch("https://localhost:7136/api/users/GetOnlineUser", requestOptions)
             .then(response => response.json())
-            .then(data => {
-
-                data.forEach(member => {
+            .then(data => {                
+                data.forEach(member => 
+                    {
 
                     var userHtml = `
                                             <li>
-                                                   <a title="${member.name}">
-                                                       <img id="chat" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo">
-                                                   <span class="online-dot"></span>
+                                                <p>${member.name}</p>
+                                                <a title=${member.id}>
+                                                <img id="chat" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo">
+                                                <span class="online-dot"></span>                                                  
                                                 </a>
                                             </li>
                                         `;

@@ -174,24 +174,25 @@ connection.on("chatToUser", (name, message) =>
 
     console.log(name);
 
-    if (user1 === null)
-    {
-        user1 = name;
-        console.log("User 1: " + user1);
-    }
-    else if (user2 === null && user1 !== name)
-    {
-        user2 = name;
-        console.log("User 2: " + user2);
-    }
+    //if (user1 === null)
+    //{
+    //    user1 = name;
+    //    console.log("User 1: " + user1);
+    //}
+    //else if (user2 === null && user1 !== name)
+    //{
+    //    user2 = name;
+    //    console.log("User 2: " + user2);
+    //}
 
-    if (name === user1)
+    if (name === "Demo")
     {
         message = `${name}: ${message}`;
         console.log(message);
         $("#chatmsg").append(`<p class="sender-demo">${message}</p>`);
         $("#message").val("");
-    } else if (name === user2)
+    }
+    else if (name === "Demo1")
     {
         message = `${name}: ${message}`;
         console.log(message);

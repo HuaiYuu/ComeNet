@@ -834,25 +834,51 @@
     
    
 
+    //document.addEventListener('click', function (event)
+    //{        
+    //    if (event.target.id === 'chat')
+    //    {
+    //        var memberId = null;
+    //        //var h4Tags = document.getElementById('chatroomuserid');
+    //        //h4Tags.forEach(function (h4Tag)
+    //        //{
+    //        //    h4Tag.addEventListener('click', function ()
+    //        //    {
+    //        //        memberId = h4Tag.getAttribute('title');
+    //        //        console.log('Member ID:', memberId);
+    //        //        sentchatrequest(memberId);
+    //        //    });
+    //        //});
+
+    //        var h4Tag = document.getElementById('chatroomuserid');
+    //        h4Tag.addEventListener('click', function () 
+    //        {
+    //            memberId = h4Tag.getAttribute('title');
+    //            console.log('Member ID:', memberId);
+    //            sentchatrequest(memberId);
+    //        });
+    //    }
+    //});
     document.addEventListener('click', function (event)
-    {        
-        if (event.target.id === 'chat')
+    {
+        if (event.target.id === 'chatroom') 
         {
             var memberId = null;
-            var h4Tags = document.querySelectorAll('a');
-            h4Tags.forEach(function (h4Tag)
+            var h4Tag = event.target.querySelector('#chatroom');
+            console.log(h4Tag);
+            if (h4Tag) 
             {
-                h4Tag.addEventListener('click', function ()
-                {
-                    memberId = h4Tag.getAttribute('title');
-                    console.log('Member ID:', memberId);
-                    sentchatrequest(memberId);
-                });
-            });
-
-           
+                memberId = h4Tag.getAttribute('alt');
+                console.log('Member ID:', memberId);
+                sentchatrequest(memberId);
+            }
+            memberId = event.target.getAttribute('alt');
+            sentchatrequest(memberId);
+            
         }
     });
+
+        
 
     function sentchatrequest(memberId) 
     {
@@ -958,10 +984,10 @@
                     {
 
                     var userHtml = `
-                                            <li>
+                                                <li id="chatroomuserid">
                                                 <p>${member.name}</p>
-                                                <a title=${member.id}>
-                                                <img id="chat" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo">
+                                                <a  title=${member.id}>
+                                                <img  style="border: solid;" id="chatroom" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt=${member.id} class="img-responsive profile-photo">
                                                 <span class="online-dot"></span>                                                  
                                                 </a>
                                             </li>

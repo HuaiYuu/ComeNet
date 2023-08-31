@@ -522,9 +522,14 @@ namespace ComeNet.Controllers
         [HttpPost("GetNearbyUser")]
         public async Task<ActionResult<IEnumerable<Userfriend>>> GetNearbyUser(ParasUserFriendList paras)
         {
-            var friendIds = await _context.Friendlist
-            .Where(f => f.userid == paras.userid)
-            .Select(f => f.friendid)
+            //var friendIds = await _context.Friendlist
+            //.Where(f => f.userid == paras.userid)
+            //.Select(f => f.friendid)
+            //.ToListAsync();
+
+            var friendIds = await _context.User
+            .Where(f => f.id != paras.userid)
+            .Select(f => f.id)
             .ToListAsync();
 
 
@@ -560,6 +565,7 @@ namespace ComeNet.Controllers
                 userfriend.email = users.email;
                 userfriend.name = users.name;
                 userfriend.picture = users.picture;
+                userfriend.distance = distance;
 
 
 
@@ -567,7 +573,7 @@ namespace ComeNet.Controllers
                 {
                     return NotFound();
                 }
-                if(distance<1)
+                if(distance<5)
                 {
                     userlist.Add(userfriend);
                 }

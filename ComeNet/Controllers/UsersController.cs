@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
+using NuGet.Protocol;
 
 namespace ComeNet.Controllers
 {
@@ -94,8 +95,6 @@ namespace ComeNet.Controllers
         public double distance { get; set; }
 	}
 
-   
-
     public class ActivitynPeople
     {
         public int Id { get; set; }
@@ -108,6 +107,15 @@ namespace ComeNet.Controllers
         public List<string> people { get; set; }
 
     }
+
+    public class ResultGetOnlineUser
+    {
+        public List<ResultFriendName> onlineuser = new List<ResultFriendName>();
+
+        public List<ResultFriendName> offlineuser = new List<ResultFriendName>();
+
+    }
+
     public class ResultFriendName
     {        
         public string name { get; set; }
@@ -212,29 +220,56 @@ namespace ComeNet.Controllers
         public async Task<ActionResult> GetOnlineUser(ParasUserFriendList paras)
         {
 
+            ResultGetOnlineUser resultGetOnlineUser = new ResultGetOnlineUser();
 
-            var connections = _userConnectionManager.GetAllUsers();           
-            foreach (var connectionId in connections)
+            List<ResultFriendName> onlineusers = new List<ResultFriendName>();
+
+            List<ResultFriendName> offlineusers = new List<ResultFriendName>();
+
+            var friendIds = await _context.Friendlist
+            .Where(f => f.userid == paras.userid)
+            .Select(f => f.friendid)
+            .ToListAsync();
+
+            var connections = _userConnectionManager.GetAllUsers();
+
+            foreach (var userid in friendIds)
             {
-                
-                if(connectionId !=  paras.userid.ToString())
+
+                if (connections.Contains(userid.ToString()))
+                {                    
+                        var myuser = await _context.User.FindAsync(Convert.ToInt32(userid));
+                        ResultFriendName resultFriendName = new ResultFriendName();
+                        resultFriendName.name = myuser.name;
+                        resultFriendName.picture = myuser.picture;
+                        resultFriendName.Id = myuser.id.ToString();
+
+                        if (!OnlineUserMap.ContainsKey(myuser.name))
+                        {
+                            OnlineUserMap[myuser.name] = new List<string>();
+                        }
+                        OnlineUserMap[myuser.name].Add(userid.ToString());
+                        onlineusers.Add(resultFriendName);                    
+                }
+                else
                 {
-                    var myuser = await _context.User.FindAsync(Convert.ToInt32(connectionId));
+
+                    var myuser = await _context.User.FindAsync(Convert.ToInt32(userid));
                     ResultFriendName resultFriendName = new ResultFriendName();
                     resultFriendName.name = myuser.name;
                     resultFriendName.picture = myuser.picture;
                     resultFriendName.Id = myuser.id.ToString();
 
-                    if (!OnlineUserMap.ContainsKey(myuser.name))
-                    {
-                        OnlineUserMap[myuser.name] = new List<string>();
-                    }
-                    OnlineUserMap[myuser.name].Add(connectionId);
-                    users.Add(resultFriendName);
+                    offlineusers.Add(resultFriendName);
                 }
             }
+            resultGetOnlineUser.onlineuser = onlineusers;
+            resultGetOnlineUser.offlineuser= offlineusers;
+            
 
-            return Ok(users);
+            
+
+            return Ok(resultGetOnlineUser.ToJson());
         }
 
         [HttpPost("Signup")]		

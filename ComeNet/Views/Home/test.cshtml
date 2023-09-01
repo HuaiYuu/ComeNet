@@ -1,0 +1,54 @@
+﻿
+@{
+    var name = ViewBag.name;
+    var id = ViewBag.id;
+    ViewData["Title"] = "NearbyUser";
+}
+
+
+
+<body>
+    <div class="sidebar">
+        <div id="chat-block">           
+            <ul id="onlineuser">               
+            </ul>
+        </div>
+    </div>   
+</body>
+<style>
+    body {
+        
+    }
+
+    
+
+    .content {        
+        padding: 20px;
+    }
+
+    #chat-block {
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    #onlineuser {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar {
+        width: 300px;
+        background-color: #f0f0f0;
+        border-left: 1px solid #ccc; /* Change to border-left */
+    }
+
+        #onlineuser li {
+            margin-bottom: 5px;
+        }
+</style>

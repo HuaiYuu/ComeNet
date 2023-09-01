@@ -11,8 +11,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />    
 </head>
 <header class="header-area overlay">
     <nav class="navbar navbar-expand-md navbar-dark">
@@ -77,8 +76,15 @@
         </div>
     </nav>
     <div style="display:flex">
+     
+       
+    </div>
+    
+</header>
+<body style="background-color:#5bc0de">
+    <div style="display:flex; width: 95vw; position: relative;">
         <div class="col-md-4 static sidebarmenu">
-            <div class="profile-card">
+            <div class="profile-card">                
                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="profile-photo">
                 <h5><a href="#" class="text-white">@name</a></h5>
                 <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
@@ -93,36 +99,39 @@
             </ul><!--news-feed links ends-->
             <div id="chat-block">
                 <div class="title">online user</div>
-                <ul  id="onlineuser"class="online-users list-inline">              
+                <ul id="onlineuserold" class="online-users list-inline">
                 </ul>
             </div><!--chat block ends-->
         </div>
-        <div>
+        <div style="width:100vh !important;">
             @RenderBody()
         </div>
+        <div class="kk">
+            <button id="toggle-sidebar">Toggle</button>
+            <div class="sidebar">
+                <div id="chat-block">
+                    <div class="title">上線中</div>
+                    <ul id="onlineuser">
+                    <li><a href="#" title="Linda Lohan"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="img-responsive profile-photo"><span class="online-dot"></span></a></li>
+                    </ul>
+                    <div style="background-color:gray" class="title">離線中</div>
+                    <ul id="offlineuser">
+                                               
+                    </ul>
+                </div>
+            </div>          
+        </div> 
     </div>
-    
-   
-</header>
-
-<body>
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @* @RenderBody()*@
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - ComeNet - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2023 - ComeNet - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 <style>
 
     @@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800');
@@ -205,15 +214,7 @@
         /* background-color: rgba(0, 0, 0, .3);*/
     }
 
-    .header-area {
-        position: relative;
-        height: 140vh;
-        background: #5bc0de;
-        background-attachment: fixed;
-        background-position: center center;
-        background-repeat: no-repear;
-        background-size: cover;
-    }
+    
 
     .banner {
         display: flex;
@@ -739,11 +740,73 @@
    
 
 </style>
+<style>
+   
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+        float: left; 
+    }
+
+    
+    #toggle-sidebar {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+
+
+    .kk {      
+     
+        max-height:100%; 
+        overflow-y: auto;        
+        top:9%;
+        position: absolute;
+        right: -45;
+       /* margin: 0;*/*/
+       /* padding: 0;*/
+        outline: red 3px solid;
+    }
+
+    .sidebar-expanded {
+        width: 300px;
+        background-color: #f0f0f0;
+        border-left: 1px solid #ccc; 
+    }
+
+    .content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    #chat-block {
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    #onlineuser {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        #onlineuser li {
+            margin-bottom: 5px;
+        }
+
+</style> 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
-
-   
 
     toastr.options = {
         "closeButton": false,
@@ -761,19 +824,12 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-
-
     function ready() {
 
     }
-
     var userId = null;
-
     userId = @id;
-
     myFunction();
-
-
     document.addEventListener("DOMContentLoaded", ready);
     document.getElementById("user").innerHTML = "UserId: " + userId;
     jQuery(function ($) {
@@ -877,9 +933,6 @@
             
         }
     });
-
-        
-
     function sentchatrequest(memberId) 
     {
         console.log(userId);
@@ -962,8 +1015,11 @@
     function myFunction() 
     {
 
-        const teamMembersContainer = document.getElementById('onlineuser');
-        teamMembersContainer.innerHTML = "";
+        const onlineMembers = document.getElementById('onlineuser');
+        onlineMembers.innerHTML = "";
+
+        const offlineMembers = document.getElementById('offlineuser');
+        offlineMembers.innerHTML = "";
 
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -979,28 +1035,53 @@
         };
         fetch("https://localhost:7136/api/users/GetOnlineUser", requestOptions)
             .then(response => response.json())
-            .then(data => {                
-                data.forEach(member => 
-                    {
+            .then(data => 
+            {    
+                
+                data.onlineuser.forEach(member =>{
 
-                    var userHtml = `
+                    var useronHtml = `
                                                 <li id="chatroomuserid">
                                                 <p>${member.name}</p>
-                                                <a  title=${member.id}>
-                                                <img  style="border: solid;" id="chatroom" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt=${member.id} class="img-responsive profile-photo">
+                                                <a title=${member.id}>
+                                                <img  id="chatroom" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt=${member.id} class="img-responsive profile-photo">
                                                 <span class="online-dot"></span>                                                  
                                                 </a>
-                                            </li>
+                                                </li>
                                         `;
 
 
-                    teamMembersContainer.innerHTML += userHtml;
+                    onlineMembers.innerHTML += useronHtml;
                 });
+                data.offlineuser.forEach(member =>{
+
+                    var useroffHtml = `
+                                                    <li id="chatroomuserid">
+                                                        <p>${member.name}</p>
+                                                        <a title=${member.id}>
+                                                        <img style="border: solid;" id="chatroom" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt=${member.id} class="img-responsive profile-photo">
+                                                        <span class="online-dot"></span>
+                                                        </a>
+                                                    </li>
+                                                `;
+                    offlineMembers.innerHTML += useroffHtml
+                });
+
             })
             .catch(error => {
                 console.error('Error fetching team member data:', error);
             });
     }
+
+    // 获取侧边栏和按钮元素
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.getElementById('toggle-sidebar');
+
+    // 添加按钮点击事件监听器
+    toggleButton.addEventListener('click', () => {
+        // 切换侧边栏的展开和折叠状态
+        sidebar.classList.toggle('sidebar-expanded');
+    });
 
    
   

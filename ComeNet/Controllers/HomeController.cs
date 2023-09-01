@@ -53,11 +53,19 @@ namespace ComeNet.Controllers
             ViewBag.Name = name;
             ViewBag.id = id;
 
+            return View();
+        }
 
+        public IActionResult test()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
 
             return View();
         }
-		public IActionResult Friends()
+        public IActionResult Friends()
 		{
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");

@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using NuGet.Protocol;
+using Newtonsoft.Json.Linq;
 
 namespace ComeNet.Controllers
 {
@@ -31,8 +32,12 @@ namespace ComeNet.Controllers
         public string name { get; set; }
         public string email { get; set; }
         public string password { get; set; }
-
-
+        public string gender { get; set; }
+        public string interest { get; set; }
+        public int age { get; set; }
+        public string horoscope { get; set; }
+        public string answer { get; set; }
+        public string question { get; set; }        
     }
     public class ParasUserSignIn
     {      
@@ -80,18 +85,14 @@ namespace ComeNet.Controllers
     public class ParasChatContext
     {
         public int roomId { get; set; }
-    }
-    
+    }    
     public class Userfriend
 	{
 		public int id { get; set; }
 		public string provider { get; set; }
 		public string name { get; set; }
 		public string email { get; set; }
-		public string picture { get; set; }
-		public string password { get; set; }
-		public string latitude { get; set; }
-		public string longitude { get; set; }
+		public string picture { get; set; }				
         public double distance { get; set; }
 	}
 
@@ -123,6 +124,19 @@ namespace ComeNet.Controllers
         public string picture { get; set; }
 
         public string Id { get; set; }
+    }
+
+    public class ResultSuggestionFriend
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string picture { get; set; }
+        public string gender { get; set; }
+        public string interest { get; set; }
+        public int age { get; set; }
+        public string horoscope { get; set; }
+        public string answer { get; set; }
+        public string question { get; set; }     
     }
     public class ResultCreateActivity
     {
@@ -266,17 +280,16 @@ namespace ComeNet.Controllers
             resultGetOnlineUser.onlineuser = onlineusers;
             resultGetOnlineUser.offlineuser= offlineusers;
             
-
-            
-
             return Ok(resultGetOnlineUser.ToJson());
         }
 
-        [HttpPost("Signup")]		
-		public async Task<ActionResult<IEnumerable<User>>> UserSignup([FromBody] ParasUserSignUp paras)
-		{
+        [HttpPost("Signup")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> signup(User paras , IFormFile myimg)        
+        {
 			string hashedPassword;
-			try
+            string targetFolderPath = @"/upload";
+            try
 			{
 				//save user profile
 				User user = new User();
@@ -286,8 +299,27 @@ namespace ComeNet.Controllers
 				user.password = hashedPassword;
 				user.provider = "native";
 				user.picture = "https://schoolvoyage.ga/images/123498.png";
-                
-				_context.Add(user);
+                user.age = paras.age;
+                user.horoscope = paras.horoscope;
+                user.answer = paras.answer;
+                user.question = paras.question;
+                user.gender = paras.gender;
+                user.interest =paras.interest;
+                user.longitude = "123";
+                user.latitude = "123";
+
+                if (myimg != null)
+                {
+                    string fileName = myimg.FileName;
+                    string filePath = Path.Combine(targetFolderPath, fileName);
+                    user.picture = filePath;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await myimg.CopyToAsync(stream);
+                    }
+                }
+
+                _context.Add(user);
 				await _context.SaveChangesAsync();
 			}
 			catch (Exception ex)
@@ -323,7 +355,6 @@ namespace ComeNet.Controllers
                     HttpContext.Session.SetString("token", accesstoken);
                     HttpContext.Session.SetString("name", username);
                     HttpContext.Session.SetString("id", id.ToString());
-
 
                     try
 					{
@@ -582,9 +613,7 @@ namespace ComeNet.Controllers
             foreach (var userid in friendIds)
             {
                 Userfriend userfriend = new Userfriend();
-
                 var users = await _context.User.FindAsync(userid);
-
                 GeoCoordinate point2 = new GeoCoordinate();
                 point2.Latitude = Convert.ToDouble(users.latitude);
                 point2.Longitude = Convert.ToDouble(users.longitude);
@@ -601,6 +630,8 @@ namespace ComeNet.Controllers
                 userfriend.name = users.name;
                 userfriend.picture = users.picture;
                 userfriend.distance = distance;
+                userfriend.provider = users.provider;
+              
 
 
 
@@ -615,6 +646,54 @@ namespace ComeNet.Controllers
             }
 
             return userlist;
+        }
+
+        [HttpPost("GetSuggestionFriend")]
+        public async Task<ActionResult<IEnumerable<ResultSuggestionFriend>>> GetSuggestionFriend(ParasUserFriendList paras)
+        {
+           
+            var UserIds = await _context.User
+            .Where(f => f.id != paras.userid)
+            .Select(f => f.id)
+            .ToListAsync();
+
+
+            var friendIds = await _context.Friendlist
+           .Where(f => f.userid == paras.userid)
+           .Select(f => f.friendid)
+           .ToListAsync();
+
+            var nonFriendUserIds = UserIds.Except(friendIds).ToList();
+
+
+            List<ResultSuggestionFriend> userlist = new List<ResultSuggestionFriend>();
+
+            var me = await _context.User.FindAsync(paras.userid);
+
+
+            foreach (var userid in nonFriendUserIds)
+            {
+
+                ResultSuggestionFriend userfriend = new ResultSuggestionFriend();
+                var users = await _context.User.FindAsync(userid);
+
+
+                if (me.gender != users.gender)
+                if (me.age == users.age)
+                if (me.interest == users.interest)
+               
+                userfriend.id = userid;              
+                userfriend.name = users.name;
+                userfriend.picture = users.picture;
+                userfriend.gender = users.gender;
+                userfriend.age = users.age;
+                userfriend.interest= users.interest;
+                
+                userlist.Add(userfriend);
+                return userlist;
+            }
+
+            return null;
         }
 
         [HttpPost("GetActivityList")]

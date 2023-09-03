@@ -15,11 +15,17 @@ namespace ComeNet.Models
         public string name { get; set; }
         public string email { get; set; }
         public string picture { get; set; }
-        public string password { get; set; }
+        public string password { get; set; }     
+        public string gender { get; set; }
+        public string interest { get; set; }
+        public int age { get; set; }
+        public string horoscope { get; set; }
+        public string answer { get; set; }
+        public string question { get; set; }
         public string latitude { get; set; }
         public string longitude { get; set; }
 
-	}
+    }
     public class Friendlist
     {
         public int id { get; set; }

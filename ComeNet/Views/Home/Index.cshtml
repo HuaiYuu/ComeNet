@@ -2,12 +2,15 @@
     ViewData["Title"] = "Home Page";
     var name = ViewBag.name;
     var id = ViewBag.id;
- }
+    var alert = TempData["SuccessMessage"];    
+}
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
  <script>
-    toastr.options = {
+    toastr.options =
+    {
         "closeButton": false,
         "debug": true,
         "newestOnTop": false,
@@ -22,6 +25,12 @@
         "hideEasing": "linear",
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
+    }
+
+
+    if (@alert != null) 
+    {
+        toastr["success"]("註冊成功");
     }
 
  </script>

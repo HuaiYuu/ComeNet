@@ -1,4 +1,4 @@
-﻿
+﻿@model ComeNet.Models.User
 @{
     Layout = null;
 }
@@ -24,16 +24,56 @@
             <div class="or-line"></div>
             <div class="or">OR</div>
         </div>
-        <form id="loginForm">
+
+        <form id="loginForm" asp-action="signup"  enctype="multipart/form-data">
             <div class="loginbox-textbox">
-                <input type="text" id="username" class="form-control" placeholder="Name">
+                <input type="text" id="name" asp-for="name" class="form-control" placeholder="姓名">
             </div>
             <div class="loginbox-textbox">
-                <input type="text" id="email" class="form-control" placeholder="Email">
+                <input type="text" id="email" asp-for="email" class="form-control" placeholder="信箱">
             </div>
             <div class="loginbox-textbox">
-                <input type="text" id="password" class="form-control" placeholder="Password">
+                <input type="text" id="password" asp-for="password" class="form-control" placeholder="密碼">
             </div>
+            <div class="loginbox-textbox">
+                <input type="text" id="gender" asp-for="gender" class="form-control" placeholder="性別">
+            </div>
+            <div class="loginbox-textbox">
+                <input type="text" id="interest" asp-for="interest" class="form-control" placeholder="興趣">
+            </div>
+            <div class="loginbox-textbox">
+                <input type="text" id="age" class="form-control" asp-for="age" placeholder="年紀">
+            </div>
+            <div class="loginbox-textbox">                
+                <select id="horoscope" asp-for="horoscope">
+                    <option value="選擇星座">選擇星座</option>
+                    <option value="牡羊座">牡羊座</option>
+                    <option value="金牛座">金牛座</option>
+                    <option value="雙子座">雙子座</option>
+                    <option value="巨蟹座">巨蟹座</option>
+                    <option value="獅子座">獅子座</option>
+                    <option value="處女座">處女座</option>
+                    <option value="天秤座">天秤座</option>
+                    <option value="天蠍座">天蠍座</option>
+                    <option value="射手座">射手座</option>
+                    <option value="摩羯座">摩羯座</option>
+                    <option value="水瓶座">水瓶座</option>
+                    <option value="雙魚座">雙魚座</option>
+                </select>
+            </div>
+            <div class="loginbox-textbox">
+                <p>選擇一張相片</p>
+                <input type="file" id="myimg" name="myimg" class="form-control" placeholder="照片">
+            </div>
+            <div class="loginbox-textbox">
+                <select  id="question" asp-for="question">
+                    <option value="選擇問題">選擇問題</option>
+                    <option value="問題1">問題1</option>
+                    <option value="問題2">問題2</option>
+                    <option value="問題3">問題3</option>
+                </select>
+                <input type="text" id="answer" asp-for=answer class="form-control" placeholder="回答">
+            </div>                      
             <div class="loginbox-forgot">
                 <a href=""></a>
             </div>
@@ -49,46 +89,64 @@
     </div>
 </div>
 <script>
-    document.getElementById("loginForm").addEventListener("submit", function (event) {
-        event.preventDefault();
+
+    //document.getElementById("loginForm").addEventListener("submit", function (event) 
+    //{
+    //    event.preventDefault();
+
+    //    var username = document.getElementById("username").value;
+    //    var email = document.getElementById("email").value;
+    //    var password = document.getElementById("password").value;
+    //    var gender = document.getElementById("gender").value;
+    //    var interest = document.getElementById("interest").value;
+    //    var age = document.getElementById("age").value;
+    //    var horoscope = document.getElementById("horoscope").value;
+    //    var question = document.getElementById("question").value;
+    //    var answer = document.getElementById("answer").value;
 
 
-        var username = document.getElementById("username").value;
-        var email = document.getElementById("email").value;
-        var password = document.getElementById("password").value;
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+
+    //    var myHeaders = new Headers();
+    //    myHeaders.append("Content-Type", "application/json");
 
 
 
-        var raw = JSON.stringify({
-            "name": username,
-            "email": email,
-            "password": password,
+    //    var raw = JSON.stringify
+    //        ({
+    //            "name": username,
+    //            "email": email,
+    //            "password": password,
+    //            "gender": gender,
+    //            "interest": interest,
+    //            "age": age,
+    //            "horoscope": horoscope,
+    //            "answer": answer,
+    //            "question": question
+    //        });
 
-        });
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
+    //    var requestOptions = {
+    //        method: 'POST',
+    //        headers: myHeaders,
+    //        body: raw,
+    //        redirect: 'follow'
+    //    };
 
-        fetch("https://localhost:7136/api/users/signup", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.access_token != null) {
-                    alert('註冊成功');
-                    window.location.href = 'https://localhost:7136/home/index';
-                }
-                else {
-                    alert('註冊失敗');
-                    window.location.reload();
-                }
-            })
-            .catch(error => console.log('error', error));
-    })
+    //    fetch("shttps://localhost:7136/api/users/signup", requestOptions)
+    //        .then(response => response.json())
+    //        .then(result => {
+    //            if (result.access_token != null) {
+    //                alert('註冊成功');
+    //                window.location.href = 'fhttps://localhost:7136/home/index';
+    //            }
+    //            else {
+    //                alert('註冊失敗');
+    //                //window.location.reload();
+    //            }
+    //        })
+    //        .catch(error => console.log('error', error));
+    //})
+ 
 </script>
 <style>
     body {

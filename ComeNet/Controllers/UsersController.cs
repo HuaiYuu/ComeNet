@@ -136,7 +136,11 @@ namespace ComeNet.Controllers
         public int age { get; set; }
         public string horoscope { get; set; }
         public string answer { get; set; }
-        public string question { get; set; }     
+        public string question { get; set; }
+
+        public string message { get; set; }
+
+
     }
     public class ResultCreateActivity
     {
@@ -679,18 +683,43 @@ namespace ComeNet.Controllers
 
 
                 if (me.gender != users.gender)
-                if (me.age == users.age)
-                if (me.interest == users.interest)
-               
-                userfriend.id = userid;              
+                {
+                    if (Math.Abs(me.age - users.age) <= 3)
+                    {
+                        if (me.interest == users.interest)
+                        {
+                            userfriend.message = "絕配";
+                        }
+                    }
+                }
+                else
+                {
+                    
+                    if (me.interest == users.interest)
+                    {
+                        userfriend.message = "擁有共同興趣";
+                       
+                    }
+                    else
+                    {
+                       
+                    }
+                }
+
+                userfriend.id = userid;
                 userfriend.name = users.name;
                 userfriend.picture = users.picture;
                 userfriend.gender = users.gender;
                 userfriend.age = users.age;
-                userfriend.interest= users.interest;
-                
+                userfriend.interest = users.interest;
                 userlist.Add(userfriend);
                 return userlist;
+
+
+
+
+
+
             }
 
             return null;

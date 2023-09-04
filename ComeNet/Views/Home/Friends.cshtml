@@ -10,77 +10,28 @@
 </head>
 
 
-<section id="team" class="team_area section-padding">
-	<div class="container">
-		<h2 class="title_spectial">好友列表</h2>
-		<div class="row text-center" id="team-members">						
+
+	<section id="team" class="team_area section-padding">
+		<div class="container">
+		<div id="pagination"></div>
+			<h2 class="title_spectial">好友列表</h2>
+			<div class="row text-center" id="team-members">
+			</div>
 		</div>
-	</div>
-</section>
-<section id="bod" class="bod_area">
-	<div class="container">
-		<h2 class="title_spectial">Board of directors</h2>
-		<div class="row text-center">
-			<div class="col-lg-3 col-sm-3 col-xs-12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.1s; animation-name: fadeInLeft;">
-				<div class="our-bod">
-					<div class="single-bod">
-						<img src="https://bootdey.com/img/Content/avatar/avatar6.png" style="transition: filter 0.3s ease-in-out;" class="img-fluid" alt="">
-						<h3>Gary Hunt</h3>
-						<p>Marketer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR BOARD OF DIRECTORS -->
-			</div><!--- END COL -->
-			<div class="col-lg-3 col-sm-3 col-xs-12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.2s; animation-name: fadeInLeft;">
-				<div class="our-bod">
-					<div class="single-bod">
-						<img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="img-fluid" alt="">
-						<h3>Ayoub Fennouni</h3>
-						<p>Manager</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR BOARD OF DIRECTORS -->
-			</div><!--- END COL -->
-			<div class="col-lg-3 col-sm-3 col-xs-12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.3s; animation-name: fadeInLeft;">
-				<div class="our-bod">
-					<div class="single-bod">
-						<img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="img-fluid" alt="">
-						<h3>Mark Linomit</h3>
-						<p>Python Developer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR BOARD OF DIRECTORS -->
-			</div><!--- END COL -->
-			<div class="col-lg-3 col-sm-3 col-xs-12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.4s" data-wow-offset="0" style="visibility: visible; animation-duration: 1s; animation-delay: 0.4s; animation-name: fadeInLeft;">
-				<div class="our-bod">
-					<div class="single-bod">
-						<img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="img-fluid" alt="">
-						<h3>Thompson Luis</h3>
-						<p>Developer</p>
-					</div>
-					<ul class="social">
-						<li><a href="#" class="fa fa-facebook facebook"></a></li>
-						<li><a href="#" class="fa fa-twitter twitter"></a></li>
-						<li><a href="#" class="fa fa-google google"></a></li>
-					</ul>
-				</div><!--- END OUR BOARD OF DIRECTORS -->
-			</div><!--- END COL -->
-		</div><!--- END ROW -->
-	</div><!--- END CONTAINER -->
-</section>
+	</section>
+
+
+
 <style>
+	#team 
+	{
+		margin-top:15%;
+	}
+
+
+
+
+
 	body{
 		margin-top:20px;
 background:rgb(238, 238, 238, 0.6);
@@ -276,71 +227,106 @@ display: inline-block;
 		display: flex;
 	}
 </style>
-
 <script>
+	var currentPage = 1; 
+	var itemsPerPage = 4; 
+	function fetchData()
+	{
+		var myHeaders = new Headers();
+		myHeaders.append("Content-Type", "application/json");
 
-	var myHeaders = new Headers();
-	myHeaders.append("Content-Type", "application/json");
-
-	var raw = JSON.stringify({
-		"userid": @id,
-	});
-
-	var requestOptions = {
-		method: 'POST',
-		headers: myHeaders,
-		body: raw,
-		redirect: 'follow'
-	};
-
-	fetch("https://localhost:7136/api/users/friendlist", requestOptions)
-		.then(response => response.json())
-		.then(data => {
-			const teamMembersContainer = document.getElementById('team-members');
-			data.forEach(member => {
-				const memberHtml = `
-						<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
-							<div class="our-team">
-								<div class="single-team">
-										<img src="${member.picture}" class="img-fluid" alt="${member.name}">
-									    <h3>${member.name}</h3>
-										<h4>${member.id}</h4>
-										<div class="distance">
-											  <i class="fa fa-map-marker"></i>
-											  <p>距離:${member.distance}公里</p>
-										</div>
-									  
-								</div>
-									<ul class="social">
-										
-											<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
-											<li><a href="https://localhost:7136/Home/"  class="fa fa-phone fa-2x phone"></a></li>
-											<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
-								</ul>
-							</div>
-						</div>`;
-
-				teamMembersContainer.innerHTML += memberHtml;
-			});
-		})
-		.catch(error => {
-			console.error('Error fetching team member data:', error);
+		var raw = JSON.stringify({
+			"userid": @id,
 		});
+
+		var requestOptions = {
+			method: 'POST',
+			headers: myHeaders,
+			body: raw,
+			redirect: 'follow'
+		};
+
+		fetch("https://localhost:7136/api/users/friendlist", requestOptions)
+			.then(response => response.json())
+			.then(data => {
+
+				updatePagination(data);
+
+				const teamMembersContainer = document.getElementById('team-members');
+				teamMembersContainer.innerHTML = ''; // 清空当前内容
+
+				
+				const startIndex = (currentPage - 1) * itemsPerPage;
+				console.log(startIndex);
+				const endIndex = startIndex + itemsPerPage;
+				console.log(endIndex);
+				const currentPageData = data.slice(startIndex, endIndex);
+				console.log(currentPageData);
+
+				currentPageData.forEach(member => {
+					const memberHtml = `
+							<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
+								<div class="our-team">
+									<div class="single-team">
+											<img src="${member.picture}" class="img-fluid" alt="${member.name}">
+											<h3>${member.name}</h3>
+											<h4>${member.id}</h4>
+											<div class="distance">
+												  <i class="fa fa-map-marker"></i>
+												  <p>距離:${member.distance}公里</p>
+											</div>
+
+									</div>
+										<ul class="social">
+
+												<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
+												<li><a href="https://localhost:7136/Home/"  class="fa fa-phone fa-2x phone"></a></li>
+												<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
+									</ul>
+								</div>
+							</div>`;
+
+					
+					teamMembersContainer.innerHTML += memberHtml;
+				});
+				
+			})
+			.catch(error => {
+				console.error('Error fetching team member data:', error);
+			});
+	}
+	function updatePagination(data)
+	{
+		const totalPages = Math.ceil(data.length / itemsPerPage);
+		console.log(totalPages);
+		const paginationContainer = document.getElementById('pagination');
+		paginationContainer.innerHTML = ''; 
+
+		for (let i = 1; i <= totalPages; i++) {
+			const pageButton = document.createElement('button');
+			pageButton.textContent = i;
+			pageButton.addEventListener('click', () => 
+			{
+				currentPage = i; 
+				console.log(currentPage);
+				fetchData(); 
+			});
+			paginationContainer.appendChild(pageButton);
+		}
+	}
+	fetchData(); 
 
 	var time = new Date();
 	var formattedDateTime = time.toLocaleString();
 
 	console.log(formattedDateTime);
 	var memberId = null;
-	
-	document.addEventListener('click', function (event)
-	{
-		if (event.target.id === 'videochat')
-		{
+
+	document.addEventListener('click', function (event) {
+		if (event.target.id === 'videochat') {
 
 			var h4Tags = document.querySelectorAll('a');
-			h4Tags.forEach(function (h4Tag)
-			{
+			h4Tags.forEach(function (h4Tag) {
 				h4Tag.addEventListener('click', function () {
 					memberId = h4Tag.getAttribute('data-userid');
 					console.log('Member ID:', memberId);
@@ -365,13 +351,11 @@ display: inline-block;
 			fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
 				.then(response => response.json())
 				.then(result => {
-					if (result.userId != null)
-					{						
+					if (result.userId != null) {
 						console.log(result.userId);
 						window.open('https://localhost:7136/Home/startvideochat', '_blank');
 					}
-					else 
-					{
+					else {
 						alert('請稍等');
 						//window.location.reload();
 					}
@@ -382,18 +366,12 @@ display: inline-block;
 
 
 		}
-		if (event.target.id === 'chat') 
-		{
+		if (event.target.id === 'chat') {
 
 			window.open('https://localhost:7136/Home/chat2user', '_blank');
 
 		}
 	});
-	
-
-
-
-
 
 
 </script>

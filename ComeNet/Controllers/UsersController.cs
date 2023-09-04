@@ -82,6 +82,11 @@ namespace ComeNet.Controllers
     {
         public int userid { get; set; }       
     }
+    public class ParasLimitedTimeEvent
+    {
+        public string toolname { get; set; }
+        public int userid { get; set; }
+    }
     public class ParasChatContext
     {
         public int roomId { get; set; }
@@ -95,7 +100,6 @@ namespace ComeNet.Controllers
 		public string picture { get; set; }				
         public double distance { get; set; }
 	}
-
     public class ActivitynPeople
     {
         public int Id { get; set; }
@@ -108,7 +112,6 @@ namespace ComeNet.Controllers
         public List<string> people { get; set; }
 
     }
-
     public class ResultGetOnlineUser
     {
         public List<ResultFriendName> onlineuser = new List<ResultFriendName>();
@@ -116,7 +119,6 @@ namespace ComeNet.Controllers
         public List<ResultFriendName> offlineuser = new List<ResultFriendName>();
 
     }
-
     public class ResultFriendName
     {        
         public string name { get; set; }
@@ -125,7 +127,6 @@ namespace ComeNet.Controllers
 
         public string Id { get; set; }
     }
-
     public class ResultSuggestionFriend
     {
         public int id { get; set; }
@@ -161,16 +162,18 @@ namespace ComeNet.Controllers
         private IUserService _userService;
         private readonly IHubContext<NotificationUserHub> _notificationUserHubContext;
         private readonly IUserConnectionManager _userConnectionManager;
-      
+        private IQueueService _queueService;
 
-        public UsersController(ComeNetContext context, HttpClient httpClient, IPasswordHashService passwordHashService, IUserService userService, IHubContext<NotificationUserHub> notificationUserHubContext, IUserConnectionManager userConnectionManager)
+
+        public UsersController(ComeNetContext context, HttpClient httpClient, IPasswordHashService passwordHashService, IUserService userService, IQueueService queueService, IHubContext<NotificationUserHub> notificationUserHubContext, IUserConnectionManager userConnectionManager)
         {
             _context = context;
             _httpClient = httpClient;
             _passwordHashService = passwordHashService;
             _userService = userService;
             _notificationUserHubContext = notificationUserHubContext;
-            _userConnectionManager = userConnectionManager;           
+            _userConnectionManager = userConnectionManager;    
+            _queueService = queueService;
         }
 
         [HttpGet]
@@ -799,6 +802,36 @@ namespace ComeNet.Controllers
 
 
             return Ok(result);
+        }
+
+
+        [HttpPost("GetLimitedTimeEvent")]
+        public async Task<ActionResult<IEnumerable<MessageContext>>> GetLimitedTimeEvent(ParasLimitedTimeEvent paras)
+        {
+
+            ToolRequest toolRequest = new ToolRequest();
+            toolRequest.ToolName = paras.toolname;
+            toolRequest.ReceiverUserId = paras.userid;
+
+            _queueService.Enqueue(toolRequest);
+            int num = _queueService.GetRequestCount();
+
+            //while (true)
+            //{
+                
+            //    ToolRequest Request = _queueService.Dequeue();
+
+            //    if (Request != null)
+            //    {
+            //        // 處理 ToolRequest，例如執行工具操作
+            //        Console.WriteLine($"處理 ToolRequest - 工具名稱：{toolRequest.ToolName}，接收者用戶ID：{toolRequest.ReceiverUserId}");
+            //    }
+
+            //    // 可以添加一些休眠時間以避免過度使用 CPU
+            //    Thread.Sleep(1000); // 休眠 1 秒
+            //    return Ok(num);
+            //}
+            return Ok(num);
         }
 
     }

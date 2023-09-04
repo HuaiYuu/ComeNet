@@ -1,0 +1,185 @@
+﻿@{
+    var name = ViewBag.name;
+    var id = ViewBag.id;
+    ViewData["Title"] = "LimitedTimeEvent";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+<div id="remainingTime"></div>
+<style>
+
+    #remainingTime {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-weight: bold;
+        background-color: papayawhip;
+        padding: 10px;
+    }
+</style>
+<div class="container">
+    <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
+        <div class="col">
+            <div class="card radius-15 bg-primary">
+                <div class="card-body text-center">
+                    <div class="p-4 radius-15">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="110" height="110" class="rounded-circle shadow p-1 bg-white" alt="">
+                        <h5 id="toolname" class="mb-0 mt-5 text-white">解鎖五張用戶卡</h5>
+                        <p class="mb-3 text-white"></p>
+                        <div class="list-inline contacts-social mt-3 mb-3">
+                           
+                        </div>
+                        <div class="d-grid">
+                            <a id="get"  class="btn btn-white radius-15">領取</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<style>
+    body{
+    background-color: #f7f7ff;
+    margin-top:20px;
+    }
+    .btn-white {
+    background-color: #fff;
+    border-color: #e7eaf3;
+    }
+    .radius-15 {
+    border-radius: 15px;
+    }
+    .contacts-social a {
+    font-size: 16px;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    background: #ffffff;
+    border: 1px solid #eeecec;
+    text-align: center;
+    border-radius: 50%;
+    color: #2b2a2a;
+    }
+    .bg-info {
+    background-color: #0dcaf0!important;
+    }
+    .bg-primary {
+    background-color: #008cff!important;
+    }
+    .bg-danger {
+    background-color: #fd3550!important;
+    }
+    .bg-warning {
+    background-color: #ffc107!important;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script>
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": true,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function ()
+    {
+       
+        var getButton = document.getElementById("get");
+
+        
+        getButton.addEventListener("click", function ()
+        {            
+            var toolname = document.getElementById("toolname").textContent;
+            console.log("Toolname: " + toolname);
+            gettool(toolname);
+        });
+    });
+
+
+    function gettool(toolname)
+    {
+        console.log("Toolnameapi: " + toolname);
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var rawvideo = JSON.stringify({
+            "userId": "@id",
+            "toolname": toolname,
+        });
+        var requestvideo = {
+            method: 'POST',
+            headers: myHeaders,
+            body: rawvideo,
+            redirect: 'follow'
+        };
+
+        fetch("https://localhost:7136/home/LimitedTimeEvent", requestvideo)
+            .then(response => response.json())
+            .then(result => {
+
+                console.log(result.message);
+                if (result.message=="額滿")
+                {
+                    toastr["error"](result.message);
+                }
+                else
+                {
+                    toastr["success"](result.message);
+                }
+               
+
+            })
+            .catch(error => console.log('error', error));
+
+    }
+
+       
+</script>
+<script>
+    
+
+        function updateRemainingTime()
+        {
+            var currentTime = new Date();
+            var nextHour = new Date(currentTime);
+            nextHour.setHours(nextHour.getHours() + 1);
+            nextHour.setMinutes(0, 0, 0);
+
+            var timeDiff = nextHour - currentTime;
+
+            if (timeDiff > 0) 
+            {
+                var minutes = Math.floor(timeDiff / (1000 * 60));
+                var seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                var timeUntilNextHour = minutes + "分鐘 " + seconds + "秒";
+
+                document.getElementById("remainingTime").textContent = "距離下一個小時：" + timeUntilNextHour;
+            } 
+            else 
+            {
+                
+            }
+        }
+
+        setInterval(updateRemainingTime, 1000);
+        updateRemainingTime();
+</script>

@@ -22,8 +22,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 builder.Services.AddScoped<IAwslogService, AwslogService>();
+builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddScoped<IUserConnectionManager, UserConnectionManager>();
-
 builder.Services.AddSignalR();
 
 

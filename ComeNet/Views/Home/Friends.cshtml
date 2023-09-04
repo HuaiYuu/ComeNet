@@ -9,8 +9,6 @@
 	<link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
 </head>
 
-
-
 	<section id="team" class="team_area section-padding">
 		<div class="container">
 		<div id="pagination"></div>
@@ -19,8 +17,6 @@
 			</div>
 		</div>
 	</section>
-
-
 
 <style>
 	#team 
@@ -253,9 +249,7 @@ display: inline-block;
 				updatePagination(data);
 
 				const teamMembersContainer = document.getElementById('team-members');
-				teamMembersContainer.innerHTML = ''; // 清空当前内容
-
-				
+				teamMembersContainer.innerHTML = ''; 
 				const startIndex = (currentPage - 1) * itemsPerPage;
 				console.log(startIndex);
 				const endIndex = startIndex + itemsPerPage;
@@ -273,7 +267,7 @@ display: inline-block;
 											<h4>${member.id}</h4>
 											<div class="distance">
 									    	  <i class="fa fa-map-marker"></i>
-												  <p>距離:${member.distance}公里</p>
+											  <p>距離:${member.distance}公里</p>
 											</div>
 									</div>
 										<ul class="social">

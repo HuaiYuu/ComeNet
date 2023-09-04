@@ -10,35 +10,31 @@ namespace AWSWEBAPP.Services
 {
     public interface IQueueService
     {
-        // 將好友請求加入佇列
-        void Enqueue(FriendRequest request);
-
-        // 從佇列中取出下一個好友請求
-        FriendRequest Dequeue();
-
-        // 獲取佇列中的請求數量
-        int GetRequestCount();
-
-        // 刪除佇列中的所有請求
+        
+        void Enqueue(ToolRequest request);
+        ToolRequest Dequeue();
+        int GetRequestCount();       
         void ClearQueue();
     }
 
-    public class FriendRequest
+    public class ToolRequest
     {
-        public int SenderUserId { get; set; }
+        public string ToolName { get; set; }
         public int ReceiverUserId { get; set; }
     }
 
-    public class InMemoryQueueService : IQueueService
+    public class QueueService : IQueueService
     {
-        private Queue<FriendRequest> requestQueue = new Queue<FriendRequest>();
+        private Queue<ToolRequest> requestQueue = new Queue<ToolRequest>();
 
-        public void Enqueue(FriendRequest request)
+        public void Enqueue(ToolRequest request)
         {
+
+
             requestQueue.Enqueue(request);
         }
 
-        public FriendRequest Dequeue()
+        public ToolRequest Dequeue()
         {
             return requestQueue.Count > 0 ? requestQueue.Dequeue() : null;
         }

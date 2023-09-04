@@ -88,7 +88,7 @@
                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="profile-photo">
                 <h5><a href="#" class="text-white">@name</a></h5>
                 <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
-            </div><!--profile card ends-->
+            </div>
             <ul class="nav-news-feed">
                 <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">My Activity</a></div></li>
                 <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">People Nearby</a></div></li>
@@ -96,12 +96,8 @@
                 <li><i class="fa fa-comments icon4"></i><div><a href="#">Messages</a></div></li>
                 <li><i class="fa fa-picture-o icon5"></i><div><a href="https://localhost:7136/home/friends">Images</a></div></li>
                 <li><i class="fa fa-video-camera icon6"></i><div><a href="https://localhost:7136/home/Suggestion">Suggestion</a></div></li>
-            </ul><!--news-feed links ends-->
-            <div id="chat-block">
-                <div class="title">online user</div>
-                <ul id="onlineuserold" class="online-users list-inline">
-                </ul>
-            </div><!--chat block ends-->
+                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://localhost:7136/home/LimitedTimeEvent">限時專區</a></div></li>
+            </ul>           
         </div>
         <div style="width:100vh !important;">
             @RenderBody()
@@ -1092,13 +1088,13 @@
             });
     }
 
-    // 获取侧边栏和按钮元素
+    
     const sidebar = document.querySelector('.sidebar');
     const toggleButton = document.getElementById('toggle-sidebar');
 
-    // 添加按钮点击事件监听器
+    
     toggleButton.addEventListener('click', () => {
-        // 切换侧边栏的展开和折叠状态
+        
         sidebar.classList.toggle('sidebar-expanded');
     });
 

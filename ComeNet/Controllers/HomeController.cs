@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using Sprache;
 using System.Diagnostics;
 using System.Drawing;
@@ -24,7 +25,8 @@ namespace ComeNet.Controllers
         private readonly IHubContext<NotificationUserHub> _notificationUserHubContext;
 		private readonly IUserConnectionManager _userConnectionManager;
         private IPasswordHashService _passwordHashService;
-        public HomeController(ILogger<HomeController> logger,IHubContext<NotificationUserHub> notificationUserHubContext, IUserService userService, IUserConnectionManager userConnectionManager, ComeNetContext context, IPasswordHashService passwordHashService)
+        private IQueueService _queueService;
+        public HomeController(ILogger<HomeController> logger,IHubContext<NotificationUserHub> notificationUserHubContext, IUserService userService, IQueueService queueService, IUserConnectionManager userConnectionManager, ComeNetContext context, IPasswordHashService passwordHashService)
         {
             _context = context;
             _logger = logger;
@@ -32,6 +34,7 @@ namespace ComeNet.Controllers
 			_userConnectionManager = userConnectionManager;
             _userService = userService;
             _passwordHashService = passwordHashService;
+            _queueService = queueService;
         }
         public IActionResult home()
         {
@@ -100,6 +103,14 @@ namespace ComeNet.Controllers
             return View();
         }
         public IActionResult Suggestion()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+            return View();
+        }
+        public IActionResult LimitedTimeEvent()
         {
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
@@ -227,6 +238,51 @@ namespace ComeNet.Controllers
             TempData["SuccessMessage"] = "註冊成功";
 
             return RedirectToAction("index", "Home");
+        }
+
+
+        private static readonly Queue<ToolRequest> requestQueue = new Queue<ToolRequest>();
+
+        [HttpPost]
+        public IActionResult LimitedTimeEvent([FromBody] ParasLimitedTimeEvent paras)
+        {
+
+
+            ResultCreateActivity result = new ResultCreateActivity();
+
+
+
+            int num = requestQueue.Count();
+
+            if(num > 0) 
+            {
+                result.message = "額滿";                
+            }
+            else
+            {
+                ToolRequest toolRequest = new ToolRequest();
+                toolRequest.ToolName = paras.toolname;
+                toolRequest.ReceiverUserId = paras.userid;
+                requestQueue.Enqueue(toolRequest);
+                result.message = "成功";
+            }
+
+            //while (true)
+            //{
+
+            //    ToolRequest Request = requestQueue.Dequeue();
+
+            //    if (Request != null)
+            //    {
+            //        // 處理 ToolRequest，例如執行工具操作
+            //        Console.WriteLine($"處理 ToolRequest - 工具名稱：{Request.ToolName}，接收者用戶ID：{Request.ReceiverUserId}");
+            //    }
+            //    result.message = num.ToString();
+
+            //    Thread.Sleep(1000); 
+            //    return Ok(result);
+            //}
+            return Ok(result);
         }
 
         public IActionResult Chat2user()

@@ -268,17 +268,15 @@ display: inline-block;
 							<div class="col-lg-2 col-sm-4 col-xs-12 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s" data-wow-offset="0">
 								<div class="our-team">
 									<div class="single-team">
-											<img src="${member.picture}" class="img-fluid" alt="${member.name}">
+										    <img style="height:112.45px;width:112.45px;" src="${member.picture}" class="img-fluid" alt="${member.name}">
 											<h3>${member.name}</h3>
 											<h4>${member.id}</h4>
 											<div class="distance">
-												  <i class="fa fa-map-marker"></i>
+									    	  <i class="fa fa-map-marker"></i>
 												  <p>距離:${member.distance}公里</p>
 											</div>
-
 									</div>
 										<ul class="social">
-
 												<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
 												<li><a href="https://localhost:7136/Home/"  class="fa fa-phone fa-2x phone"></a></li>
 												<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>

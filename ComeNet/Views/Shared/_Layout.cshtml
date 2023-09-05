@@ -70,7 +70,7 @@
                         <li><a asp-action="LOGIN" class="nav-item nav-link">Log In</a></li>
 
                     }
-                    <p id="user"></p>
+                    <p id="user">@id</p>
                 </ul>
             </div>
         </div>
@@ -850,6 +850,7 @@
     }
     var userId = null;
     userId = @id;
+    console.log(userId)
     myFunction();
     document.addEventListener("DOMContentLoaded", ready);
     document.getElementById("user").innerHTML = "UserId: " + userId;
@@ -901,9 +902,6 @@
         $(window).on('resize', adjustNav);
 
         adjustNav();
-
-
-
 
     });
 
@@ -971,6 +969,7 @@
             {
                 "chater1": userId.toString(),
                 "chater2": memberId.toString(),
+                "chater": userId.toString(),
         });
         var requestroomid = 
         {
@@ -989,6 +988,7 @@
                     roomId = result.message;
                     console.log(roomId);
 
+                    window.location.href = 'https://localhost:7136/chatroom/' + roomId;
 
                     var rawvideo = JSON.stringify({
                         "articleHeading": formattedDateTime + "您有新訊息",
@@ -1006,11 +1006,13 @@
                         .then(response => response.json())
                         .then(result => {
 
-                            if (result.userId != null) {
-                                console.log(result.userId);
-                                window.open('https://localhost:7136/chatroom/' + roomId, '_blank');   //打開視窗
+                            if (result.message != null) 
+                            {
+                                console.log(result.message);
+                                
                             }
-                            else {
+                            else 
+                            {
                                 alert('請稍等');
                             }
 
@@ -1056,10 +1058,13 @@
                 data.onlineuser.forEach(member =>{
 
                     var useronHtml = `
-                                                <li id="chatroomuserid">
+                                                <li id="chatroomuserid">                                                
+                                               
                                                 <p>${member.name}</p>
-                                                <a  title=${member.id}>
-                                                <img  style="border: solid;" id="chatroom" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt=${member.id} class="img-responsive profile-photo">
+                                                     <span id="chatnotification${member.Id}" class="badge rounded-pill badge-notification bg-danger"></span>
+                                                <a  title=${member.Id}>
+                                                
+                                                <img  style="border: solid;" id="chatroom" src="${member.picture}" alt=${member.Id} class="img-responsive profile-photo">
                                                 <span class="online-dot"></span>                                                  
                                                 </a>
                                                </li>
@@ -1073,8 +1078,8 @@
                     var useroffHtml = `
                                                     <li id="chatroomuserid">
                                                         <p>${member.name}</p>
-                                                        <a title=${member.id}>
-                                                        <img style="border: solid;" id="chatroom" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt=${member.id} class="img-responsive profile-photo">
+                                                            <a title=${member.Id}>
+                                                                <img style="border: solid;" id="chatroom" src="${member.picture}" alt=${member.Id} class="img-responsive profile-photo">
                                                             <span class="offline-dot"></span>
                                                         </a>
                                                     </li>
@@ -1098,9 +1103,8 @@
         sidebar.classList.toggle('sidebar-expanded');
     });
 
-   
+
   
-    
 
 </script>
 <script src="/js/signalr/dist/browser/signalr.js"></script>

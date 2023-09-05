@@ -9,14 +9,4 @@ connection.on("chatToUser", (name, message) => {
     $("#message").val("");
 });
 
-connection.start().catch(function (err)
-{
-    return console.error(err.toString());
-}).then(function () {
-    document.getElementById('user').innerHTML = 'UserId:' + userId;
-    connection.invoke('GetConnectionId').then(function (connectionId)
-    {
-        console.log("連線");
-        console.log(connectionId);
-    })
-});
+

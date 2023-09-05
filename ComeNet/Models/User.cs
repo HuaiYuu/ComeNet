@@ -33,6 +33,13 @@ namespace ComeNet.Models
         public int friendid { get; set; }
 
     }
+    public class Rejectlist
+    {
+        public int id { get; set; }
+        public int userid { get; set; }
+        public int rejectid { get; set; }
+
+    }
     public class Jwt
     {
         public string access_token { get; set; }
@@ -181,7 +188,8 @@ namespace ComeNet.Models
 		public string name { get; set; }
 		public string message { get; set; }
 		public string userId { get; set; }
-	}
+        public string roomId { get; set; }
+    }
     public class ActivityList
     {
         public int Id { get; set; }       

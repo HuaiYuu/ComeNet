@@ -1,7 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Chat";
+    var roomId = ViewBag.roomId;
+    var id = ViewBag.id;
 }
-
+<p id="roomid">@roomId</p>
 <section style="margin-left: 30%;width:100vh">
     <div class="container py-5">
         <div class="row d-flex justify-content-center">
@@ -45,6 +47,7 @@
 
 </style>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 
     //var chat = document.getElementById("chatmsg");
@@ -68,40 +71,7 @@
     //}, 3000); 
     getmessage();
 
-    function showmsg()
-    {
-
-        var username = document.getElementById('username');
-        var content = username.textContent;
-        console.log(content);
-
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var rawvideo = JSON.stringify({
-            "name": content,
-            "message": "加入聊天室",
-            "userId": "19",
-        });
-        var requestvideo = {
-            method: 'POST',
-            headers: myHeaders,
-            body: rawvideo,
-            redirect: 'follow'
-        };
-
-        fetch("https://localhost:7136/api/users/ChatToSpecificUser", requestvideo)
-            .then(response => response.json())
-            .then(result => {
-                if (result.userId != null) {
-                    console.log("成功加入");
-                }
-                else {
-                    alert('請稍等');
-                }
-            })
-            .catch(error => console.log('error', error));
-    }
+  
     function sendMessage()
     {
         var username = document.getElementById('username');
@@ -115,7 +85,8 @@
         var rawvideo = JSON.stringify({
             "name": content,
             "message": message,
-            "userId": "19",
+            "userId": "@id",
+            "roomId": "@roomId",
         });
         var requestvideo = {
             method: 'POST',
@@ -131,7 +102,8 @@
                 {
                     console.log("成功");
                 }
-                else {
+                else 
+                {
                     alert('請稍等');
                 }
             })
@@ -145,8 +117,9 @@
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        var rawvideo = JSON.stringify({            
-            "userId": "19",
+        var rawvideo = JSON.stringify
+        ({
+           "roomId": "@roomId",
         });
         var requestvideo = {
             method: 'POST',
@@ -155,7 +128,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://localhost:7136/api/users/GetChatContext", requestvideo)
+        fetch("https://localhost:7136/api/users/GetUserChatContext", requestvideo)
             .then(response => response.json())
             .then(result => 
                 {
@@ -171,5 +144,7 @@
             .catch(error => console.log('error', error));
            $("#message").val("");
     }
+
+   
 
 </script>

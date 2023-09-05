@@ -4,6 +4,7 @@
     ViewData["Title"] = "Suggestion";
 }
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <div id="remainingTime"></div>
 <style>
     
@@ -94,9 +95,28 @@
         margin-bottom: 5px;
     }
                 </style>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 <script>    
+    toastr.options = {
+        "closeButton": false,
+        "debug": true,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+
+
     callApiAtEight();
     function callApiAtEight()
     {
@@ -121,29 +141,28 @@
                     const teamMembersContainer = document.getElementById('suggestion');
                     data.forEach(member => {
 
-                    const memberHtml = `<div class="col-md-5 suggestion">
+                    const memberHtml = `<p id=suggestionid>${member.id}</p>
+                    <div class="col-md-5 suggestion">
                     <div class="widget-head-color-box lazur-bg p-lg text-center">
                         <div class="m-b-md">
                             <h2 class="font-bold no-margins">
                                     ${member.name}
                             </h2>
-                            <small>Founder of Mysite</small>
+                            <small></small>
                         </div>
                             <img src="${member.picture}" class="img-circle circle-border m-b-md" alt="profile">
                         <div>
-                            <span>100 Tweets</span> |
-                            <span>350 Following</span> |
-                            <span>610 Followers</span>
+                                    <span>${member.age}</span> |
+                                    <span>${member.gender}</span> |
+                                    <span>${member.interest}</span>
                         </div>
                     </div>
                     <div class="widget-text-box">
-                        <h4 class="media-heading">Alex Smith</h4>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                            <h4 class="media-heading"></h4>
+                            <p>哈囉!我是${member.name}一起做個朋友吧!</p>
                         <div class="text-right">
-                            <a class="btn btn-xs btn-default"><i class="fa fa-thumbs-up"></i> Like </a>
-                            <a class="btn btn-xs btn-primary"><i class="fa fa-heart"></i> Love</a>
-                            <a class="btn btn-xs btn-success"><i class="fa fa fa-envelope"></i> Message</a>
-                            <a class="btn btn-xs btn-info"><i class="fa fa fa-phone"></i> Call</a>
+                            <a id="agree" class="btn btn-xs btn-default"><i class="fa fa-thumbs-up"></i>同意</a>
+                            <a id="reject" class="btn btn-xs btn-info"><i class="fa fa fa-thumbs-down"></i>拒絕</a>
                         </div>
                     </div>
                 </div>
@@ -160,6 +179,10 @@
     }
 </script>
 <script>
+
+
+
+
     function updateRemainingTime()
     {
         
@@ -183,9 +206,82 @@
             callApiAtEight();
         }
     }
-
     setInterval(updateRemainingTime, 1000);
-
-    
     updateRemainingTime();
+
+    document.addEventListener('click', function (event) 
+    {
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var rejectid = document.getElementById('suggestionid')
+        var userid = @id
+
+            console.log(rejectid.textContent);
+            console.log(userid);
+
+        if (event.target.id === 'agree')
+        {
+           console.log("agree");
+
+
+            var chatmember = JSON.stringify
+                (
+                    {
+                        "userid": userid,
+                        "agreeid": rejectid.textContent
+                    });
+            var requestroomid =
+            {
+                method: 'POST',
+                headers: myHeaders,
+                body: chatmember,
+                redirect: 'follow'
+            };
+            fetch("https://localhost:7136/api/users/CreateAgreeFriend", requestroomid)
+                .then(response => response.json())
+                .then(result => {
+
+                    if (result.message != null) 
+                    {
+                        toastr["success"](result.message);
+                    }
+                })
+                .catch(error => console.log('error', error));
+
+
+        }
+
+        if (event.target.id === 'reject')
+        {
+            console.log("reject");
+
+            var chatmember = JSON.stringify
+            (
+                {
+                        "userid": userid,
+                        "rejectid": rejectid.textContent,
+                    });
+            var requestroomid =
+            {
+                method: 'POST',
+                headers: myHeaders,
+                body: chatmember,
+                redirect: 'follow'
+            };
+            fetch("https://localhost:7136/api/users/CreateRejectFriend", requestroomid)
+                .then(response => response.json())
+                .then(result => {
+
+                    if (result.message != null) 
+                    {
+                        toastr["success"](result.message);                       
+                    }
+                })
+                .catch(error => console.log('error', error));
+           
+        }
+    });
+
 </script>

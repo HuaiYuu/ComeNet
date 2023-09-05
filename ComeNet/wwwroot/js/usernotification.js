@@ -1,27 +1,14 @@
 ﻿"use strict";
 var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationUserHub?userId=" + userId).build();  
 
-//connection.on("sendToUser", (articleHeading, articleContent) => {
-//    var heading = document.createElement("h3");
-//    heading.textContent = articleHeading;
-
-//    var p = document.createElement("p");
-//    p.innerText = articleContent;
-
-//    var div = document.createElement("div");
-//    div.appendChild(heading);
-//    div.appendChild(p);
-
-//    document.getElementById("articleList").appendChild(div);
-//});
-
-connection.on('user-connected', id => {
-    if (userId === id) return;
+connection.on('user-connected', (id, roomid) =>
+{
+    /*if (userId === id) return;*/
     console.log(`User connected: ${id}`);
+    console.log(`User connected: ${roomid}`);
     conectNewUser(id, localStream)
 
 })
-
 connection.on("sendToUser", (articleHeading, articleContent) => {
     // 創建 li 元素來容納訊息
     var li = document.createElement("li");
@@ -145,54 +132,24 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
 
     console.log(notificationBadge);
 });
-
-var user1 = null;
-var user2 = null;
-
-connection.on("chatToUser", (name, message) =>
+connection.on("chatToUser", (name, message, useraim,usermain) =>
 {
-    //console.log(name);
-
-    //user1 = name;
-    //console.log(user1);
-
-    //if (user1 != name)
-    //{
-    //    message = `${name}: ${message}`;
-    //    console.log(message);
-    //    $("#chatmsg").append(`<p class="sender-demo">${message}</p>`);
-    //    $("#message").val("");
-    //}
-    //else
-    //{
-    //    message = `${name}: ${message}`;
-    //    console.log(message);
-    //    $("#chatmsg").append(`<p class="sender-demo1">${message}</p>`);
-    //    $("#message").val("");
-
-    //}
-
+    console.log("go");
     console.log(name);
+    console.log(message);
+    console.log(useraim);
+    console.log(usermain);
 
-    //if (user1 === null)
-    //{
-    //    user1 = name;
-    //    console.log("User 1: " + user1);
-    //}
-    //else if (user2 === null && user1 !== name)
-    //{
-    //    user2 = name;
-    //    console.log("User 2: " + user2);
-    //}
 
-    if (name === "Demo")
+    
+    if (name === usermain)
     {
         message = `${name}: ${message}`;
         console.log(message);
         $("#chatmsg").append(`<p class="sender-demo">${message}</p>`);
         $("#message").val("");
     }
-    else if (name === "Demo1")
+    else if (name === useraim)
     {
         message = `${name}: ${message}`;
         console.log(message);
@@ -200,12 +157,17 @@ connection.on("chatToUser", (name, message) =>
         $("#message").val("");
     }
 
-    
+});
+connection.on("chatnotification", (notifyid) =>
+{
+
+    console.log(notifyid);
+    // 更新通知數字
+    var notificationBadge = document.querySelector(`#chatnotification${notifyid}`);
+    notificationBadge.textContent = "new";
+    notificationBadge.classList.add('bg-danger');
 
 });
-
-
-
 
 
 
@@ -215,12 +177,30 @@ connection.start().catch(function (err)
 }).then(function ()
 {
     document.getElementById('user').innerHTML = 'UserId:' + userId;
+    var roomid = document.getElementById('roomid');
+    
+    console.log(userId);
     connection.invoke('GetConnectionId').then(function (connectionId)
     {
-        console.log("連線");
-        console.log(connectionId);
+        console.log(connectionId);        
+    }).catch(function (err) {
+        console.error('Error invoking GetConnectionId:', err.toString());
+    });
 
-    })
-
+    if (roomid != null)
+    {
+        var roomId = roomid.textContent;
+         
+        connection.invoke('JoinRoom', roomId)
+            .then(function () {
+                // 成功加入房间后的处理
+            })
+            .catch(function (error) {
+                console.error('Error joining room:', error);
+            });
+    }
     
+
+   
+
 });

@@ -24,6 +24,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Text;
 using NuGet.Protocol;
 using Newtonsoft.Json.Linq;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ComeNet.Controllers
 {
@@ -75,12 +76,27 @@ namespace ComeNet.Controllers
     }
     public class ParasCreateChatRoom
     {
+
+        public string chater { get; set; }
         public string chater1 { get; set; }
         public string chater2 { get; set; }
+
+      
     }
     public class ParasUserFriendList
     {
         public int userid { get; set; }       
+    }
+
+    public class ParasUserRejectList
+    {
+        public int userid { get; set; }
+        public int rejectid { get; set; }
+    }
+    public class ParasUserAgreeList
+    {
+        public int userid { get; set; }
+        public int agreeid { get; set; }
     }
     public class ParasLimitedTimeEvent
     {
@@ -152,6 +168,8 @@ namespace ComeNet.Controllers
         public List<ActivitynPeople> activity { get; set; }
     }
 
+   
+
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -197,39 +215,68 @@ namespace ComeNet.Controllers
                     await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
                 }
             }
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = connections.ToString();
 
 
-
-            return Ok(model);
+            return Ok(result);
         }
 
 		[HttpPost("ChatToSpecificUser")]
 		public async Task<ActionResult> ChatToSpecificUser(ChatContext model)
 		{
-            //var connections = _userConnectionManager.GetUserConnections(model.userId);
-            //if (connections != null && connections.Count > 0)
-            //{
-            //	foreach (var connectionId in connections)
-            //	{
-            //                 //await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatToUser", model.name, model.message);
-            //               //  await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
-            //                 await _notificationUserHubContext.Clients.Group("18to19").SendAsync("chatToUser", model.name, model.message);
-            //             }
-            //}
+            
 
             MessageContext context = new MessageContext();
             context.message = model.message;
             context.name = model.name;
             context.datetime = DateTime.Now;
-            context.roomId = 19218;
-
+            context.roomId = Convert.ToInt32(model.roomId);
 
             _context.MessageContext.Add(context);
             await _context.SaveChangesAsync();
 
 
+            string notifyid = "";
+            string[] users = model.roomId.ToString().Split("8507");
 
-            await _notificationUserHubContext.Clients.All.SendAsync("chatToUser", model.name, model.message);
+            if (model.userId == users[0])
+            {
+                notifyid = users[1];
+            }
+            else if(model.userId == users[1])
+            {
+                notifyid = users[0];
+            }
+
+            for (int i = 0;i<users.Count();i++)
+            {
+                var username = await _context.User
+                .Where(f => f.id == Convert.ToInt16(users[i]))
+                .Select(f => f.name)
+                .FirstAsync();
+                users[i]= username;
+            }
+
+            string useraim = users[0];
+            string usermain = users[1];
+
+            await _notificationUserHubContext.Clients.Group(model.roomId).SendAsync("chatToUser", model.name, model.message, useraim, usermain);
+
+            var connections = _userConnectionManager.GetUserConnections(notifyid);
+            if (connections != null && connections.Count > 0)
+            {
+                foreach (var connectionId in connections)
+                {
+                    await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatnotification", model.userId);
+                }
+            }
+            
+            
+
+
+
+
             return Ok(model);
 		}
 
@@ -500,20 +547,32 @@ namespace ComeNet.Controllers
         {
 
             string roomid = "";
+           
             string chater1 = paras.chater1;
             string chater2 = paras.chater2;
+            string id = paras.chater;
 
             if ( Convert.ToUInt16(chater1) > Convert.ToUInt16(chater2))
             {
-                roomid = chater1 + "2" + chater2;
+                roomid = chater1 + "8507" + chater2;
             }
             else
             {
-                roomid = chater2 + "2" + chater1;
+                roomid = chater2 + "8507" + chater1;
             }
 
             ResultCreateActivity result = new ResultCreateActivity();
             result.message = roomid;
+
+            //var connections = _userConnectionManager.GetUserConnections(paras.chater);
+            //if (connections != null && connections.Count > 0)
+            //{
+            //    foreach (var connectionId in connections)
+            //    {                    
+            //        _notificationUserHubContext.Groups.AddToGroupAsync(connectionId, roomid);
+            //        await _notificationUserHubContext.Clients.Group(roomid).SendAsync("user-connected", id, roomid);
+            //    }
+            //}
 
             return Ok(result);
         }
@@ -767,19 +826,21 @@ namespace ComeNet.Controllers
             return Ok(activityLists);
         }
 
-        [HttpPost("GetChatContext")]
-        public async Task<ActionResult<IEnumerable<MessageContext>>> GetChatContext(int paras)
+        [HttpPost("GetUserChatContext")]
+        public async Task<ActionResult<IEnumerable<MessageContext>>> GetUserChatContext(ParasChatContext paras)
         {
+
+
+
+
             string user1 = "Demo";
             string user2 = "Demo1";
             string chatcontext = "";
 
-            
-
             StringBuilder chatHtml = new StringBuilder();
 
             var message = await _context.MessageContext
-            .Where(f => f.roomId == 19218)           
+            .Where(f => f.roomId == paras.roomId)           
             .ToListAsync();
 
             foreach (var messages in message)
@@ -803,12 +864,9 @@ namespace ComeNet.Controllers
 
             return Ok(result);
         }
-
-
         [HttpPost("GetLimitedTimeEvent")]
         public async Task<ActionResult<IEnumerable<MessageContext>>> GetLimitedTimeEvent(ParasLimitedTimeEvent paras)
         {
-
             ToolRequest toolRequest = new ToolRequest();
             toolRequest.ToolName = paras.toolname;
             toolRequest.ReceiverUserId = paras.userid;
@@ -832,6 +890,42 @@ namespace ComeNet.Controllers
             //    return Ok(num);
             //}
             return Ok(num);
+        }
+
+        [HttpPost("CreateRejectFriend")]
+        public async Task<ActionResult<IEnumerable<Rejectlist>>> CreateRejectFriend(ParasUserRejectList paras)
+        {
+
+            Rejectlist rejectlist = new Rejectlist();
+            rejectlist.userid=paras.userid;
+            rejectlist.userid=paras.rejectid;
+
+            _context.Rejectlist.Add(rejectlist);
+            await _context.SaveChangesAsync();
+
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = "已拒絕";
+
+            return Ok(result);
+        }
+
+        [HttpPost("CreateAgreeFriend")]
+        public async Task<ActionResult<IEnumerable<Friendlist>>> CreateAgreeFriend(ParasUserAgreeList paras)
+        {
+
+            Friendlist friendlist = new Friendlist();
+            friendlist.userid=paras.userid;
+            friendlist.friendid = paras.agreeid;
+
+            _context.Friendlist.Add(friendlist);
+            await _context.SaveChangesAsync();
+
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = "已成為朋友";
+
+            return Ok(result);
         }
 
     }

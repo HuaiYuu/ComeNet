@@ -18,8 +18,8 @@ namespace ComeNet.Data
         public DbSet<ComeNet.Models.Friendlist> Friendlist { get; set; } = default!;
         public DbSet<ComeNet.Models.ActivityList> ActivityList { get; set; } = default!;
         public DbSet<ComeNet.Models.ActivityDetail> ActivityDetail { get; set; } = default!;
-
         public DbSet<ComeNet.Models.MessageContext> MessageContext { get; set; } = default!;
+        public DbSet<ComeNet.Models.Rejectlist> Rejectlist { get; set; } = default!;
 
     }
 }

@@ -115,9 +115,8 @@
         "hideMethod": "fadeOut"
     }
 
-
-
     callApiAtEight();
+
     function callApiAtEight()
     {
         
@@ -137,39 +136,54 @@
 
             fetch("https://localhost:7136/api/users/GetSuggestionFriend", requestOptions)
                 .then(response => response.json())
-                .then(data => {
-                    const teamMembersContainer = document.getElementById('suggestion');
+                .then(data =>
+                {
+
+                    var teamMembersContainer = document.getElementById('suggestion');
+
+                if (data.length == 0) 
+                {
+                    teamMembersContainer.innerHTML = "";
+                }
+                else
+                {
                     data.forEach(member => {
 
-                    const memberHtml = `<p id=suggestionid>${member.id}</p>
-                    <div class="col-md-5 suggestion">
-                    <div class="widget-head-color-box lazur-bg p-lg text-center">
-                        <div class="m-b-md">
-                            <h2 class="font-bold no-margins">
-                                    ${member.name}
-                            </h2>
-                            <small></small>
-                        </div>
-                            <img src="${member.picture}" class="img-circle circle-border m-b-md" alt="profile">
-                        <div>
-                                    <span>${member.age}</span> |
-                                    <span>${member.gender}</span> |
-                                    <span>${member.interest}</span>
-                        </div>
-                    </div>
-                    <div class="widget-text-box">
-                            <h4 class="media-heading"></h4>
-                            <p>哈囉!我是${member.name}一起做個朋友吧!</p>
-                        <div class="text-right">
-                            <a id="agree" class="btn btn-xs btn-default"><i class="fa fa-thumbs-up"></i>同意</a>
-                            <a id="reject" class="btn btn-xs btn-info"><i class="fa fa fa-thumbs-down"></i>拒絕</a>
-                        </div>
-                    </div>
-                </div>
-                                  `
+                        const memberHtml = `
+                                <p id=suggestionid>${member.id}</p>
+                                <div class="col-md-5 suggestion">
+                                <div class="widget-head-color-box lazur-bg p-lg text-center">
+                                    <div class="m-b-md">
+                                        <h2 class="font-bold no-margins">
+                                                ${member.name}
+                                        </h2>
+                                        <small></small>
+                                    </div>
+                                        <img src="${member.picture}" class="img-circle circle-border m-b-md" alt="profile">
+                                    <div>
+                                                <span>${member.age}</span> |
+                                                <span>${member.gender}</span> |
+                                                <span>${member.interest}</span>
+                                    </div>
+                                </div>
+                                <div class="widget-text-box">
+                                        <h4 class="media-heading"></h4>
+                                        <p>哈囉!我是${member.name}一起做個朋友吧!</p>
+                                    <div class="text-right">
+                                        <a id="agree" class="btn btn-xs btn-default"><i class="fa fa-thumbs-up"></i>同意</a>
+                                        <a id="reject" class="btn btn-xs btn-info"><i class="fa fa fa-thumbs-down"></i>拒絕</a>
+                                    </div>
+                                </div>
+                            </div>
+                                              `
+                        teamMembersContainer.innerHTML = memberHtml;
 
-                        teamMembersContainer.innerHTML += memberHtml;
                     });
+                }
+
+
+
+                    
                 })
                 .catch(error => {
                     console.error('Error fetching team member data:', error);
@@ -179,9 +193,6 @@
     }
 </script>
 <script>
-
-
-
 
     function updateRemainingTime()
     {
@@ -205,6 +216,7 @@
         {            
             callApiAtEight();
         }
+       
     }
     setInterval(updateRemainingTime, 1000);
     updateRemainingTime();
@@ -224,7 +236,6 @@
         if (event.target.id === 'agree')
         {
            console.log("agree");
-
 
             var chatmember = JSON.stringify
                 (
@@ -246,11 +257,10 @@
                     if (result.message != null) 
                     {
                         toastr["success"](result.message);
+                        callApiAtEight();
                     }
                 })
                 .catch(error => console.log('error', error));
-
-
         }
 
         if (event.target.id === 'reject')
@@ -262,7 +272,7 @@
                 {
                         "userid": userid,
                         "rejectid": rejectid.textContent,
-                    });
+                });
             var requestroomid =
             {
                 method: 'POST',
@@ -276,11 +286,12 @@
 
                     if (result.message != null) 
                     {
-                        toastr["success"](result.message);                       
+                        toastr["success"](result.message);
+                        callApiAtEight();
+                       
                     }
                 })
-                .catch(error => console.log('error', error));
-           
+                .catch(error => console.log('error', error));           
         }
     });
 

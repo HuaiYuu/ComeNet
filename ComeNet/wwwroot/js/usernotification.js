@@ -158,14 +158,19 @@ connection.on("chatToUser", (name, message, useraim,usermain) =>
     }
 
 });
-connection.on("chatnotification", (notifyid) =>
+connection.on("chatnotification", (name, message) =>
 {
 
-    console.log(notifyid);
-    // 更新通知數字
-    var notificationBadge = document.querySelector(`#chatnotification${notifyid}`);
-    notificationBadge.textContent = "new";
-    notificationBadge.classList.add('bg-danger');
+    //console.log(notifyid);
+    //// 更新通知數字
+    //var notificationBadge = document.querySelector(`#chatnotification${notifyid}`);
+    //notificationBadge.textContent = "new";
+    //notificationBadge.classList.add('bg-danger');
+
+    
+
+    toastr["success"](`${name}: ${message}`)
+    
 
 });
 

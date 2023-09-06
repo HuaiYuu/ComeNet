@@ -3,7 +3,8 @@
     var roomId = ViewBag.roomId;
     var id = ViewBag.id;
 }
-<p id="roomid">@roomId</p>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+<p style="display:none" id="roomid">@roomId</p>
 <section style="margin-left: 30%;width:100vh">
     <div class="container py-5">
         <div class="row d-flex justify-content-center">
@@ -46,9 +47,28 @@
     }
 
 </style>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
 
     //var chat = document.getElementById("chatmsg");
     //var messageParagraph = document.createElement('p');

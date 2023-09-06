@@ -268,7 +268,7 @@ namespace ComeNet.Controllers
             {
                 foreach (var connectionId in connections)
                 {
-                    await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatnotification", model.userId);
+                    await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("chatnotification", model.name, model.message);
                 }
             }
             
@@ -729,62 +729,74 @@ namespace ComeNet.Controllers
            .Select(f => f.friendid)
            .ToListAsync();
 
-            var nonFriendUserIds = UserIds.Except(friendIds).ToList();
 
+            var rejfriendIds = await _context.Rejectlist
+           .Where(f => f.userid == paras.userid)
+           .Select(f => f.rejectid)
+           .ToListAsync();
 
+            var nonFriendUserIds = UserIds.Except(friendIds).Except(rejfriendIds).ToList();
             List<ResultSuggestionFriend> userlist = new List<ResultSuggestionFriend>();
 
-            var me = await _context.User.FindAsync(paras.userid);
-
-
-            foreach (var userid in nonFriendUserIds)
+            if (nonFriendUserIds.Count > 0)
             {
+                
 
-                ResultSuggestionFriend userfriend = new ResultSuggestionFriend();
-                var users = await _context.User.FindAsync(userid);
+                var me = await _context.User.FindAsync(paras.userid);
 
 
-                if (me.gender != users.gender)
+                foreach (var userid in nonFriendUserIds)
                 {
-                    if (Math.Abs(me.age - users.age) <= 3)
+
+                    ResultSuggestionFriend userfriend = new ResultSuggestionFriend();
+                    var users = await _context.User.FindAsync(userid);
+
+
+                    if (me.gender != users.gender)
                     {
-                        if (me.interest == users.interest)
+                        if (Math.Abs(me.age - users.age) <= 3)
                         {
-                            userfriend.message = "絕配";
+                            if (me.interest == users.interest)
+                            {
+                                userfriend.message = "絕配";
+                            }
                         }
-                    }
-                }
-                else
-                {
-                    
-                    if (me.interest == users.interest)
-                    {
-                        userfriend.message = "擁有共同興趣";
-                       
                     }
                     else
                     {
-                       
+
+                        if (me.interest == users.interest)
+                        {
+                            userfriend.message = "擁有共同興趣";
+
+                        }
+                        else
+                        {
+
+                        }
                     }
+
+                    userfriend.id = userid;
+                    userfriend.name = users.name;
+                    userfriend.picture = users.picture;
+                    userfriend.gender = users.gender;
+                    userfriend.age = users.age;
+                    userfriend.interest = users.interest;
+                    userlist.Add(userfriend);
+                    return userlist;
+
                 }
-
-                userfriend.id = userid;
-                userfriend.name = users.name;
-                userfriend.picture = users.picture;
-                userfriend.gender = users.gender;
-                userfriend.age = users.age;
-                userfriend.interest = users.interest;
-                userlist.Add(userfriend);
-                return userlist;
-
-
-
-
-
-
+            }
+            else
+            {              
+                
             }
 
-            return null;
+
+
+            return userlist;
+
+
         }
 
         [HttpPost("GetActivityList")]
@@ -898,7 +910,7 @@ namespace ComeNet.Controllers
 
             Rejectlist rejectlist = new Rejectlist();
             rejectlist.userid=paras.userid;
-            rejectlist.userid=paras.rejectid;
+            rejectlist.rejectid=paras.rejectid;
 
             _context.Rejectlist.Add(rejectlist);
             await _context.SaveChangesAsync();

@@ -90,12 +90,12 @@
                 <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
             </div>
             <ul class="nav-news-feed">
-                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">My Activity</a></div></li>
-                <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">People Nearby</a></div></li>
-                <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">Friends</a></div></li>
-                <li><i class="fa fa-comments icon4"></i><div><a href="#">Messages</a></div></li>
-                <li><i class="fa fa-picture-o icon5"></i><div><a href="https://localhost:7136/home/friends">Images</a></div></li>
-                <li><i class="fa fa-video-camera icon6"></i><div><a href="https://localhost:7136/home/Suggestion">Suggestion</a></div></li>
+                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">活動列表</a></div></li>
+                <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">誰在附近?</a></div></li>
+                <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">好友</a></div></li>
+                <li><i class="fa fa-comments icon2"></i><div><a href="#">訊息</a></div></li>
+                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://localhost:7136/home/friends">圖片</a></div></li>
+                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://localhost:7136/home/Suggestion">抽卡</a></div></li>
                 <li><i class="fa fa-clock-o icon6"></i><div><a href="https://localhost:7136/home/LimitedTimeEvent">限時專區</a></div></li>
             </ul>           
         </div>
@@ -1058,14 +1058,12 @@
                 data.onlineuser.forEach(member =>{
 
                     var useronHtml = `
-                                                <li id="chatroomuserid">                                                
-                                               
-                                                <p>${member.name}</p>
-                                                     <span id="chatnotification${member.Id}" class="badge rounded-pill badge-notification bg-danger"></span>
-                                                <a  title=${member.Id}>
-                                                
+                                                <li id="chatroomuserid">                                                                                                                                                                                              
+                                                <a  title=${member.Id}>                                                
                                                 <img  style="border: solid;" id="chatroom" src="${member.picture}" alt=${member.Id} class="img-responsive profile-photo">
-                                                <span class="online-dot"></span>                                                  
+                                                     <span class="online-dot"></span>
+                                                    <p>${member.name}</p>
+                                                                                             
                                                 </a>
                                                </li>
                                         `;
@@ -1077,10 +1075,12 @@
 
                     var useroffHtml = `
                                                     <li id="chatroomuserid">
-                                                        <p>${member.name}</p>
+                                                             
                                                             <a title=${member.Id}>
                                                                 <img style="border: solid;" id="chatroom" src="${member.picture}" alt=${member.Id} class="img-responsive profile-photo">
-                                                            <span class="offline-dot"></span>
+                                                                     <span class="offline-dot"></span>
+                                                                    <p>${member.name}</p>
+                                                           
                                                         </a>
                                                     </li>
                                                 `;

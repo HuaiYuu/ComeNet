@@ -25,6 +25,8 @@ using System.Text;
 using NuGet.Protocol;
 using Newtonsoft.Json.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ComeNet.Controllers
 {
@@ -83,6 +85,8 @@ namespace ComeNet.Controllers
 
       
     }
+
+  
     public class ParasUserFriendList
     {
         public int userid { get; set; }       
@@ -105,14 +109,18 @@ namespace ComeNet.Controllers
     public class ParasChatContext
     {
         public int roomId { get; set; }
-    }
-    
+    }    
     public class ParasCreateToollist
     {       
         public int userid { get; set; }
         public string toolname { get; set; }
         public int number { get; set; }
     }
+    public class ParasUseTool
+    {
+        public int userid { get; set; }
+        public string toolname { get; set; }        
+    }   
     public class Userfriend
 	{
 		public int id { get; set; }
@@ -173,7 +181,6 @@ namespace ComeNet.Controllers
     {        
         public List<ActivitynPeople> activity { get; set; }
     }
-
     public class ResultGetUserToolList
     {
         public List<UserToollist> tools { get; set; }
@@ -973,13 +980,8 @@ namespace ComeNet.Controllers
         [HttpPost("GetToollist")]
         public async Task<ActionResult<IEnumerable<ResultGetUserToolList>>> GetToollist(ParasUserFriendList paras)
         {
-    
-
-
-
             List<UserToollist> toollists = new List<UserToollist>();
             var usertoollist = await _context.UserToollist.Where(f=>f.userid==paras.userid).ToListAsync();
-
 
             foreach (var tools in usertoollist)
             {
@@ -994,6 +996,57 @@ namespace ComeNet.Controllers
             }
 
             return Ok(toollists);
+        }
+
+
+        [HttpPost("UseTool")]
+        public async Task<ActionResult<IEnumerable<Friendlist>>> UseTool(ParasUseTool paras)
+        {
+            ResultCreateActivity result = new ResultCreateActivity();
+
+            if (paras.toolname.Trim()== "解鎖五張用戶卡")
+            {
+                var UserIds = await _context.User
+                .Where(f => f.id != paras.userid)
+                .Select(f => f.id)
+                .ToListAsync();
+
+
+                var friendIds = await _context.Friendlist
+               .Where(f => f.userid == paras.userid)
+               .Select(f => f.friendid)
+               .ToListAsync();
+
+                var nonFriendUserIds = UserIds.Except(friendIds).Take(5).ToList();
+
+                foreach (var ids in nonFriendUserIds)
+                {
+
+                    Friendlist friendlist = new Friendlist();
+                    friendlist.userid = paras.userid;
+                    friendlist.friendid= ids;
+
+                    _context.Friendlist.Add(friendlist);
+                    await _context.SaveChangesAsync();
+                }
+
+                var toolcard = await _context.UserToollist
+                .Where(f => f.userid == paras.userid && f.toolname.Trim() == "解鎖五張用戶卡")
+                .FirstOrDefaultAsync();
+
+                if (toolcard != null)
+                {
+                    _context.UserToollist.Remove(toolcard);
+                    await _context.SaveChangesAsync();
+                }
+
+
+                result.message = "ok";
+
+            }
+
+
+            return Ok(result);
         }
 
     }

@@ -316,7 +316,7 @@ namespace ComeNet.Controllers
 
                             if (id == "18")
                             {
-                                Thread.Sleep(10000);
+                                Thread.Sleep(5000);
                             }
 
                             while (reader.Read())
@@ -343,8 +343,8 @@ namespace ComeNet.Controllers
                                 throw ex;
                             }
 
-                       
-                       
+                            result.message = "成功";
+
                     }
                 }
             }

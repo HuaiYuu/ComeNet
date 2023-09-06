@@ -126,13 +126,13 @@
 
 
 
-        fetch("https://localhost:7136/api/users/signin", requestOptions)
+        fetch("https://johnny666.online/api/users/signin", requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.access_token != null) 
                 {                                        
                     toastr["success"]("登入成功");
-                    window.location.href = 'https://localhost:7136/Home/index';
+                    window.location.href = 'https://johnny666.online/Home/index';
                     console.log(result.user.id);
                 }
                 else 

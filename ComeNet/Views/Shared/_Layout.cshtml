@@ -90,13 +90,13 @@
                 <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
             </div>
             <ul class="nav-news-feed">
-                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">活動列表</a></div></li>
-                <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">誰在附近?</a></div></li>
-                <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">好友</a></div></li>
+                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://johnny666.online/home/activitylist">活動列表</a></div></li>
+                <li><i class="fa fa-users icon2"></i><div><a href="https://johnny666.online/home/nearby">誰在附近?</a></div></li>
+                <li><i class="fa fa-user icon3"></i><div><a href="https://johnny666.online/home/friends">好友</a></div></li>
                 <li><i class="fa fa-comments icon2"></i><div><a href="#">訊息</a></div></li>
-                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://localhost:7136/home/card">道具卡片</a></div></li>
-                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://localhost:7136/home/Suggestion">抽卡</a></div></li>
-                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://localhost:7136/home/LimitedTimeEvent">限時專區</a></div></li>
+                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://johnny666.online/home/card">道具卡片</a></div></li>
+                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://johnny666.online/home/Suggestion">抽卡</a></div></li>
+                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://johnny666.online/home/LimitedTimeEvent">限時專區</a></div></li>
             </ul>           
         </div>
         <div style="width:100vh !important;">
@@ -980,7 +980,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://localhost:7136/api/users/CreateChatRoom",requestroomid)
+        fetch("https://johnny666.online/api/users/CreateChatRoom",requestroomid)
             .then(response => response.json())
             .then(result => {
 
@@ -989,11 +989,11 @@
                     roomId = result.message;
                     console.log(roomId);
 
-                    window.location.href = 'https://localhost:7136/chatroom/' + roomId;
+                    window.location.href = 'https://johnny666.online/chatroom/' + roomId;
 
                     var rawvideo = JSON.stringify({
                         "articleHeading": formattedDateTime + "您有新訊息",
-                        "articleContent": "https://localhost:7136/chatroom/" + roomId,
+                        "articleContent": "https://johnny666.online/chatroom/" + roomId,
                         "userId": memberId,
                     });
                     var requestvideo = {
@@ -1003,7 +1003,7 @@
                         redirect: 'follow'
                     };
 
-                    fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
+                    fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
                         .then(response => response.json())
                         .then(result => {
 
@@ -1051,7 +1051,7 @@
             body: raw,
             redirect: 'follow'
         };
-        fetch("https://localhost:7136/api/users/GetOnlineUser", requestOptions)
+        fetch("https://johnny666.online/api/users/GetOnlineUser", requestOptions)
             .then(response => response.json())
             .then(data => 
             {    

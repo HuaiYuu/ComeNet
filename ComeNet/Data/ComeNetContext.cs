@@ -20,6 +20,8 @@ namespace ComeNet.Data
         public DbSet<ComeNet.Models.ActivityDetail> ActivityDetail { get; set; } = default!;
         public DbSet<ComeNet.Models.MessageContext> MessageContext { get; set; } = default!;
         public DbSet<ComeNet.Models.Rejectlist> Rejectlist { get; set; } = default!;
-
+        public DbSet<ComeNet.Models.Toollist> Toollist { get; set; } = default!;
+        public DbSet<ComeNet.Models.UserToollist> UserToollist { get; set; } = default!;
+        
     }
 }

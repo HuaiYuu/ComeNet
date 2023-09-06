@@ -87,7 +87,6 @@ namespace ComeNet.Controllers
     {
         public int userid { get; set; }       
     }
-
     public class ParasUserRejectList
     {
         public int userid { get; set; }
@@ -106,7 +105,14 @@ namespace ComeNet.Controllers
     public class ParasChatContext
     {
         public int roomId { get; set; }
-    }    
+    }
+    
+    public class ParasCreateToollist
+    {       
+        public int userid { get; set; }
+        public string toolname { get; set; }
+        public int number { get; set; }
+    }
     public class Userfriend
 	{
 		public int id { get; set; }
@@ -168,7 +174,12 @@ namespace ComeNet.Controllers
         public List<ActivitynPeople> activity { get; set; }
     }
 
-   
+    public class ResultGetUserToolList
+    {
+        public List<UserToollist> tools { get; set; }
+    }
+
+
 
     [Route("api/[controller]")]
     [ApiController]
@@ -938,6 +949,51 @@ namespace ComeNet.Controllers
             result.message = "已成為朋友";
 
             return Ok(result);
+        }
+
+        [HttpPost("CreateToollist")]
+        public async Task<ActionResult<IEnumerable<UserToollist>>> CreateToollist(ParasCreateToollist paras)
+        {
+
+            UserToollist userToollist = new UserToollist();
+            userToollist.userid=paras.userid;
+            userToollist.toolname=paras.toolname;
+            userToollist.number=paras.number;
+
+            _context.UserToollist.Add(userToollist);
+            await _context.SaveChangesAsync();
+
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = "已成為朋友";
+
+            return Ok(result);
+        }
+
+        [HttpPost("GetToollist")]
+        public async Task<ActionResult<IEnumerable<ResultGetUserToolList>>> GetToollist(ParasUserFriendList paras)
+        {
+    
+
+
+
+            List<UserToollist> toollists = new List<UserToollist>();
+            var usertoollist = await _context.UserToollist.Where(f=>f.userid==paras.userid).ToListAsync();
+
+
+            foreach (var tools in usertoollist)
+            {
+                UserToollist tool = new UserToollist();
+
+                tool.userid = tools.userid;
+                tool.toolname = tools.toolname;
+                tool.number = tools.number;
+                tool.id = tools.id;
+
+                toollists.Add(tool);
+            }
+
+            return Ok(toollists);
         }
 
     }

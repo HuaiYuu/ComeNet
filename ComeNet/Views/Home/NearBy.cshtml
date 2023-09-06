@@ -506,6 +506,8 @@
             cursor: pointer;
         }
 </style>
+
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
@@ -564,8 +566,8 @@
 
     var h2Content=null;
 
-    function createactivity() 
-    {        
+   function createactivity() 
+   {        
             event.preventDefault();
             console.log(h2Content);      
             var eventDate = document.getElementById('eventDate').value;
@@ -698,9 +700,7 @@
     }  
 
     var myHeaders = new Headers();
-
-    myHeaders.append("Content-Type", "application/json");
-   
+    myHeaders.append("Content-Type", "application/json");   
     var raw = JSON.stringify({
         "userid": @id,
     });

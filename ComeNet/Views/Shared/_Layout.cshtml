@@ -70,7 +70,7 @@
                         <li><a asp-action="LOGIN" class="nav-item nav-link">Log In</a></li>
 
                     }
-                    <p id="user">@id</p>
+                    <p style="display:none" id="user">@id</p>
                 </ul>
             </div>
         </div>
@@ -94,7 +94,7 @@
                 <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">誰在附近?</a></div></li>
                 <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">好友</a></div></li>
                 <li><i class="fa fa-comments icon2"></i><div><a href="#">訊息</a></div></li>
-                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://localhost:7136/home/friends">圖片</a></div></li>
+                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://localhost:7136/home/card">道具卡片</a></div></li>
                 <li><i class="fa fa-user-plus icon4"></i><div><a href="https://localhost:7136/home/Suggestion">抽卡</a></div></li>
                 <li><i class="fa fa-clock-o icon6"></i><div><a href="https://localhost:7136/home/LimitedTimeEvent">限時專區</a></div></li>
             </ul>           
@@ -1075,8 +1075,7 @@
                 data.offlineuser.forEach(member =>{
 
                     var useroffHtml = `
-                                                    <li id="chatroomuserid">
-                                                             
+                                                    <li id="chatroomuserid">                                                             
                                                             <a title=${member.Id}>
                                                                 <img style="border: solid;" id="chatroom" src="${member.picture}" alt=${member.Id} class="img-responsive profile-photo">
                                                                      <span class="offline-dot"></span>

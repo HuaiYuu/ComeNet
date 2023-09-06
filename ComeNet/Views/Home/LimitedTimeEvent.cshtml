@@ -6,8 +6,18 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-<div id="remainingTime"></div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+<div style="margin-top:-8%" id="remainingTime"></div>
 <style>
+
+    .fa-spinner {
+        font-size: 100px;
+        margin-left: 45%;
+    }
+
+    .hidden{
+        display:none;
+    }
 
     #remainingTime {
         position: absolute;
@@ -32,7 +42,7 @@
         margin-top:15%;
     }
 </style>
-<div style="margin-top:25%;margin-left:35%;width:100%; " class="limtform">
+<div style="margin-top:25%;margin-left:40%;width:100%; " class="limtform">
     <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
         <div class="col">
             <div class="card radius-15 bg-primary">
@@ -53,6 +63,9 @@
         </div>
         
     </div>
+</div>
+<div id="loadingContainer" class="hidden">
+<div class="fa fa-spinner fa-spin"></div>
 </div>
 <style>
     body{
@@ -90,8 +103,10 @@
     background-color: #ffc107!important;
     }
 </style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
+    loadingContainer.classList.remove('hidden');
 
     toastr.options = {
         "closeButton": false,
@@ -110,26 +125,26 @@
         "hideMethod": "fadeOut"
     }
 
-
     document.addEventListener("DOMContentLoaded", function ()
     {
-       
-        var getButton = document.getElementById("get");
-
         
+        var getButton = document.getElementById("get");
         getButton.addEventListener("click", function ()
         {            
+            
             var toolname = document.getElementById("toolname").textContent;
             console.log("Toolname: " + toolname);
-            gettool(toolname);
+
+                gettool(toolname);
+            
         });
     });
 
 
     function gettool(toolname)
     {
+        
         console.log("Toolnameapi: " + toolname);
-
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
@@ -147,9 +162,9 @@
         fetch("https://localhost:7136/home/LimitedTimeEvent", requestvideo)
             .then(response => response.json())
             .then(result => {
-
                 console.log(result.message);
-                if (result.message=="額滿")
+
+                if (result.message=="已額滿")
                 {
                     toastr["error"](result.message);
                 }
@@ -157,11 +172,13 @@
                 {
                     toastr["success"](result.message);
                 }
-               
+                loadingContainer.classList.add('hidden');
 
             })
             .catch(error => console.log('error', error));
 
+
+        
     }
 
        

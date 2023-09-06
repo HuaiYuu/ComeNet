@@ -2,24 +2,25 @@
     ViewData["Title"] = "Chat";
     var roomId = ViewBag.roomId;
     var id = ViewBag.id;
+    var notifyname = ViewBag.notifyname;
+    var picture = ViewBag.picture;
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <p style="display:none" id="roomid">@roomId</p>
-<section style="margin-left: 30%;width:100vh">
+<section style="width:80vh">
     <div class="container py-5">
         <div class="row d-flex justify-content-center">
             <div class="col-md-8 col-lg-6 col-xl-4" style="width:75%;margin-top:10%">
-                <div class="card" id="chat1" style="border-radius: 15px;">
+                <div class="card" id="chat1" style="border-radius: 15px;max-height: 60%;">
                     <div class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
                          style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                        <i class="fas fa-angle-left"></i>
-                        <p class="mb-0 fw-bold">Live chat</p>
-                        <i class="fas fa-times"></i>
+                        <img style="border: solid;" id="chatroom" src="@picture" class="img-responsive profile-photo">                                               
+                        <p id="whotochat" style="background-color:black;border-radius: 5px;" class="mb-0 fw-bold">@notifyname</p>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="overflow-y: auto;max-height:70%">
                         <div class="form-outline">
-                            <div id="chatmsg"></div>
-                            <textarea class="form-control" id="message" rows="4"></textarea>
+                            <div style="" id="chatmsg"></div>
+                            <textarea style="position:sticky;height:88px;z-index: 100;bottom: 0;" class="form-control" id="message" rows="4"></textarea>
                             <button id="sendbutton" onclick="sendMessage()" class="sendMessage">Send</button>
                         </div>
                     </div>
@@ -51,7 +52,6 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 
-
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -69,29 +69,7 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-
-    //var chat = document.getElementById("chatmsg");
-    //var messageParagraph = document.createElement('p');
-    //messageParagraph.textContent = '正在等待使用者進入聊天室.......';
-    //messageParagraph.className = 'welcomeword'; 
-    //chat.appendChild(messageParagraph);
-
-
-    //const targetElement = document.getElementById('username');
-    //const observer = new MutationObserver(function (showmsg, observer)
-    //{        
-    //    console.log('目标元素的值已经变化了！');        
-    //});
-
-    //const config = { characterData: true, subtree: true };
-    //observer.observe(targetElement, config);
-    //setTimeout(function () 
-    //{
-    //    showmsg();
-    //}, 3000); 
     getmessage();
-
-  
     function sendMessage()
     {
         var username = document.getElementById('username');
@@ -164,7 +142,5 @@
             .catch(error => console.log('error', error));
            $("#message").val("");
     }
-
-   
 
 </script>

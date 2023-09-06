@@ -183,7 +183,21 @@ namespace ComeNet.Models
         public string articleContent { get; set; }
         public string userId { get; set; }
     }
-	public class ChatContext
+    public class Toollist
+    {
+        public int id { get; set; }
+        public string toolname { get; set; }
+        public int number { get; set; }
+    }
+    public class UserToollist
+    {
+        public int id { get; set; }
+        public int userid { get; set; }
+        public string toolname { get; set; }
+        public int number { get; set; }
+    }
+    
+    public class ChatContext
 	{
 		public string name { get; set; }
 		public string message { get; set; }
@@ -206,7 +220,6 @@ namespace ComeNet.Models
         public string userId { get; set; }
         public string username { get; set; }       
     }
-
     public class MessageContext
     {
         public int Id { get; set; }

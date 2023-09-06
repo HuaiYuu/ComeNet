@@ -6,9 +6,12 @@ using ComeNet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
 using Sprache;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using WebRTC.Hubs;
@@ -59,7 +62,16 @@ namespace ComeNet.Controllers
             ViewBag.id = id;
 
             return View();
-        }        
+        }
+        public IActionResult Card()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+
+            return View();
+        }
         public IActionResult Index()
         {
             var name = HttpContext.Session.GetString("name");
@@ -167,7 +179,7 @@ namespace ComeNet.Controllers
         }
 
         [HttpGet("/ChatRoom/{roomId}")]
-        public IActionResult ChatRoom(string roomId)
+        public async Task<IActionResult> ChatRoom(string roomId)
         {
 
             var name = HttpContext.Session.GetString("name");
@@ -176,6 +188,24 @@ namespace ComeNet.Controllers
             ViewBag.Name = name;
             ViewBag.id = id;
             ViewBag.roomId = roomId;
+
+            string[] users = roomId.Split("8507");
+            string notifyid = "";
+
+            if (id == users[0])
+            {
+                notifyid = users[1];
+            }
+            else if (id == users[1])
+            {
+                notifyid = users[0];
+            }
+
+
+            var userprofile = _context.User.Where(f => f.id == Convert.ToInt16(notifyid)).FirstOrDefault();
+
+            ViewBag.notifyname = userprofile.name;
+            ViewBag.picture = userprofile.picture;
 
             return View();           
         }
@@ -246,25 +276,77 @@ namespace ComeNet.Controllers
         [HttpPost]
         public IActionResult LimitedTimeEvent([FromBody] ParasLimitedTimeEvent paras)
         {
-
+            DotNetEnv.Env.Load();
+            string connString = Environment.GetEnvironmentVariable("CONNECTION_STRING"); ;
 
             ResultCreateActivity result = new ResultCreateActivity();
 
-
-
             int num = requestQueue.Count();
 
-            if(num > 0) 
+            if(num < 0) 
             {
                 result.message = "額滿";                
             }
             else
             {
-                ToolRequest toolRequest = new ToolRequest();
-                toolRequest.ToolName = paras.toolname;
-                toolRequest.ReceiverUserId = paras.userid;
-                requestQueue.Enqueue(toolRequest);
-                result.message = "成功";
+
+
+                //ToolRequest toolRequest = new ToolRequest();
+                //toolRequest.ToolName = paras.toolname;
+                //toolRequest.ReceiverUserId = paras.userid;
+                //requestQueue.Enqueue(toolRequest);
+                //result.message = "成功";
+
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+
+                    using (SqlTransaction transaction = conn.BeginTransaction())
+                    {
+
+                        var id = HttpContext.Session.GetString("id");
+                        int newTicketCount = 0;
+                        int currentTicketCount = 0;
+                            try
+                            {
+                                // 選擇並鎖定特定行
+                                string selectSql = string.Format("SELECT * FROM Toollist WITH (UPDLOCK) WHERE Toolname=N'{0}';", paras.toolname);
+                                SqlCommand selectCmd = new SqlCommand(selectSql, conn, transaction);
+                                SqlDataReader reader = selectCmd.ExecuteReader();
+
+                            if (id == "18")
+                            {
+                                Thread.Sleep(10000);
+                            }
+
+                            while (reader.Read())
+                                {
+                                    currentTicketCount = (int)reader["number"];                                   
+                                    newTicketCount = currentTicketCount - 1;
+                                }
+                                reader.Close();
+                            if (currentTicketCount < 1)
+                            {
+                                transaction.Rollback();
+                                result.message = "已額滿";
+                                return Ok(result);
+                            }
+                            string updateSql = string.Format("UPDATE Toollist SET number = {1} WHERE Toolname=N'{0}';", paras.toolname, newTicketCount);
+                                SqlCommand updateCmd = new SqlCommand(updateSql, conn, transaction);
+                                updateCmd.ExecuteNonQuery();
+                                transaction.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                               // return RedirectToAction("Login", "Home");
+                                throw ex;
+                            }
+
+                       
+                       
+                    }
+                }
             }
 
             //while (true)

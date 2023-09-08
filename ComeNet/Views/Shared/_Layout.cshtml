@@ -2,7 +2,6 @@
     var name = ViewBag.name;
     var id = ViewBag.id;
 }
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,7 +60,7 @@
                     @if (name != null)
                     {
                         <li style="margin-left:300px; color:black"><a class="nav-item nav-link">Welcome!</a></li>
-                        <li><a asp-action="#" id="username" style="color:orange" class="nav-item nav-link">@name</a></li>
+                        <li><a asp-action="#" id="username" style="color:black" class="nav-item nav-link">@name</a></li>
                         <li><a asp-action="LOGOUT" class="nav-item nav-link">Log Out</a></li>
                     }
                     else
@@ -77,36 +76,34 @@
     </nav>
     <div style="display:flex">
      
-       
     </div>
     
 </header>
-<body style="background-color:#5bc0de">
-    <div style="display:flex; width: 95vw; position: relative;">
-        <div class="col-md-4 static sidebarmenu">
+<body style="">
+    <div class="bigbox">
+        <div class="menubar static">
             <div class="profile-card">                
                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="profile-photo">
                 <h5><a href="#" class="text-white">@name</a></h5>
                 <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
             </div>
             <ul class="nav-news-feed">
-                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://johnny666.online/home/activitylist">活動列表</a></div></li>
-                <li><i class="fa fa-users icon2"></i><div><a href="https://johnny666.online/home/nearby">誰在附近?</a></div></li>
-                <li><i class="fa fa-user icon3"></i><div><a href="https://johnny666.online/home/friends">好友</a></div></li>
-                <li><i class="fa fa-comments icon2"></i><div><a href="#">訊息</a></div></li>
-                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://johnny666.online/home/card">道具卡片</a></div></li>
-                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://johnny666.online/home/Suggestion">抽卡</a></div></li>
-                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://johnny666.online/home/LimitedTimeEvent">限時專區</a></div></li>
+                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">活動列表</a></div></li>
+                <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">誰在附近?</a></div></li>
+                <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">好友</a></div></li>
+                <li><i class="fa fa-comments icon2"></i><div><a href="https://localhost:7136/home/message">訊息</a></div></li>
+                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://localhost:7136/home/card">道具卡片</a></div></li>
+                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://localhost:7136/home/Suggestion">抽卡</a></div></li>
+                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://localhost:7136/home/LimitedTimeEvent">限時專區</a></div></li>
             </ul>           
         </div>
-        <div style="width:100vh !important;">
+        <div style="width:120vh;">
             @RenderBody()
-        </div>
-       
-        <div class="kk">
+        </div>       
+        <div style="max-height:100%;">
             <button id="toggle-sidebar">好友列表</button>
-            <div class="sidebar">
-                <div id="chat-block">
+            <div class="sidebar sidebar-expanded ">
+                <div id="chat-block" class="friendlistbar">
                     <div class="title">上線中</div>
                     <ul id="onlineuser" class="online-users list-inline">
                                                        
@@ -130,10 +127,6 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 <style>
-
-    @@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800');
-    @@import url('https://fonts.googleapis.com/css?family=Lobster');
-
     html {
         font-size: 62.5%;
     }
@@ -200,15 +193,23 @@
             -ms-transform: scaleX(1);
             transform: scaleX(1);
         }
+</style>
+<style>
 
-    .overlay::after {
+    @@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700,800');
+    @@import url('https://fonts.googleapis.com/css?family=Lobster');
+
+  
+
+    .overlay::after 
+    {
         content: '';
-        /* position: absolute;*/
+        position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
         top: 0;
-        /* background-color: rgba(0, 0, 0, .3);*/
+        /*background-color: rgba(0, 0, 0, .3);*/
     }
 
     
@@ -239,6 +240,7 @@
         width: 100%;
         transition: background 0.6s ease-in;
         z-index: 99999;
+        background-color:orange;       
     }
 
         .navbar .navbar-brand {
@@ -304,7 +306,8 @@
         font-size: 1.6rem;
     }
 
-        .navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover {
+        .navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover 
+        {
             color: #fff;
         }
 
@@ -316,7 +319,7 @@
         .navbar .dropdown-menu .dropdown-item {
             position: relative;
             padding: 10px 20px;
-            color: #fff;
+            color: white;
             font-size: 1.4rem;
             border-bottom: 1px solid rgba(255, 255, 255, .1);
             transition: color 0.2s ease-in;
@@ -366,7 +369,7 @@
         padding: 120px 0;
     }
 
-    @@media screen and (max-width: 768px) {
+   /* @@media screen and (max-width: 768px) {
         .navbar-brand {
             margin-left: 50px;
         }
@@ -500,7 +503,7 @@
             transform: scaleY(1);
         }
     }
-
+*/
     
 
    
@@ -541,15 +544,7 @@
    
 </style>
 <style>
-    body {
-        margin-top: 20px;
-        background: #FAFAFA;
-    }
-    /*==================================================
-      Newsfeed Left Sidebar
-      ==================================================*/
-
-    /*Profile Card CSS*/
+   
 
     .profile-card {
         background: linear-gradient(to bottom, rgba(39,170,225,.8), rgba(28,117,188,.8));
@@ -581,13 +576,13 @@
             font-size: 12px;
         }
 
-    /*Newsfeed Links CSS*/
+  
 
     ul.nav-news-feed {
         padding-left: 20px;
         padding-right: 20px;
         margin: 0 0 40px 0;
-        background: #fff;
+        background: #ffe!important;    /*////sidebarmenu 顏色*/
         padding-top: 20px;
     }
 
@@ -646,13 +641,15 @@
         color: #9e1f63;
     }
 
-    /*Chat Block CSS*/
+    
 
-    #chat-block {
-        margin: 0 0 40px 0;
+    #chat-block {      
         text-align: center;
         background: #fff;
-        padding-top: 20px;
+      /*  padding-top: 20px;*/
+        border-radius: 15px;
+        border:solid 1px black;
+        
     }
 
         #chat-block .title {
@@ -752,13 +749,22 @@
 
 </style>
 <style>
-   
-    .sidebar {
-        width: 0;
-        overflow: hidden;
-        transition: width 0.3s ease-in-out;
-        float: left; 
+
+
+
+
+    .menubar {
+        flex: 0 0 auto;
+        width: 20%;
     }
+
+    .friendlistbar
+    {
+       
+    }
+
+   
+   
 
     
     #toggle-sidebar {
@@ -770,24 +776,47 @@
     }
 
 
+    .bigbox
+    {
+        display: flex;
+        align-items:flex-start;
+        width: 100vw;
+        margin-top:5%;
+        position: relative;
+        height:80vh;
+    }
 
-    .kk {      
-     
-        max-height:100%; 
+
+    /*聊天列表*/
+
+    .kk      
+    {              
         overflow-y: auto;        
         top:9%;
         position: absolute;
         right: -45;
-       /* margin: 0;*/*/
+    /*   /* margin: 0;*/*/
        /* padding: 0;*/
-        outline: red 3px solid;
+      /*  outline: red 3px solid;*/*/
+    }
+
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+        float: initial;
     }
 
     .sidebar-expanded {
         width: 300px;
         background-color: #f0f0f0;
-        border-left: 1px solid #ccc; 
+        border-left: 1px solid #ccc;
+        max-height: 100%;
+        overflow-y: auto;
+        max-height: 90%;
     }
+
+   
 
     .content {
         flex: 1;
@@ -980,7 +1009,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://johnny666.online/api/users/CreateChatRoom",requestroomid)
+        fetch("https://localhost:7136/api/users/CreateChatRoom",requestroomid)
             .then(response => response.json())
             .then(result => {
 
@@ -989,11 +1018,11 @@
                     roomId = result.message;
                     console.log(roomId);
 
-                    window.location.href = 'https://johnny666.online/chatroom/' + roomId;
+                    window.location.href = 'https://localhost:7136/chatroom/' + roomId;
 
                     var rawvideo = JSON.stringify({
                         "articleHeading": formattedDateTime + "您有新訊息",
-                        "articleContent": "https://johnny666.online/chatroom/" + roomId,
+                        "articleContent": "https://localhost:7136/chatroom/" + roomId,
                         "userId": memberId,
                     });
                     var requestvideo = {
@@ -1003,7 +1032,7 @@
                         redirect: 'follow'
                     };
 
-                    fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
+                    fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
                         .then(response => response.json())
                         .then(result => {
 
@@ -1051,7 +1080,7 @@
             body: raw,
             redirect: 'follow'
         };
-        fetch("https://johnny666.online/api/users/GetOnlineUser", requestOptions)
+        fetch("https://localhost:7136/api/users/GetOnlineUser", requestOptions)
             .then(response => response.json())
             .then(data => 
             {    

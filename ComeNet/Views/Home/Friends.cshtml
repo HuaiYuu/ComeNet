@@ -9,30 +9,24 @@
 	<link rel="stylesheet" href="~/ComeNet.styles.css" asp-append-version="true" />
 </head>
 
-	<section id="team" class="team_area section-padding">
+<section id="team" class="team_area section-padding">
 		<div class="container">
 		<div id="pagination"></div>
 			<h2 class="title_spectial">好友列表</h2>
-			<div class="row text-center" id="team-members">
+			<div class="row text-center space" id="team-members">
 			</div>
 		</div>
 	</section>
 
 <style>
-	#team 
+	
+	.space
 	{
-		margin-top:15%;
+		
+		justify-content: space-around;
 	}
 
-
-
-
-
-	body{
-		margin-top:20px;
-background:rgb(238, 238, 238, 0.6);
-color: #9aa9c1;
-}
+	
 a{
 text-decoration:none;
 }
@@ -242,7 +236,7 @@ display: inline-block;
 			redirect: 'follow'
 		};
 
-		fetch("https://johnny666.online/api/users/friendlist", requestOptions)
+		fetch("https://localhost:7136/api/users/friendlist", requestOptions)
 			.then(response => response.json())
 			.then(data => {
 
@@ -272,7 +266,7 @@ display: inline-block;
 									</div>
 										<ul class="social">
 												<li><a id="videochat" data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
-												<li><a href="https://johnny666.online/Home/"  class="fa fa-phone fa-2x phone"></a></li>
+												<li><a href="https://localhost:7136/Home/"  class="fa fa-phone fa-2x phone"></a></li>
 												<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
 									</ul>
 								</div>
@@ -330,7 +324,7 @@ display: inline-block;
 			myHeaders.append("Content-Type", "application/json");
 			var rawvideo = JSON.stringify({
 				"articleHeading": formattedDateTime + " 視訊邀請",
-				"articleContent": "https://johnny666.online/18",
+				"articleContent": "https://localhost:7136/18",
 				"userId": memberId,
 			});
 			var requestvideo = {
@@ -340,12 +334,12 @@ display: inline-block;
 				redirect: 'follow'
 			};
 
-			fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
+			fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
 				.then(response => response.json())
 				.then(result => {
 					if (result.userId != null) {
 						console.log(result.userId);
-						window.open('https://johnny666.online/Home/startvideochat', '_blank');
+						window.open('https://localhost:7136/Home/startvideochat', '_blank');
 					}
 					else {
 						alert('請稍等');
@@ -360,7 +354,7 @@ display: inline-block;
 		}
 		if (event.target.id === 'chat') {
 
-			window.open('https://johnny666.online/Home/chat2user', '_blank');
+			window.open('https://localhost:7136/Home/chat2user', '_blank');
 
 		}
 	});

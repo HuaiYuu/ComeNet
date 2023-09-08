@@ -21,7 +21,7 @@ document.addEventListener('click', function (event) {
 		myHeaders.append("Content-Type", "application/json");
 		var rawvideo = JSON.stringify({
 			"articleHeading": formattedDateTime + "聊天室邀請",
-			"articleContent": "https://johnny666.online/chatroom/19",
+			"articleContent": "https://localhost:7136/chatroom/19",
 			"userId": memberId,
 		});
 		var requestvideo = {
@@ -31,7 +31,7 @@ document.addEventListener('click', function (event) {
 			redirect: 'follow'
 		};
 
-		fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
+		fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
 			.then(response => response.json())
 			.then(result => {
 				if (result.userId != null)
@@ -46,6 +46,6 @@ document.addEventListener('click', function (event) {
 	}
 	if (event.target.id === 'chat')
 	{
-		window.open('https://johnny666.online/Home/chat2user', '_blank');
+		window.open('https://localhost:7136/Home/chat2user', '_blank');
 	}
 });

@@ -20,6 +20,7 @@ namespace ComeNet.Models
         public string interest { get; set; }
         public int age { get; set; }
         public string horoscope { get; set; }
+        public string job { get; set; }
         public string answer { get; set; }
         public string question { get; set; }
         public string latitude { get; set; }

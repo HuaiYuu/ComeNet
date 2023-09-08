@@ -83,7 +83,7 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
             redirect: 'follow'
         };
 
-        fetch("https://johnny666.online/api/users/CreateActivityPeople", actrequestOptions)
+        fetch("https://localhost:7136/api/users/CreateActivityPeople", actrequestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.message == "ok")

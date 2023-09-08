@@ -545,7 +545,7 @@
 
   .col-md-4 {
     flex: 0 0 auto;
-    width: 33.33333333%;
+    width: 20%;
   }
 
   .col-md-5 {
@@ -715,6 +715,10 @@
     flex: 0 0 auto;
     width: 50%;
   }
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
 
   .row-cols-lg-3 > * {
     flex: 0 0 auto;
@@ -973,6 +977,11 @@
     flex: 0 0 auto;
     width: 33.33333333%;
   }
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+   
 
   .col-xl-5 {
     flex: 0 0 auto;
@@ -1202,6 +1211,10 @@
     width: 58.33333333%;
   }
 
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
   .col-xxl-8 {
     flex: 0 0 auto;
     width: 66.66666667%;

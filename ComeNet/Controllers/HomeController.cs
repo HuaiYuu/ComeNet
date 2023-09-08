@@ -114,6 +114,14 @@ namespace ComeNet.Controllers
         {
             return View();
         }
+        public IActionResult Message()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+            return View();
+        }
         public IActionResult Suggestion()
         {
             var name = HttpContext.Session.GetString("name");
@@ -237,6 +245,7 @@ namespace ComeNet.Controllers
                 user.picture = "https://schoolvoyage.ga/images/123498.png";
                 user.age = paras.age;
                 user.horoscope = paras.horoscope;
+                user.job=paras.job;
                 user.answer = paras.answer;
                 user.question = paras.question;
                 user.gender = paras.gender;
@@ -261,7 +270,7 @@ namespace ComeNet.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = "使用者信箱已被註冊" });
+                return BadRequest(new { message = ex.Message });
             }
             var token = _userService.Authenticate(paras.email, hashedPassword);
 
@@ -301,7 +310,7 @@ namespace ComeNet.Controllers
                 {
                     conn.Open();
 
-                    using (SqlTransaction transaction = conn.BeginTransaction())
+                    using (SqlTransaction transaction = conn.BeginTransaction(System.Data.IsolationLevel.Serializable))
                     {
 
                         var id = HttpContext.Session.GetString("id");
@@ -310,14 +319,14 @@ namespace ComeNet.Controllers
                             try
                             {
                                 // 選擇並鎖定特定行
-                                string selectSql = string.Format("SELECT * FROM Toollist WITH (UPDLOCK) WHERE Toolname=N'{0}';", paras.toolname);
+                                string selectSql = string.Format("SELECT number FROM Toollist WITH (UPDLOCK,HOLDLOCK) WHERE  id=1;");
                                 SqlCommand selectCmd = new SqlCommand(selectSql, conn, transaction);
                                 SqlDataReader reader = selectCmd.ExecuteReader();
 
-                            if (id == "18")
-                            {
-                                Thread.Sleep(5000);
-                            }
+                            //if (id == "18")
+                            //{
+                            //    Thread.Sleep(5000);
+                            //}
 
                             while (reader.Read())
                                 {
@@ -331,7 +340,7 @@ namespace ComeNet.Controllers
                                 result.message = "已額滿";
                                 return Ok(result);
                             }
-                            string updateSql = string.Format("UPDATE Toollist SET number = {1} WHERE Toolname=N'{0}';", paras.toolname, newTicketCount);
+                            string updateSql = string.Format("UPDATE Toollist WITH (ROWLOCK,UPDLOCK) SET number = {1} WHERE Toolname=N'{0}' and id=1;", paras.toolname, newTicketCount);
                                 SqlCommand updateCmd = new SqlCommand(updateSql, conn, transaction);
                                 updateCmd.ExecuteNonQuery();
                                 transaction.Commit();

@@ -42,6 +42,9 @@
                 <input type="text" id="interest" asp-for="interest" class="form-control" placeholder="興趣">
             </div>
             <div class="loginbox-textbox">
+                <input type="text" id="job" asp-for="job" class="form-control" placeholder="職業">
+            </div>
+            <div class="loginbox-textbox">
                 <input type="text" id="age" class="form-control" asp-for="age" placeholder="年紀">
             </div>
             <div class="loginbox-textbox">                
@@ -68,9 +71,9 @@
             <div class="loginbox-textbox">
                 <select  id="question" asp-for="question">
                     <option value="選擇問題">選擇問題</option>
-                    <option value="問題1">問題1</option>
-                    <option value="問題2">問題2</option>
-                    <option value="問題3">問題3</option>
+                    <option value="請問你是狗派還是貓派?">請問你是狗派還是貓派?</option>
+                    <option value="喜歡甜食還是喜歡鹹食?">喜歡甜食還是喜歡鹹食?</option>
+                    <option value="最討厭的食物?">最討厭的食物?</option>
                 </select>
                 <input type="text" id="answer" asp-for=answer class="form-control" placeholder="回答">
             </div>                      
@@ -150,7 +153,7 @@
 </script>
 <style>
     body {
-        margin-top: 20px;
+        
     }
 
     .login-container {

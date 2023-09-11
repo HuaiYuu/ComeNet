@@ -22,10 +22,10 @@
                 <span class="menu-icon-bar"></span>
             </button>
             <div id="main-nav" class="collapse navbar-collapse">
-                <ul class="navbar-nav ml-auto">
-                    <li><a asp-action="index" class="nav-item nav-link active">Home</a></li>
-                    <li><a href="#" class="nav-item nav-link">About Us</a></li>
-                    <li class="dropdown">
+                <ul  class="navbar-nav ml-auto">
+                    <li style ="display:none"><a asp-action="index" class="nav-item nav-link active">Home</a></li>
+                    <li style="display:none"><a href="#" class="nav-item nav-link">About Us</a></li>
+                    <li style="display:none" class="dropdown">
                         <a href="#" class="nav-item nav-link" data-toggle="dropdown">Services</a>
                         <div class="dropdown-menu">
                             <a asp-action="Friends" class="dropdown-item">My Friends</a>
@@ -33,7 +33,7 @@
                             <a href="#" class="dropdown-item">Dropdown Item 3</a>
                         </div>
                     </li>
-                    <li class="dropdown">
+                    <li style="display:none" class="dropdown">
                         <a href="#" class="nav-item nav-link" data-toggle="dropdown">Portfolio</a>
                         <div class="dropdown-menu">
                             <a href="#" class="dropdown-item">Dropdown Item 1</a>
@@ -43,9 +43,9 @@
                             <a href="#" class="dropdown-item">Dropdown Item 5</a>
                         </div>
                     </li>
-                    <li><a href="#" class="nav-item nav-link">Contact</a></li>
-                    <li><a asp-action="chat2user" class="nav-item nav-link">Chat</a></li>
-                    <li class="nav-item me-3 me-lg-0">
+                    <li style="display:none"><a href="#" class="nav-item nav-link">Contact</a></li>
+                    <li style="display:none"><a asp-action="chat2user" class="nav-item nav-link">Chat</a></li>
+                    <li style="margin-left:150%" class="nav-item me-3 me-lg-0">
                         <div class="dropdown">
                             <a class="nav-link link-white me-3  hidden-arrow" data-bs-toggle="dropdown" href="#" id="navbarDropdownMenuLink" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -59,9 +59,9 @@
 
                     @if (name != null)
                     {
-                        <li style="margin-left:300px; color:black"><a class="nav-item nav-link">Welcome!</a></li>
-                        <li><a asp-action="#" id="username" style="color:black" class="nav-item nav-link">@name</a></li>
-                        <li><a asp-action="LOGOUT" class="nav-item nav-link">Log Out</a></li>
+                        <li style="color:black"><a class="nav-item nav-link">Welcome!</a></li>
+                        <li><a asp-action="Profile" id="username" style="color:black" class="nav-item nav-link">@name</a></li>
+                        <li><a asp-action="LOGOUT"  style="width:300px;" class="nav-item nav-link">Log Out</a></li>
                     }
                     else
                     {
@@ -83,11 +83,12 @@
     <div class="bigbox">
         <div class="menubar static">
             <div class="profile-card">                
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="user" class="profile-photo">
-                <h5><a href="#" class="text-white">@name</a></h5>
-                <a href="#" class="text-white"><i class="fa fa-user"></i> 1,299 followers</a>
+                <img id="user-picture" src="" alt="user"  class="profile-photo">
+                <h5><p class="text-white">@name</p></h5>
+                <p id="user-job" class="text-white"><i class="fa fa-user"></i></p>
             </div>
             <ul class="nav-news-feed">
+                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/Home/Profile">個人檔案</a></div></li>
                 <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">活動列表</a></div></li>
                 <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">誰在附近?</a></div></li>
                 <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">好友</a></div></li>
@@ -119,7 +120,7 @@
 </body>
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2023 - ComeNet - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2023 - COME NET - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -709,6 +710,7 @@
             }
 
     img.profile-photo {
+        
         height: 58px;
         width: 58px;
         border-radius: 50%;
@@ -882,6 +884,7 @@
     userId = @id;
     console.log(userId)
     myFunction();
+    profile();
     document.addEventListener("DOMContentLoaded", ready);
     document.getElementById("user").innerHTML = "UserId: " + userId;
     jQuery(function ($) {
@@ -1115,6 +1118,37 @@
                                                 `;
                     offlineMembers.innerHTML += useroffHtml
                 });
+
+            })
+            .catch(error => {
+                console.error('Error fetching team member data:', error);
+            });
+    }
+
+    function profile(){
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "userId": userId
+        });
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch("https://localhost:7136/api/users/GetUser", requestOptions)
+            .then(response => response.json())
+            .then(data => 
+            {
+
+
+                var info = document.getElementById("user-job");
+                info.textContent=data.job;
+
+                var imgElement = document.getElementById("user-picture");
+                imgElement.src = data.picture;
 
             })
             .catch(error => {

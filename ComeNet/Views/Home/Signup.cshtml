@@ -47,6 +47,9 @@
             <div class="loginbox-textbox">
                 <input type="text" id="age" class="form-control" asp-for="age" placeholder="年紀">
             </div>
+            <div class="loginbox-textbox">
+                <input type="text" id="birthday" class="form-control" asp-for="birthday" placeholder="生日">
+            </div>
             <div class="loginbox-textbox">                
                 <select id="horoscope" asp-for="horoscope">
                     <option value="選擇星座">選擇星座</option>
@@ -81,7 +84,7 @@
                 <a href=""></a>
             </div>
             <div class="loginbox-submit">
-                <input type="submit" class="btn btn-primary btn-block" value="SignUp">
+                <input type="submit" class="btn btn-primary btn-block" value="註冊">
             </div>
         </form>
         <div class="loginbox-signup">
@@ -89,6 +92,8 @@
         </div>
     </div>
     <div class="logobox">
+        <a asp-controller="home" asp-action="home" class="btn btn-primary btn-block"> 返回</a>
+        <a asp-controller="home" asp-action="Login" class="btn btn-primary btn-block"> 登入</a>
     </div>
 </div>
 <script>
@@ -152,13 +157,11 @@
  
 </script>
 <style>
-    body {
-        
-    }
+    
 
     .login-container {
         position: relative;
-        margin: 10% auto;
+        margin: 3% auto;
         max-width: 340px;
     }
 

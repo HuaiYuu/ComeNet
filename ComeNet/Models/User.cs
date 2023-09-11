@@ -22,9 +22,11 @@ namespace ComeNet.Models
         public string horoscope { get; set; }
         public string job { get; set; }
         public string answer { get; set; }
+        public string birthday { get; set; }
         public string question { get; set; }
         public string latitude { get; set; }
         public string longitude { get; set; }
+       
 
     }
     public class Friendlist

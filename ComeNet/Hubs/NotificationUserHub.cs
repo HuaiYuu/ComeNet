@@ -42,13 +42,13 @@ namespace ComeNet.Hubs
 			await Clients.Group(roomId).SendAsync("user-connected", userId, roomId);
 		}
 
-		//Called when a connection with the hub is terminated.
+		
 		public async override Task OnDisconnectedAsync(Exception exception)
 		{
 			//get the connectionId
 			var connectionId = Context.ConnectionId;
 			_userConnectionManager.RemoveUserConnection(connectionId);
-			var value = await Task.FromResult(0);//adding dump code to follow the template of Hub > OnDisconnectedAsync
+			var value = await Task.FromResult(0);
 		}
 	}
 }

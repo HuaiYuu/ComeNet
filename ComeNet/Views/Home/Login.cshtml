@@ -1,7 +1,11 @@
 ﻿@{
-    Layout = null;
+    Layout = null;    
 }
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -14,10 +18,9 @@
         <div class="loginbox-social">
             <div class="social-title ">Connect with Your Social Accounts</div>
             <div class="social-buttons">
-                <a href="https://www.facebook.com/v17.0/dialog/oauth?client_id=152727527773584&redirect_uri=https://localhost:7176/admin/fblogin&auth_type=rerequest&scope=email&public_profile"  class="button-facebook">
+                <a href="https://www.facebook.com/v17.0/dialog/oauth?client_id=152727527773584&redirect_uri=https://localhost:7136/Home/LOGIN&auth_type=rerequest&scope=email&public_profile" class="button-facebook">
                     <i class="social-icon fa fa-facebook"></i>
-                </a>
-               
+                </a>               
             </div>
         </div>
         <div class="loginbox-or">
@@ -30,24 +33,39 @@
         </div>
         <div class="loginbox-textbox">
                 <input type="text" id="password" class="form-control" placeholder="Password">
-        </div>
-        <div class="loginbox-forgot">
-            <a href="#">Forgot Password?</a>
-        </div>
+        </div>        
         <div class="loginbox-submit">
-                <input  type="submit" class="btn btn-primary btn-block" value="Login">
+                <input  type="submit" class="btn btn-primary btn-block" value="登入">
         </div>
-        </form>
-        <div class="loginbox-signup">
-            <a href="#register.html">Sign Up With Email</a>
-        </div>
+        </form>        
     </div>
     <div class="logobox">
+        <a asp-controller="home" asp-action="home" class="btn btn-primary btn-block"> 返回</a>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
+
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": true,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      
+    }
+
 
     document.getElementById("loginForm").addEventListener("submit", function (event)
     {
@@ -55,7 +73,7 @@
 
         if (navigator.geolocation)
         {
-            navigator.geolocation.getCurrentPosition(showPosition);
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
         } 
         else
         {
@@ -65,14 +83,7 @@
     }
     )
 
-    function getLocation() 
-    {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
-    }
+    
 
     function showPosition(position) 
     {
@@ -86,22 +97,7 @@
         var myHeaders = new Headers();
 
 
-        toastr.options = {
-            "closeButton": false,
-            "debug": true,
-            "newestOnTop": false,
-            "progressBar": false,
-            "positionClass": "toast-top-center",
-            "preventDuplicates": false,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        }
+        
 
 
 
@@ -147,8 +143,32 @@
 
     }
 
+    function showError(error)
+    {
+        switch (error.code)
+        {
+            case error.PERMISSION_DENIED:
+               // toastr.error('用戶封鎖了位置訪問權限。', '', { "toastClass": "custom-toast" });
+                alert('用戶封鎖了位置訪問權限。');
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert('位置信息不可用。');
+                break;
+            case error.TIMEOUT:
+                alert('獲取位置信息超時。');
+                break;
+            case error.UNKNOWN_ERROR:
+                alert('發生未知錯誤。');
+                break;
+        }
+    }
+
 </script>
 <style>
+
+    
+
+
     body {
         margin-top: 20px;
     }

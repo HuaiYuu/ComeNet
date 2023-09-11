@@ -1,4 +1,5 @@
 ﻿using AWSWEBAPP.Services;
+using Azure.Core;
 using ComeNet.Data;
 using ComeNet.Hubs;
 using ComeNet.Models;
@@ -9,33 +10,48 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using NuGet.Protocol;
 using Sprache;
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Net.Http;
 using WebRTC.Hubs;
 using User = ComeNet.Models.User;
 
 namespace ComeNet.Controllers
 {
 
-	public class HomeController : Controller
+    public class FBAccessToken
+    {
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public string expires_in { get; set; }
+        public string auth_type { get; set; }        
+    }
+
+
+
+    public class HomeController : Controller
     {
         private readonly ComeNetContext _context;
         private readonly ILogger<HomeController> _logger;
         private IUserService _userService;
+        private readonly HttpClient _httpClient;
         private readonly IHubContext<NotificationUserHub> _notificationUserHubContext;
 		private readonly IUserConnectionManager _userConnectionManager;
         private IPasswordHashService _passwordHashService;
         private IQueueService _queueService;
-        public HomeController(ILogger<HomeController> logger,IHubContext<NotificationUserHub> notificationUserHubContext, IUserService userService, IQueueService queueService, IUserConnectionManager userConnectionManager, ComeNetContext context, IPasswordHashService passwordHashService)
+        public HomeController(ILogger<HomeController> logger,IHubContext<NotificationUserHub> notificationUserHubContext, IUserService userService, HttpClient httpClient, IQueueService queueService, IUserConnectionManager userConnectionManager, ComeNetContext context, IPasswordHashService passwordHashService)
         {
             _context = context;
             _logger = logger;
 			_notificationUserHubContext = notificationUserHubContext;
 			_userConnectionManager = userConnectionManager;
             _userService = userService;
+            _httpClient = httpClient;
             _passwordHashService = passwordHashService;
             _queueService = queueService;
         }
@@ -76,6 +92,12 @@ namespace ComeNet.Controllers
         {
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
+
+            if(id == null)
+            {
+                return RedirectToAction("home", "Home");
+            }
+
             ViewBag.Name = name;
             ViewBag.id = id;
 
@@ -94,18 +116,119 @@ namespace ComeNet.Controllers
 		{
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
+            if (id == null)
+            {
+                return RedirectToAction("home", "Home");
+            }
             ViewBag.Name = name;
             ViewBag.id = id;
             return View();
 		}       
-        public IActionResult Login()
+        public async Task<IActionResult> Login(string code)
         {
+            string AppId = Environment.GetEnvironmentVariable("AppId");
+            string AppSecret = Environment.GetEnvironmentVariable("AppSecret");
+
+            FBAccessToken accessToken = new FBAccessToken();
+            UserProfile userProfile = new UserProfile();
+            User user = new User();
+            if (code == null) return View();
+
+
+            try
+            {
+                var data = new
+                {
+                    client_id = AppId,
+                    client_secret = AppSecret,
+                    redirect_uri = "https://localhost:7136/Home/LOGIN",
+                    code = code,
+                };
+                var content = new StringContent(JsonConvert.SerializeObject(data), System.Text.Encoding.UTF8, "application/json");
+                using (var response = await _httpClient.PostAsync("https://graph.facebook.com/v17.0/oauth/access_token", content))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        accessToken = JsonConvert.DeserializeObject<FBAccessToken>(apiResponse);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                using (var response = await _httpClient.GetAsync("https://graph.facebook.com/me?fields=id,name,email,picture&access_token=" + accessToken.access_token))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        userProfile = JsonConvert.DeserializeObject<UserProfile>(apiResponse);
+
+                        var userdata = await _context.User.Where(p => p.email == userProfile.Email).ToListAsync();
+                        if (userdata.Count == 0)
+                        {
+                            User userbyfacebook = new User();
+                            userbyfacebook.provider = "facebook";
+                            userbyfacebook.name = userProfile.Name;
+                            userbyfacebook.email = userProfile.Email;
+                            userbyfacebook.password = "*****";
+                            userbyfacebook.picture = userProfile.Picture.data.Url;
+                            userbyfacebook.age = 0;
+                            userbyfacebook.job = "";
+                            userbyfacebook.latitude = "default";
+                            userbyfacebook.longitude = "default";
+                            userbyfacebook.answer = "default";
+                            userbyfacebook.question = "default";
+                            userbyfacebook.interest = "default";
+                            userbyfacebook.gender = "default";
+                            userbyfacebook.horoscope = "default";
+                          
+                            _context.Add(userbyfacebook);
+                            await _context.SaveChangesAsync();
+
+                            return RedirectToAction("profile", "home");
+                        }
+                        else
+                        {
+                            var token = _userService.Authenticate(userProfile.Email, "*****");
+
+                            string accesstoken = token.access_token.ToString();
+                            string username = token.user.name.ToString();
+                            string email = token.user.email.ToString();
+
+                            if (token == null)
+                            {
+                                return BadRequest(new { nessage = "使用者名稱或密碼不正確" });
+                            }
+
+                            HttpContext.Session.SetString("token", accesstoken);
+                            HttpContext.Session.SetString("name", username);
+                            HttpContext.Session.SetString("email", email);
+
+                        }
+
+                        return RedirectToAction("index", "home");
+                    }
+                    else
+                    {
+                        return BadRequest(new { message = "" });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
             return View();
-        }       
+        }      
         public IActionResult NearBy()
         {
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
+            if (id == null)
+            {
+                return RedirectToAction("home", "Home");
+            }
             ViewBag.Name = name;
             ViewBag.id = id;
             return View();            
@@ -118,10 +241,14 @@ namespace ComeNet.Controllers
         {
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
+            if (id == null)
+            {
+                return RedirectToAction("home", "Home");
+            }
             ViewBag.Name = name;
             ViewBag.id = id;
             return View();
-        }
+        }        
         public IActionResult Suggestion()
         {
             var name = HttpContext.Session.GetString("name");
@@ -140,15 +267,46 @@ namespace ComeNet.Controllers
         }
         public IActionResult LogOut()
         {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
             HttpContext.Session.Clear();
-            return RedirectToAction("index", "Home");
+
+            var connections = _userConnectionManager.GetUserConnections(id);
+
+            if(connections != null)
+            {
+                _userConnectionManager.RemoveUserConnectionStatus(id);
+            }
+
+            return RedirectToAction("home", "Home");
         }
         public IActionResult Signup()
         {
             return View();
         }
-        public IActionResult Privacy()
+
+        public async Task<IActionResult> Profile()
         {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
+            ViewBag.message = "load";
+
+            var product = await _context.User.Where(f=>f.id== Convert.ToInt32(id)).FirstOrDefaultAsync();
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+            
+            public IActionResult Privacy()
+        {
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+            ViewBag.Name = name;
+            ViewBag.id = id;
             return View();
         }
         public IActionResult User()
@@ -280,6 +438,44 @@ namespace ComeNet.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(User paras)
+        {
+
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+
+            ViewBag.Name = name;
+            ViewBag.id = id;
+
+            var product = await _context.User.Where(f => f.id == Convert.ToInt32(paras.id)).FirstOrDefaultAsync();
+
+            product.email=paras.email;
+            product.age = paras.age;
+            product.job = paras.job;
+            product.horoscope = paras.horoscope;
+            product.gender = paras.gender;
+            product.name = paras.name;
+            product.interest = paras.interest;
+            
+
+
+            try
+                {
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                    ViewBag.message = "修改成功";
+            }
+                catch (DbUpdateConcurrencyException)
+                {
+                ViewBag.message = "修改失敗";
+            }
+              
+         
+            return View(product);
+        }
+
         private static readonly Queue<ToolRequest> requestQueue = new Queue<ToolRequest>();
 
         [HttpPost]
@@ -375,6 +571,8 @@ namespace ComeNet.Controllers
             //}
             return Ok(result);
         }
+
+        
 
         public IActionResult Chat2user()
         {

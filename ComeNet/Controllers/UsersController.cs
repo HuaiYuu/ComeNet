@@ -85,8 +85,6 @@ namespace ComeNet.Controllers
 
       
     }
-
-  
     public class ParasUserFriendList
     {
         public int userid { get; set; }       
@@ -212,14 +210,17 @@ namespace ComeNet.Controllers
             _queueService = queueService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        [HttpPost("GetUser")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser(ParasUserFriendList paras)
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
-            return await _context.User.ToListAsync();
+            var userprofile = await _context.User.FirstOrDefaultAsync(f => f.id == paras.userid);
+
+            if (userprofile == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userprofile);
         }
 
         [HttpPost("SendToSpecificUser")]

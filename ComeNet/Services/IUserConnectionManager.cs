@@ -4,7 +4,10 @@
 	{
 		void KeepUserConnection(string userId, string connectionId);
 		void RemoveUserConnection(string connectionId);
-		List<string> GetUserConnections(string userId);
+
+		void RemoveUserConnectionStatus(string logoutuserid);
+
+        List<string> GetUserConnections(string userId);
         List<string> GetAllUsers();
     }
 
@@ -25,11 +28,20 @@
 				userConnectionMap[userId].Add(connectionId);
 			}
 		}
-        
+
+        public void RemoveUserConnectionStatus(string logoutuserid)
+        {
+
+            lock (userConnectionMapLocker)
+            {
+             userConnectionMap.Remove(logoutuserid);
+            }
+        }
+
 
         public void RemoveUserConnection(string connectionId)
 		{
-			//Remove the connectionId of user 
+			
 			lock (userConnectionMapLocker)
 			{
 				foreach (var userId in userConnectionMap.Keys)
@@ -38,8 +50,8 @@
 					{
 						if (userConnectionMap[userId].Contains(connectionId))
 						{
-							userConnectionMap[userId].Remove(connectionId);
-							break;
+							userConnectionMap[userId].Remove(connectionId);							
+                            break;
 						}
 					}
 				}
@@ -47,6 +59,11 @@
 		}
 		public List<string> GetUserConnections(string userId)
 		{
+			if(userId == null)
+			{
+                return null;
+            }
+
 			var conn = new List<string>();
 			lock (userConnectionMapLocker)
 			{

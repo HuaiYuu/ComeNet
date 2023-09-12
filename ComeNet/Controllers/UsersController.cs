@@ -118,7 +118,11 @@ namespace ComeNet.Controllers
     {
         public int userid { get; set; }
         public string toolname { get; set; }        
-    }   
+    }
+    public class ParasGetVideoUser
+    {
+        public string connectionId { get; set; }
+    }
     public class Userfriend
 	{
 		public int id { get; set; }
@@ -226,19 +230,44 @@ namespace ComeNet.Controllers
         [HttpPost("SendToSpecificUser")]
         public async Task<ActionResult> SendToSpecificUser(Article model)
         {
-            var connections = _userConnectionManager.GetUserConnections(model.userId);
-            if (connections != null && connections.Count > 0)
+            var id = HttpContext.Session.GetString("id");
+
+            ResultCreateActivity resultmsg = new ResultCreateActivity();
+            try
             {
-                foreach (var connectionId in connections)
+                var connections = _userConnectionManager.GetUserConnections(model.userId);
+                if (connections != null && connections.Count > 0)
                 {
-                    await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
+                    foreach (var connectionId in connections)
+                    {
+                        await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("sendToUser", model.articleHeading, model.articleContent);
+                    }
+                    resultmsg.message = "ok";
                 }
             }
-            ResultCreateActivity result = new ResultCreateActivity();
-            result.message = connections.ToString();
+            catch
+            {
+                resultmsg.message = "用戶不在線上";
+            }
 
 
-            return Ok(result);
+                var username = await _context.User
+               .Where(f => f.id == Convert.ToInt16(id))
+               .Select(f => f.name)
+               .FirstAsync();
+
+
+            UserMessage message = new UserMessage();
+            message.name = username;
+            message.title = model.articleHeading;
+            message.message = model.articleContent;
+            message.datetime = DateTime.Now;
+            message.receiverid = Convert.ToInt16(model.userId);
+
+            _context.UserMessage.Add(message);
+            await _context.SaveChangesAsync();
+
+            return Ok(resultmsg);
         }
 
 		[HttpPost("ChatToSpecificUser")]
@@ -525,7 +554,7 @@ namespace ComeNet.Controllers
                     {
                         foreach (var connectionId in connections)
                         {
-                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", paras.activityname, paras.location + "," + paras.date + " " + paras.time, getactivityid[0]);
+                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", paras.activityname, paras.location + "," + paras.date + " " + paras.time, getactivityid[0]);                            
                         }
                     }
                 }
@@ -861,11 +890,31 @@ namespace ComeNet.Controllers
         public async Task<ActionResult<IEnumerable<MessageContext>>> GetUserChatContext(ParasChatContext paras)
         {
 
+            var name = HttpContext.Session.GetString("name");
+            var id = HttpContext.Session.GetString("id");
+
+
+            string notifyid = "";
+            string[] users = paras.roomId.ToString().Split("8507");
+
+            
+
+            for (int i = 0; i < users.Count(); i++)
+            {
+                var username = await _context.User
+                .Where(f => f.id == Convert.ToInt16(users[i]))
+                .Select(f => f.name)
+                .FirstAsync();
+                users[i] = username;
+            }
+
+            string useraim = users[0];
+            string usermain = users[1];
 
 
 
-            string user1 = "Demo";
-            string user2 = "Demo1";
+            string user1 = useraim;
+            string user2 = usermain;
             string chatcontext = "";
 
             StringBuilder chatHtml = new StringBuilder();
@@ -1048,6 +1097,51 @@ namespace ComeNet.Controllers
 
 
             return Ok(result);
+        }
+
+        [HttpPost("GetVideoUser")]
+        public async Task<ActionResult> GetVideoUser(ParasGetVideoUser paras)
+        {
+
+            string retrievedValue;
+
+            if (RealUsers.Userlist.TryGetValue(paras.connectionId, out retrievedValue))
+            {                
+                Console.WriteLine($"对应的值是：{retrievedValue}");
+            }
+            else
+            {
+               
+            }
+
+
+            ResultCreateActivity result = new ResultCreateActivity();
+            result.message = "已成為朋友";
+
+            return Ok(result);
+        }
+
+
+        [HttpPost("GetUserMessage")]
+        public async Task<ActionResult<IEnumerable<ResultGetUserToolList>>> GetUserMessage(ParasUserFriendList paras)
+        {
+            List<UserMessage> messagelists = new List<UserMessage>();
+            var usermessagelist = await _context.UserMessage.Where(f => f.receiverid == paras.userid).ToListAsync();
+
+            foreach (var message in usermessagelist)
+            {
+                UserMessage msg = new UserMessage();
+
+                msg.name = message.name;
+                msg.datetime = message.datetime;
+                msg.message = message.message;
+                msg.title = message.title;
+
+
+                messagelists.Add(msg);
+            }
+
+            return Ok(messagelists);
         }
 
     }

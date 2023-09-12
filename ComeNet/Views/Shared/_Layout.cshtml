@@ -370,7 +370,7 @@
         padding: 120px 0;
     }
 
-   /* @@media screen and (max-width: 768px) {
+    @@media screen and (max-width: 768px) {
         .navbar-brand {
             margin-left: 50px;
         }
@@ -504,7 +504,7 @@
             transform: scaleY(1);
         }
     }
-*/
+
     
 
    
@@ -521,8 +521,8 @@
         font-size: 58px;
         line-height: 101.8%;
         /* or 59px */
-        letter-spacing: -0.01em;
-        color: #1A1D32;
+        /*letter-spacing: -0.01em;*/
+        /*color: #1A1D32;*/
     }*/
 
     
@@ -910,10 +910,10 @@
                 dropdown = $('.dropdown'),
                 dropdownMenu = $('.dropdown-menu');
 
-            if (winWidth >= 768) {
-                dropdown.on('mouseenter', function () {
-
-
+            if (winWidth >= 0)
+            {
+                dropdown.on('mouseenter', function () 
+                {
 
                     $(this).addClass('show')
                         .children(dropdownMenu).addClass('show');
@@ -927,7 +927,8 @@
                     $(this).removeClass('show')
                         .children(dropdownMenu).removeClass('show');
                 });
-            } else {
+            } else
+            {
                 dropdown.off('mouseenter mouseleave');
             }
         }
@@ -937,7 +938,6 @@
         adjustNav();
 
     });
-
     //setInterval(myFunction, 10000); 
     
    

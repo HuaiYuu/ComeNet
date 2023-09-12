@@ -1,44 +1,60 @@
 ﻿"use strict";
 var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationUserHub?userId=" + userId).build();  
 
+
+console.log("gogogo");
+
+
 connection.on('user-connected', (id, roomid) =>
 {
     /*if (userId === id) return;*/
     console.log(`User connected: ${id}`);
     console.log(`User connected: ${roomid}`);
-    conectNewUser(id, localStream)
-
+   
+    
 })
-connection.on("sendToUser", (articleHeading, articleContent) => {
-    // 創建 li 元素來容納訊息
-    var li = document.createElement("li");
-    li.classList.add("dropdown-item"); // 添加選單項目的樣式
+connection.on("sendToUser", (articleHeading, articleContent) =>
+{
 
-    // 創建標題元素
+    
+    var li = document.createElement("li");
+    li.classList.add("dropdown-item");
+
     var heading = document.createElement("h3");
     heading.textContent = articleHeading;
     li.appendChild(heading);
 
-    // 創建內容元素
+   
+
     var p = document.createElement("h2");
     var a = document.createElement("a");
-    a.innerText = "點選";
-    a.setAttribute("href", articleContent);
-    a.setAttribute("target", "_blank");
+    a.innerText = "前往";
+    a.href = articleContent
+
+   
+
+  
+
     p.appendChild(a);
+
     li.appendChild(p);
 
     var dropdownMenu = document.getElementById("dropdownMenu");
     dropdownMenu.appendChild(li);
 
-    // 更新通知數字
+
     var notificationBadge = document.querySelector('#notificationBadge');
     notificationBadge.textContent = "new";
     notificationBadge.classList.add('bg-danger');
 
-    
+
 
     console.log(notificationBadge);
+    
+
+   
+
+
 });
 connection.on("activityinvitation", (articleHeading, articleContent,activity) => {
     
@@ -174,12 +190,11 @@ connection.on("chatnotification", (name, message) =>
 
 });
 
-
-
 connection.start().catch(function (err)
 {
     return console.error(err.toString());
-}).then(function ()
+})
+.then(function ()
 {
     document.getElementById('user').innerHTML = 'UserId:' + userId;
     var roomid = document.getElementById('roomid');
@@ -188,7 +203,8 @@ connection.start().catch(function (err)
     connection.invoke('GetConnectionId').then(function (connectionId)
     {
         console.log(connectionId);        
-    }).catch(function (err) {
+    }).catch(function (err)
+    {
         console.error('Error invoking GetConnectionId:', err.toString());
     });
 
@@ -197,13 +213,18 @@ connection.start().catch(function (err)
         var roomId = roomid.textContent;
          
         connection.invoke('JoinRoom', roomId)
-            .then(function () {
-                // 成功加入房间后的处理
+            .then(function ()
+            {
+                
             })
             .catch(function (error) {
                 console.error('Error joining room:', error);
             });
     }
+
+    
+  
+
     
 
    

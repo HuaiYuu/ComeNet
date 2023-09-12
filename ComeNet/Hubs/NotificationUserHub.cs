@@ -1,6 +1,7 @@
 ﻿using ComeNet.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using System.Net.Http;
 using WebRTC.Hubs;
 
 namespace ComeNet.Hubs
@@ -20,8 +21,7 @@ namespace ComeNet.Hubs
 			
             _userConnectionManager.KeepUserConnection(userId, Context.ConnectionId);
 
-			//Groups.AddToGroupAsync(Context.ConnectionId, roomid);
-			//Clients.Group(roomid).SendAsync("user-connected", userId);
+			
 
 			return Context.ConnectionId;
 		}
@@ -39,11 +39,11 @@ namespace ComeNet.Hubs
             var httpContext = this.Context.GetHttpContext();
             var userId = httpContext.Request.Query["userId"];
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-			await Clients.Group(roomId).SendAsync("user-connected", userId, roomId);
-		}
+			await Clients.Group(roomId).SendAsync("user-connected", userId, roomId);           
+        }
+        
 
-		
-		public async override Task OnDisconnectedAsync(Exception exception)
+        public async override Task OnDisconnectedAsync(Exception exception)
 		{
 			//get the connectionId
 			var connectionId = Context.ConnectionId;

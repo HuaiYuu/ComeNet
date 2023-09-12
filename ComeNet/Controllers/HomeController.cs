@@ -284,7 +284,6 @@ namespace ComeNet.Controllers
         {
             return View();
         }
-
         public async Task<IActionResult> Profile()
         {
             var name = HttpContext.Session.GetString("name");
@@ -299,9 +298,8 @@ namespace ComeNet.Controllers
                 return NotFound();
             }
             return View(product);
-        }
-            
-            public IActionResult Privacy()
+        }            
+        public IActionResult Privacy()
         {
             var name = HttpContext.Session.GetString("name");
             var id = HttpContext.Session.GetString("id");
@@ -327,8 +325,8 @@ namespace ComeNet.Controllers
 			return Redirect($"/{id}");
 		}
 
-		[HttpGet("/{roomId}")]
-		public IActionResult Room(string roomId)
+		[HttpGet("/VideoRoom/{roomId}")]
+		public IActionResult VideoRoom(string roomId)
 		{
 			var name = HttpContext.Session.GetString("name");
 			var id = HttpContext.Session.GetString("id");

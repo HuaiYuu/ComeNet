@@ -15,16 +15,14 @@
                     <table class="table manage-candidates-top mb-0">
                         <thead>
                             <tr>
-                                <th>User</th>
-                                <th class="text-center">Status</th>
-                                <th class="action text-right">Action</th>
+                                <th>附近用戶</th>                               
                             </tr>
                         </thead>
                         <tbody  id="nearbyuser">
                                                              
                         </tbody>
                     </table>
-                    <div class="text-center mt-3 mt-sm-3">
+                    @*<div class="text-center mt-3 mt-sm-3">
                         <ul class="pagination justify-content-center mb-0">
                             <li class="page-item disabled"> <span class="page-link">Prev</span> </li>
                             <li class="page-item active" aria-current="page"><span class="page-link">1 </span> <span class="sr-only">(current)</span></li>
@@ -34,7 +32,7 @@
                             <li class="page-item"><a class="page-link" href="#">25</a></li>
                             <li class="page-item"> <a class="page-link" href="#">Next</a> </li>
                         </ul>
-                    </div>
+                    </div>*@
                     <div><button id="openFormButton">發起活動</button></div>
                 </div>
             </div>
@@ -96,7 +94,7 @@
 </div>
 <div id="modalsel" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="closeindex">&times;</span>
         <h2>創立活動</h2>
         <div id="CreateActivityForm">
             <label for="eventDate">日期：</label>
@@ -127,7 +125,7 @@
     .smalltopic {
         max-height: 100%;
         overflow-y: auto;
-        width: 100vh;
+        width: 100%;
     }
     .modalsel {
         display: none;
@@ -156,6 +154,20 @@
         float: right;
         font-size: 28px;
         font-weight: bold;
+    }
+
+    .closeindex {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .closeindex:hover,
+        .closeindex:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }
 
         .close:hover,
@@ -522,7 +534,8 @@
     const modal = document.getElementById('modal');
     const modalsel = document.getElementById('modalsel');  
     const closeButtons = document.getElementsByClassName('close');
-
+    const closeindexButtons = document.getElementsByClassName('closeindex');
+  
     
     openFormButton.addEventListener('click', function () 
     {
@@ -536,6 +549,13 @@
         {
             modal.style.display = 'none';          
         });      
+    }
+
+    for (const closeindexButton of closeindexButtons) 
+    {
+        closeindexButton.addEventListener('click', function () {
+            modalsel.style.display = 'none';
+        });
     }
 
     window.addEventListener('click', function (event) 
@@ -744,16 +764,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td class="candidate-list-favourite-time text-center">
-                                            <a class="candidate-list-favourite order-2 text-danger" href="#"><i class="fas fa-heart"></i></a>
-                                            <span class="candidate-list-time order-1"></span>
-                                        </td>
-                                        <td>
-                                            <ul class="list-unstyled mb-0 d-flex justify-content-end">
-                                                <li><a href="#" class="text-primary" data-toggle="tooltip" title="" data-original-title="view"><i class="far fa-eye"></i>邀請</a></li>
-                                            </ul>
-                                        </td>
+                                        </td>                                        
                                     </tr>`
                 const invitationHtml = `<input type="checkbox" id="${member.id}" name="person" value="${member.name}">
                                 <label for="${member.id}">${member.name}</label>

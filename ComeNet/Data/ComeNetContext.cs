@@ -22,6 +22,10 @@ namespace ComeNet.Data
         public DbSet<ComeNet.Models.Rejectlist> Rejectlist { get; set; } = default!;
         public DbSet<ComeNet.Models.Toollist> Toollist { get; set; } = default!;
         public DbSet<ComeNet.Models.UserToollist> UserToollist { get; set; } = default!;
+
+        public DbSet<ComeNet.Models.UserMessage> UserMessage { get; set; } = default!;
+
         
+
     }
 }

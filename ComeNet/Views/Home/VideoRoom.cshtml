@@ -4,14 +4,18 @@
     var id = ViewBag.id;
 }
 
-
-<div class="smalltopic">
+<section>
+    <div class="smalltopic">
         <div>
             <p style="text-align:center">RoomID:@ViewBag.roomId</p>
         </div>
-    <div style="display: flex;justify-content: space-between;" video-grid>
-            
-        </div>                   
+        <div style="display:flex;justify-content: space-around;" ;>
+            <div id="myvideogrid" style="display: flex;justify-content: space-between;" video-grid>
+            </div>
+            <div id="uservideogrid" style="display: flex;justify-content: space-between;" video-grid>
+            </div>
+        </div>
+        
         <div class="container" id="user-list" style="margin-top:5%;background-color:white">
             <div class="row">
                 <div class="col-md-8">
@@ -20,7 +24,9 @@
                 </div>
             </div>
         </div>
-    </div>   
+    </div>
+</section>
+
 <style>
 
     .smalltopic {
@@ -52,16 +58,18 @@
 <script>
 
     var username = null
-
+    var userId = '@id'
     const ROOM_ID = '@ViewBag.roomId'
     let videouser = null
     let localStream = null
     const Peers={}
 
     const vconnection = new signalR.HubConnectionBuilder()
-        .withUrl("/meeting", {  
+        .withUrl("/meeting?userId=" + userId,
+            {  
          skipNegotiation: true,
-         transport: signalR.HttpTransportType.WebSockets
+         transport: signalR.HttpTransportType.WebSockets,
+         serverTimeoutInMilliseconds: 60000 // 設定為 60 秒
         })
         .build();
     
@@ -69,18 +77,20 @@
    myPeer.on('open',id =>
    {
         videouser = id;
-        console.log(videouser)
+        
 
         const startSignalR = async () => 
         {
             await vconnection.start();
-            await vconnection.invoke("JoinRoom", ROOM_ID, videouser)
+            await vconnection.invoke("JoinRoom", ROOM_ID, videouser,'@id')
         }
         startSignalR();
    })
 
 
-   const videoGrid= document.querySelector('[video-grid]')
+   // const videoGrid= document.querySelector('[video-grid]')
+    const myvideogrid = document.getElementById('myvideogrid');
+    const uservideogrid = document.getElementById('uservideogrid');
 
    const myVideo = document.createElement('video')
     myVideo.muted =false;
@@ -92,14 +102,15 @@
       video:true
     }).then(stream =>
     {
-      addVideoStream(myVideo,stream)
+      addMyVideoStream(myVideo, stream)
       localStream=stream
-      console.log(localStream);
     })
 
 
-    vconnection.on('user-connected', id => {
-        console.log("123");
+    vconnection.on('user-connected', id => 
+    {
+        
+        console.log("peerIn id:" + id);
         if(videouser === id) return;
         console.log(`User connected: ${id}`);
         conectNewUser(id,localStream)
@@ -107,8 +118,16 @@
     })
     vconnection.on('user-disconnected',id =>
     {
+
+        console.log("peerOut:" + id);
         console.log(`User disconnected: ${id}`)
-        if(Peers[id]) Peers[id].close();
+
+        if(Peers[id])
+        {
+            
+            Peers[id].close();
+        }
+      
     })
 
     myPeer.on('call',call =>
@@ -123,72 +142,86 @@
     })
 
 
-  const addVideoStream = (video,stream) =>
+  const addMyVideoStream = (video,stream) =>
   {
       video.srcObject = stream;
       video.addEventListener('loadedmetadata',() =>
       {
           video.play()
       })
-       
-      videoGrid.appendChild(video);
 
-        const existingUser = document.querySelector(`#user-list [data-stream-id="${stream.id}"]`);
-
-        if (!existingUser) 
-        {
-            var userList = document.getElementById("user-list");
-            var newUserDiv = document.createElement("div");
-            newUserDiv.classList.add("nearby-user");
-
-            newUserDiv.innerHTML = `
-                <div class="row">
-                    <div class="col-md-2 col-sm-2">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
-                    </div>
-                    <div class="col-md-7 col-sm-7">
-                        <h5><a href="#" class="profile-link">${stream.id}</a></h5>
-                    </div>
-                        <div  id="container" class="col-md-3 col-sm-3">
-                                    <button id="toggleCam-${videouser}"  class="btn btn-primary pull-right" onclick="close()">切換鏡頭</button>
-                                <button id="toggleMic-${videouser}" class="btn btn-primary pull-right" >關閉麥克風</button>
-                        </div>
-                         <div  id="container1" class="col-md-3 col-sm-3">                               
-                         
-                        </div>
-                </div>
-                   
-            `;
-
-            newUserDiv.setAttribute('data-stream-id', stream.id); 
-            userList.appendChild(newUserDiv);
-        }
-
-        //var button = document.createElement('input');
-        //button.type = 'button';
-        //button.id = 'submit';
-        //button.value = '';
-        //button.className = 'btn';
-        //button.onclick = close();      
-        //var container = document.getElementById('container');
-        //container.appendChild(button);
-
-        //var button1 = document.createElement('input');
-        //button1.type = 'button';
-        //button1.id = 'submit';
-        //button1.value = '';
-        //button1.className = 'btn';
-        //button1.onclick = closemic();
-        //var container1 = document.getElementById('container1');
-        //container1.appendChild(button1);
-
+      myvideogrid.appendChild(video);
   }
 
-   
+    const addVideoStream = (video, stream) =>
+    {
+        video.srcObject = stream;
+        video.addEventListener('loadedmetadata', () => {
+            video.play()
+        })
+
+        while (uservideogrid.firstChild) 
+        {
+            uservideogrid.removeChild(uservideogrid.firstChild);
+        }        
+        uservideogrid.appendChild(video);
+    }
+
+    //const existingUser = document.querySelector(`#user-list [data-stream-id="${stream.id}"]`);
+
+    //if (!existingUser)
+    //{
+    //    var userList = document.getElementById("user-list");
+    //    var newUserDiv = document.createElement("div");
+    //    newUserDiv.classList.add("nearby-user");
+
+    //    newUserDiv.innerHTML = `
+    //        <div class="row">
+    //            <div class="col-md-2 col-sm-2">
+    //                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
+    //            </div>
+    //            <div class="col-md-7 col-sm-7">
+    //                <h5><a href="#" class="profile-link">${stream.id}</a></h5>
+    //            </div>
+    //                <div  id="container" class="col-md-3 col-sm-3">
+    //                            <button id="toggleCam-${videouser}"  class="btn btn-primary pull-right" onclick="close()">切換鏡頭</button>
+    //                        <button id="toggleMic-${videouser}" class="btn btn-primary pull-right" >關閉麥克風</button>
+    //                </div>
+    //                 <div  id="container1" class="col-md-3 col-sm-3">
+
+    //                </div>
+    //        </div>
+
+    //    `;
+
+    //    newUserDiv.setAttribute('data-stream-id', stream.id);
+    //    userList.appendChild(newUserDiv);
+    //}
+
+    //var button = document.createElement('input');
+    //button.type = 'button';
+    //button.id = 'submit';
+    //button.value = '';
+    //button.className = 'btn';
+    //button.onclick = close();
+    //var container = document.getElementById('container');
+    //container.appendChild(button);
+
+    //var button1 = document.createElement('input');
+    //button1.type = 'button';
+    //button1.id = 'submit';
+    //button1.value = '';
+    //button1.className = 'btn';
+    //button1.onclick = closemic();
+    //var container1 = document.getElementById('container1');
+    //container1.appendChild(button1);
 
 
      const conectNewUser = (videouser,localStream)=>
      {
+
+
+      
         
       const userVideo = document.createElement('video')
       userVideo.className = "uservideo";
@@ -202,6 +235,9 @@
           userVideo.remove()
       })
       Peers[videouser]= call
+
+       
+
 
      }
 

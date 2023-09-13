@@ -352,7 +352,7 @@ display: inline-block;
 					roomId = result.message;
 					console.log(roomId);
 
-					
+					window.location.href = 'https://localhost:7136/VideoRoom/' + roomId;
 
 					var rawvideo = JSON.stringify({
 						"articleHeading": formattedDateTime + "您有新訊息",

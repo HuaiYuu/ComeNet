@@ -2,7 +2,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationUserHub?userId=" + userId).build();  
 
 
-console.log("gogogo");
+
 
 
 connection.on('user-connected', (id, roomid) =>

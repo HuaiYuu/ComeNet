@@ -1103,16 +1103,16 @@ namespace ComeNet.Controllers
         public async Task<ActionResult> GetVideoUser(ParasGetVideoUser paras)
         {
 
-            string retrievedValue;
+            //string retrievedValue;
 
-            if (RealUsers.Userlist.TryGetValue(paras.connectionId, out retrievedValue))
-            {                
-                Console.WriteLine($"对应的值是：{retrievedValue}");
-            }
-            else
-            {
+            //if (Userlist.TryGetValue(paras.connectionId, out retrievedValue))
+            //{                
+            //    Console.WriteLine($"对应的值是：{retrievedValue}");
+            //}
+            //else
+            //{
                
-            }
+            //}
 
 
             ResultCreateActivity result = new ResultCreateActivity();

@@ -271,7 +271,7 @@ display: inline-block;
 			redirect: 'follow'
 		};
 
-		fetch("https://localhost:7136/api/users/friendlist", requestOptions)
+		fetch("https://johnny666.online/api/users/friendlist", requestOptions)
 			.then(response => response.json())
 			.then(data => {
 
@@ -301,7 +301,7 @@ display: inline-block;
 									</div>
 										<ul class="social">
 												<li><a id="videochatbtn"  data-userid="${member.id}"  class="fa fa-video-camera fa-2x camera "></a></li>
-												<li><a  class="fa fa-phone fa-2x phone"></a></li>
+											    <li><a id="phone"  data-userid="${member.id}"class="fa fa-phone fa-2x phone"></a></li>
 												<li><a id="chat" data-userid="${member.id}" class="fa fa-commenting fa-2x chat"></a></li>
 									    </ul>
 								</div>
@@ -343,7 +343,7 @@ display: inline-block;
 			redirect: 'follow'
 		};
 
-		fetch("https://localhost:7136/api/users/CreateChatRoom", requestroomid)
+		fetch("https://johnny666.online/api/users/CreateChatRoom", requestroomid)
 			.then(response => response.json())
 			.then(result => {
 
@@ -352,11 +352,11 @@ display: inline-block;
 					roomId = result.message;
 					console.log(roomId);
 
-					window.location.href = 'https://localhost:7136/VideoRoom/' + roomId;
+					window.location.href = 'https://johnny666.online/VideoRoom/' + roomId;
 
 					var rawvideo = JSON.stringify({
 						"articleHeading": formattedDateTime + "您有新訊息",
-						"articleContent": "https://localhost:7136/VideoRoom/" + roomId,
+						"articleContent": "https://johnny666.online/VideoRoom/" + roomId,
 						"userId": memberId,
 					});
 					var requestvideo = {
@@ -366,7 +366,7 @@ display: inline-block;
 						redirect: 'follow'
 					};
 
-					fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
+					    fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
 						.then(response => response.json())
 						.then(result => {
 							if (result.message != null)
@@ -374,7 +374,7 @@ display: inline-block;
 								if (result.message != "用戶不在線上")
 								{
 									toastr["success"](result.message);
-								//	window.location.href = 'shttps://localhost:7136/VideoRoom/' + roomId;
+									window.location.href = 'https://johnny666.online/VideoRoom/' + roomId;
 								}
 								else
 								{
@@ -431,10 +431,16 @@ display: inline-block;
 
 
 	
-
+	
 	document.addEventListener('click', function (event)
 	{
 		if (event.target.id === 'videochatbtn') 
+		{
+			var memberId = event.target.getAttribute('data-userid');
+			console.log('Member ID:', memberId);
+			sentvideorequest(memberId)
+		}
+		if (event.target.id === 'phone') 
 		{
 			var memberId = event.target.getAttribute('data-userid');
 			console.log('Member ID:', memberId);
@@ -466,7 +472,7 @@ display: inline-block;
 		//		//myHeaders.append("Content-Type", "application/json");
 		//		//var rawvideo = JSON.stringify({
 		//		//	"articleHeading": formattedDateTime + " 視訊邀請",
-		//		//	"articleContent": "shttps://localhost:7136/18",
+		//		//	"articleContent": "shttp://johnny666.online/18",
 		//		//	"userId": memberId,
 		//		//});
 		//		//var requestvideo = {

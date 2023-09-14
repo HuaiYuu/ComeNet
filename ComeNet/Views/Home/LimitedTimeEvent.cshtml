@@ -49,6 +49,9 @@
         background-color: papayawhip;
         padding: 10px;
         margin-top: 15%;
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
 </style>
 <div class="limtform">
@@ -57,7 +60,7 @@
             <div class="card radius-15 bg-primary">
                 <div class="card-body text-center">
                     <div class="p-4 radius-15">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="110" height="110" class="rounded-circle shadow p-1 bg-white" alt="">
+                        <img src="https://1.bp.blogspot.com/-fkL0roU69V4/XxU0iLpPQpI/AAAAAAABaMk/0M6msh1lJVI23vyDS5Z3SUuo0EtaKcrQgCNcBGAsYHQ/s1600/internet_filter_bubble.png" width="110" height="110" class="rounded-circle shadow p-1 bg-white" alt="">
                         <h5 id="toolname" class="mb-0 mt-5 text-white">解鎖五張用戶卡</h5>
                         <p class="mb-3 text-white"></p>
                         <div class="list-inline contacts-social mt-3 mb-3">
@@ -72,9 +75,8 @@
 
     </div>
 </div>
-<div id="loadingContainer" class="hidden">
-    <div class="fa fa-spinner fa-spin"></div>
-</div>
+
+
 <style>
 
     .btn-white {
@@ -117,7 +119,7 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script>
-    loadingContainer.classList.remove('hidden');
+    
 
     toastr.options = {
         "closeButton": false,
@@ -167,7 +169,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://localhost:7136/home/LimitedTimeEvent", requestvideo)
+        fetch("https://johnny666.online/home/LimitedTimeEvent", requestvideo)
             .then(response => response.json())
             .then(result => {
                 console.log(result.message);
@@ -194,7 +196,7 @@
                         redirect: 'follow'
                     };
 
-                    fetch("https://localhost:7136/api/users/CreateToollist", requestOptions)
+                    fetch("https://johnny666.online/api/users/CreateToollist", requestOptions)
                         .then(response => response.json())
                         .then(data => {
 

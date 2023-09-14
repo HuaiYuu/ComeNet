@@ -27,6 +27,8 @@ using Newtonsoft.Json.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Protocol.Plugins;
+using System.Reflection;
 
 namespace ComeNet.Controllers
 {
@@ -61,6 +63,7 @@ namespace ComeNet.Controllers
         public string activityid { get; set; }
         public string name { get; set; }
         public int id { get; set; }
+        public int sender { get; set; }
     }
     public class ParasGetActivityList
     {       
@@ -389,6 +392,7 @@ namespace ComeNet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> signup(User paras , IFormFile myimg)        
         {
+
 			string hashedPassword;
             string targetFolderPath = @"/upload";
             try
@@ -519,6 +523,8 @@ namespace ComeNet.Controllers
         public async Task<ActionResult<IEnumerable<ActivityList>>> CreateActivity(ParasCreateActivity paras)
         {
 
+            int sender = 0;
+            string decodedString = "";
             ActivityList user = new ActivityList();
             user.date = paras.date;
             user.time = paras.time;
@@ -526,7 +532,19 @@ namespace ComeNet.Controllers
             user.activityname = paras.activityname;
             foreach (var person in paras.creater)
             {
-                user.creater = person.name;
+
+                if(person.name.IndexOf('#')>0)
+                {                    
+                  decodedString = System.Net.WebUtility.HtmlDecode(person.name);
+                  user.creater = decodedString;
+                }
+                else
+                {
+                    user.creater = person.name;
+                }
+
+                
+                sender=person.id;
             }
                
             _context.ActivityList.Add(user);
@@ -554,14 +572,42 @@ namespace ComeNet.Controllers
                     {
                         foreach (var connectionId in connections)
                         {
-                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", paras.activityname, paras.location + "," + paras.date + " " + paras.time, getactivityid[0]);                            
+                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", person.name + "-" + paras.activityname, paras.location + "," + paras.date + " " + paras.time, getactivityid[0], sender);
+
+                            Notification notification = new Notification();
+                            notification.date = Convert.ToDateTime(paras.date);
+                            notification.eventid = getactivityid[0];
+                            notification.title = user.creater + "-"+paras.activityname;
+                            notification.message = paras.location;
+                            notification.userid= person.id;
+                            notification.senderid = sender;
+                            notification.time=paras.time;
+                            notification.alreadyread = "N";
+
+                            _context.Notification.Add(notification);
+                            await _context.SaveChangesAsync();
+
+
+                            
+
                         }
                     }
                 }
                 catch (Exception ex) 
                 {
 
-                    ///save into datebase
+                    Notification notification = new Notification();
+                    notification.date = Convert.ToDateTime(paras.date);
+                    notification.eventid = getactivityid[0];
+                    notification.title = user.creater + "-" + paras.activityname;
+                    notification.message = paras.location;
+                    notification.userid = person.id;
+                    notification.senderid = sender;
+                    notification.time = paras.time;
+                    notification.alreadyread = "N";
+
+                    _context.Notification.Add(notification);
+                    await _context.SaveChangesAsync();
                 }                
             }
 
@@ -578,11 +624,58 @@ namespace ComeNet.Controllers
             ActivityDetail activityDetail = new ActivityDetail();
             activityDetail.activityId = Convert.ToInt32(paras.activityid);
             activityDetail.username = paras.name;
-            activityDetail.userId = paras.id.ToString();
-         
-
+            activityDetail.userId = paras.id.ToString(); 
+            
             _context.ActivityDetail.Add(activityDetail);
             await _context.SaveChangesAsync();
+
+            try
+            {
+
+                var notificationUpdate = await _context.Notification
+               .Where(f => f.eventid == Convert.ToInt32(paras.activityid) && f.userid == paras.id)
+               .ToListAsync();
+
+                foreach (var notification in notificationUpdate)
+                {
+                    notification.alreadyread = "Y";
+                    _context.Update(notification);
+                }
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch(Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+            }
+          
+            var friendIds = await _context.Friendlist
+           .Where(f => f.userid == paras.id)
+           .Select(f => f.friendid)
+           .ToListAsync();
+
+            if(friendIds.Contains(paras.sender))
+            {
+
+            }
+            else
+            {
+                Friendlist friendlist = new Friendlist();
+                friendlist.userid = paras.id;
+                friendlist.friendid = paras.sender;
+
+                _context.Friendlist.Add(friendlist);
+
+                Friendlist myfriendlist = new Friendlist();
+                myfriendlist.userid = paras.sender;
+                myfriendlist.friendid = paras.id;
+
+                _context.Friendlist.Add(myfriendlist);
+
+                await _context.SaveChangesAsync();
+
+            }
 
             ResultCreateActivity result = new ResultCreateActivity();
             result.message = "ok";
@@ -1142,6 +1235,41 @@ namespace ComeNet.Controllers
             }
 
             return Ok(messagelists);
+        }
+
+        [HttpPost("GetNotificationMessage")]
+        public async Task<ActionResult<IEnumerable<ResultGetUserToolList>>> GetNotificationMessage(ParasUserFriendList paras)
+        {
+            List<Notification> notification = new List<Notification>();
+            var notificationlist = await _context.Notification.Where(f => f.userid == paras.userid && f.alreadyread=="N").ToListAsync();
+
+            foreach (var message in notificationlist)
+            {
+                Notification msg = new Notification();
+
+                msg.userid = message.userid;
+                msg.date = message.date;
+                msg.time = message.time;
+                msg.title = message.title;
+                msg.eventid = message.eventid;
+                msg.message = message.message;
+                msg.alreadyread = message.alreadyread;
+                msg.senderid = message.senderid;
+                msg.Id = message.Id;
+                notification.Add(msg);
+
+                var connections = _userConnectionManager.GetUserConnections(message.userid.ToString());
+
+                if (connections != null && connections.Count > 0)
+                {
+                    foreach (var connectionId in connections)
+                    {
+                        await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", message.title, message.message + "," + message.date.ToString("yyyy/MM/dd") + " " + message.time, message.eventid, message.senderid);
+                    }
+                }
+            }
+
+            return Ok(notification);
         }
 
     }

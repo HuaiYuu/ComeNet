@@ -8,13 +8,18 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
 <h2 class="title_spectial">個人道具卡</h2>
-<div style="margin-top:25%;margin-left:40%;width:100%; " class="limtform">
-    <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
-        <div id="toollist" class="col">           
-        </div>
-    </div>
+<div class="limtform smalltopic">   
+        <div id="toollist" class="col carflex">           
+        </div>       
 </div>
 <style>
+
+
+    .carflex
+    {
+       
+        display:flex;
+    }
 
     .title_spectial {
         text-align: center;
@@ -23,6 +28,15 @@
         margin-bottom: 60px;
         text-transform: uppercase;
         font-size: 24px;
+    }
+
+    .smalltopic {
+        max-height: 100%;
+        overflow-y: auto;
+        width: 100%;
+        display:flex;
+        justify-items:center;
+       
     }
 
     .fa-spinner {
@@ -43,6 +57,18 @@
         font-weight: bold;
         background-color: papayawhip;
         padding: 10px;
+    }
+
+    #limtform {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-weight: bold;
+        background-color: papayawhip;
+        padding: 10px;
+        margin-top: 15%;
     }
 
     #limtform {
@@ -116,7 +142,7 @@
         redirect: 'follow'
     };
 
-    fetch("https://localhost:7136/api/users/GetToollist", requestOptions)
+    fetch("https://johnny666.online/api/users/GetToollist", requestOptions)
         .then(response => response.json())
         .then(data => {
             const teamMembersContainer = document.getElementById('toollist');
@@ -126,7 +152,7 @@
                 const memberHtml = `<div class="card radius-15 bg-primary">
                             <div class="card-body text-center">
                                 <div class="p-4 radius-15">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" width="110" height="110" class="rounded-circle shadow p-1 bg-white" alt="">
+                                        <img src="https://1.bp.blogspot.com/-fkL0roU69V4/XxU0iLpPQpI/AAAAAAABaMk/0M6msh1lJVI23vyDS5Z3SUuo0EtaKcrQgCNcBGAsYHQ/s1600/internet_filter_bubble.png" width="110" height="110" class="rounded-circle shadow p-1 bg-white" alt="">
                                     <h5 id="toolname" class="mb-0 mt-5 text-white">${member.toolname}</h5>
                                         <p class="mb-3 text-white">${member.number}張</p>
                                     <div class="list-inline contacts-social mt-3 mb-3">
@@ -178,7 +204,7 @@
                         body: chatmember,
                         redirect: 'follow'
                     };
-                    fetch("https://localhost:7136/api/users/UseTool", requestroomid)
+                    fetch("https://johnny666.online/api/users/UseTool", requestroomid)
                         .then(response => response.json())
                         .then(result => {
 

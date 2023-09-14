@@ -2,12 +2,14 @@
     ViewData["Title"] = "視訊";    
     var name = ViewBag.name;
     var id = ViewBag.id;
+    var videotowho = ViewBag.UserName;
 }
 
 <section>
     <div class="smalltopic">
         <div>
-            <p style="text-align:center">RoomID:@ViewBag.roomId</p>
+            <p style="text-align:center;display:none">RoomID:@ViewBag.roomId</p>
+            <p style="text-align:center">正在與 @ViewBag.UserName 進行視訊</p>
         </div>
         <div style="display:flex;justify-content: space-around;" ;>
             <div id="myvideogrid" style="display: flex;justify-content: space-between;" video-grid>
@@ -16,10 +18,17 @@
             </div>
         </div>
         
+        
+       
+
         <div class="container" id="user-list" style="margin-top:5%;background-color:white">
             <div class="row">
                 <div class="col-md-8">
                     <div class="people-nearby" style="margin-top:5%;background-color:white">
+                        <div>
+                            <button id="toggleCam" class="btn btn-primary " onclick="close()">切換鏡頭</button>
+                            <button id="toggleMic" class="btn btn-primary " onclick="closemic()">關閉麥克風</button>                                                    
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,6 +65,56 @@
 <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
+
+    function close() {
+        const cameraBtn = document.getElementById('toggleCam');
+        cameraBtn.textContent = "關閉鏡頭";
+        let camEnabled = true; // 初始設定為開啟鏡頭
+
+        cameraBtn.addEventListener("click", () => {
+            if (camEnabled && localStream) {
+                // 禁用視頻軌道
+                localStream.getVideoTracks().forEach((track) => {
+                    track.enabled = false;
+                });
+                camEnabled = false;
+                cameraBtn.textContent = "開啟鏡頭";
+            } else if (!camEnabled && localStream) {
+                // 啟用視頻軌道
+                localStream.getVideoTracks().forEach((track) => {
+                    track.enabled = true;
+                });
+                camEnabled = true;
+                cameraBtn.textContent = "關閉鏡頭";
+            }
+        });
+
+    }
+    function closemic() {
+        const micBtn = document.getElementById('toggleMic');
+        micBtn.textContent = "關閉麥克風";
+        let micEnabled = true; // 初始設定為開啟麥克風
+
+        micBtn.addEventListener("click", () => {
+            if (micEnabled && localStream) {
+                // 禁用音頻軌道
+                localStream.getAudioTracks().forEach((track) => {
+                    track.enabled = false;
+                });
+                micEnabled = false;
+                micBtn.textContent = "開啟麥克風";
+            }
+            else if (!micEnabled && localStream) {
+                // 啟用音頻軌道
+                localStream.getAudioTracks().forEach((track) => {
+                    track.enabled = true;
+                });
+                micEnabled = true;
+                micBtn.textContent = "關閉麥克風";
+            }
+        });
+
+    }
 
     var username = null
     var userId = '@id'
@@ -135,6 +194,7 @@
         call.answer(localStream)
         const userVideo = document.createElement('video')
         userVideo.className = "uservideo";
+        userVideo.textContent = '@videotowho';
         call.on('stream',userVideoStream =>
         {
             addVideoStream(userVideo,userVideoStream)                 
@@ -142,7 +202,7 @@
     })
 
 
-  const addMyVideoStream = (video,stream) =>
+    const addMyVideoStream = (video,stream) =>
   {
       video.srcObject = stream;
       video.addEventListener('loadedmetadata',() =>
@@ -152,7 +212,6 @@
 
       myvideogrid.appendChild(video);
   }
-
     const addVideoStream = (video, stream) =>
     {
         video.srcObject = stream;
@@ -167,57 +226,41 @@
         uservideogrid.appendChild(video);
     }
 
-    //const existingUser = document.querySelector(`#user-list [data-stream-id="${stream.id}"]`);
-
-    //if (!existingUser)
-    //{
-    //    var userList = document.getElementById("user-list");
-    //    var newUserDiv = document.createElement("div");
-    //    newUserDiv.classList.add("nearby-user");
-
-    //    newUserDiv.innerHTML = `
-    //        <div class="row">
-    //            <div class="col-md-2 col-sm-2">
-    //                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
-    //            </div>
-    //            <div class="col-md-7 col-sm-7">
-    //                <h5><a href="#" class="profile-link">${stream.id}</a></h5>
-    //            </div>
-    //                <div  id="container" class="col-md-3 col-sm-3">
-    //                            <button id="toggleCam-${videouser}"  class="btn btn-primary pull-right" onclick="close()">切換鏡頭</button>
-    //                        <button id="toggleMic-${videouser}" class="btn btn-primary pull-right" >關閉麥克風</button>
-    //                </div>
-    //                 <div  id="container1" class="col-md-3 col-sm-3">
-
-    //                </div>
-    //        </div>
-
-    //    `;
-
-    //    newUserDiv.setAttribute('data-stream-id', stream.id);
-    //    userList.appendChild(newUserDiv);
-    //}
-
-    //var button = document.createElement('input');
-    //button.type = 'button';
-    //button.id = 'submit';
-    //button.value = '';
-    //button.className = 'btn';
-    //button.onclick = close();
-    //var container = document.getElementById('container');
-    //container.appendChild(button);
-
-    //var button1 = document.createElement('input');
-    //button1.type = 'button';
-    //button1.id = 'submit';
-    //button1.value = '';
-    //button1.className = 'btn';
-    //button1.onclick = closemic();
-    //var container1 = document.getElementById('container1');
-    //container1.appendChild(button1);
 
 
-     const conectNewUser = (videouser,localStream)=>
+
+   var userList = document.getElementById("user-list");
+   var newUserDiv = document.createElement("div");
+       newUserDiv.classList.add("nearby-user");
+       newUserDiv.innerHTML = `
+            <div class="row">
+                <div class="col-md-2 col-sm-2">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="user" class="profile-photo-lg">
+                </div>
+                <div class="col-md-7 col-sm-7">
+                    <h5><a >@name</a></h5>
+                </div>
+                    <div  id="container" class="col-md-3 col-sm-3">
+                                <button id="toggleCam"  class="btn btn-primary pull-right" onclick="close()">切換鏡頭</button>
+                                <button id="toggleMic" class="btn btn-primary pull-right" onclick="closemic()" >關閉麥克風</button>
+                    </div>
+                     
+            </div>
+
+        `;
+      // userList.appendChild(newUserDiv);
+    
+
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.id = 'submit';
+    button.value = '';
+    button.className = 'btn';
+    button.onclick = close();
+    var container = document.getElementById('container');
+   // container.appendChild(button);
+
+    const conectNewUser = (videouser,localStream)=>
      {
 
 
@@ -243,59 +286,7 @@
 
    
    
-    //function close()
-    //{
-    //    const cameraBtn = document.getElementById(`toggleCam-${videouser}`);
-    //    cameraBtn.textContent = "關閉鏡頭";
-    //    let camEnabled = true; // 初始設定為開啟鏡頭
-
-    //    cameraBtn.addEventListener("click", () => {
-    //        if (camEnabled && localStream) {
-    //            // 禁用視頻軌道
-    //            localStream.getVideoTracks().forEach((track) => {
-    //                track.enabled = false;
-    //            });
-    //            camEnabled = false;
-    //            cameraBtn.textContent = "開啟鏡頭";
-    //        } else if (!camEnabled && localStream) {
-    //            // 啟用視頻軌道
-    //            localStream.getVideoTracks().forEach((track) => {
-    //                track.enabled = true;
-    //            });
-    //            camEnabled = true;
-    //            cameraBtn.textContent = "關閉鏡頭";
-    //        }
-    //    });
-      
-    //}
-    //function closemic()
-    //{
-    //    const micBtn = document.getElementById(`toggleMic-${videouser}`);
-    //    micBtn.textContent = "關閉麥克風";
-    //    let micEnabled = true; // 初始設定為開啟麥克風
-
-    //    micBtn.addEventListener("click", () => {
-    //        if (micEnabled && localStream) {
-    //            // 禁用音頻軌道
-    //            localStream.getAudioTracks().forEach((track) => {
-    //                track.enabled = false;
-    //            });
-    //            micEnabled = false;
-    //            micBtn.textContent = "開啟麥克風";
-    //        } else if (!micEnabled && localStream) {
-    //            // 啟用音頻軌道
-    //            localStream.getAudioTracks().forEach((track) => {
-    //                track.enabled = true;
-    //            });
-    //            micEnabled = true;
-    //            micBtn.textContent = "關閉麥克風";
-    //        }
-    //    });
-
-
-    //    console.log("關閉麥克風");
-       
-    //}
+    
 
 
 

@@ -230,7 +230,6 @@ namespace ComeNet.Models
         public string name { get; set; }
         public string message { get; set; }
     }
-
     public class UserMessage
     {
         public int Id { get; set; }
@@ -241,4 +240,21 @@ namespace ComeNet.Models
         public string message { get; set; }
         public string title { get; set; }
     }
+
+    public class Notification
+    {
+        public int Id { get; set; }
+        public int userid { get; set; }
+        public int senderid { get; set; }        
+        public int eventid { get; set; }
+        public string title { get; set; }
+        public DateTime date { get; set; }
+        public string time { get; set; }
+        public string message { get; set; }
+        public string alreadyread { get; set; }
+        
+    }
+
+
+    
 }

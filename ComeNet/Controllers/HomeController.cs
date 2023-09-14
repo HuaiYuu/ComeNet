@@ -67,6 +67,7 @@ namespace ComeNet.Controllers
 
             ViewBag.Name = name;
             ViewBag.id = id;
+            ViewBag.message = "load";
 
             return View();
         }
@@ -141,7 +142,7 @@ namespace ComeNet.Controllers
                 {
                     client_id = AppId,
                     client_secret = AppSecret,
-                    redirect_uri = "https://localhost:7136/Home/LOGIN",
+                    redirect_uri = "https://johnny666.online/Home/Login",
                     code = code,
                 };
                 var content = new StringContent(JsonConvert.SerializeObject(data), System.Text.Encoding.UTF8, "application/json");
@@ -174,9 +175,9 @@ namespace ComeNet.Controllers
                             userbyfacebook.password = "*****";
                             userbyfacebook.picture = userProfile.Picture.data.Url;
                             userbyfacebook.age = 0;
-                            userbyfacebook.job = "";
-                            userbyfacebook.latitude = "default";
-                            userbyfacebook.longitude = "default";
+                            userbyfacebook.job = "default";
+                            userbyfacebook.latitude = "121";
+                            userbyfacebook.longitude = "23";
                             userbyfacebook.answer = "default";
                             userbyfacebook.question = "default";
                             userbyfacebook.interest = "default";
@@ -195,6 +196,7 @@ namespace ComeNet.Controllers
                             string accesstoken = token.access_token.ToString();
                             string username = token.user.name.ToString();
                             string email = token.user.email.ToString();
+                            string id = token.user.id.ToString();
 
                             if (token == null)
                             {
@@ -204,10 +206,11 @@ namespace ComeNet.Controllers
                             HttpContext.Session.SetString("token", accesstoken);
                             HttpContext.Session.SetString("name", username);
                             HttpContext.Session.SetString("email", email);
+                            HttpContext.Session.SetString("id", id);
 
                         }
 
-                        return RedirectToAction("index", "home");
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {
@@ -333,7 +336,29 @@ namespace ComeNet.Controllers
 			ViewBag.Name = name;
 			ViewBag.id = id;
 			ViewBag.roomId = roomId;
-			return View();
+            
+
+            string[] users = roomId.Split("8507");
+            string videochatwithwho ;
+
+            if (users[0]== id)
+            {
+                videochatwithwho= users[1];
+            }
+            else
+            {
+                videochatwithwho= users[0] ;
+            }
+
+           
+                var username =  _context.User
+                .Where(f => f.id == Convert.ToInt16(videochatwithwho))
+                .Select(f => f.name)
+                .FirstOrDefault();
+
+            ViewBag.UserName = username;
+
+            return View();
 		}
 
         public IActionResult StartChat()
@@ -386,8 +411,8 @@ namespace ComeNet.Controllers
         public async Task<IActionResult> Signup(User paras, IFormFile myimg)
         {
             string hashedPassword;
-            string targetFolderPath = @"\upload";
-            string fileFolderPath = @"wwwroot\upload";
+            string targetFolderPath = @"/upload";
+            string fileFolderPath = @"wwwroot/upload";
 
             try
             {
@@ -400,14 +425,15 @@ namespace ComeNet.Controllers
                 user.provider = "native";
                 user.picture = "https://schoolvoyage.ga/images/123498.png";
                 user.age = paras.age;
+                user.birthday= paras.birthday;
                 user.horoscope = paras.horoscope;
                 user.job=paras.job;
                 user.answer = paras.answer;
                 user.question = paras.question;
                 user.gender = paras.gender;
                 user.interest = paras.interest;
-                user.longitude = "default";
-                user.latitude = "default";
+                user.longitude = "123";
+                user.latitude = "23";
 
                 if (myimg != null)
                 {
@@ -430,7 +456,8 @@ namespace ComeNet.Controllers
             }
             var token = _userService.Authenticate(paras.email, hashedPassword);
 
-            TempData["SuccessMessage"] = "註冊成功";
+            ViewBag.message= "註冊成功";
+            
 
             return RedirectToAction("index", "Home");
         }

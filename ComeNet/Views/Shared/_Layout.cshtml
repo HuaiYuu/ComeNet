@@ -24,7 +24,7 @@
             <div id="main-nav" class="collapse navbar-collapse">
                 <ul  class="navbar-nav ml-auto">
                     <li style ="display:none"><a asp-action="index" class="nav-item nav-link active">Home</a></li>
-                    <li style="display:none"><a href="#" class="nav-item nav-link">About Us</a></li>
+                    <li style="display:none"><a href="#" class="nav-item nav-link">About Us</a></li>                   
                     <li style="display:none" class="dropdown">
                         <a href="#" class="nav-item nav-link" data-toggle="dropdown">Services</a>
                         <div class="dropdown-menu">
@@ -60,7 +60,7 @@
                     @if (name != null)
                     {
                         <li style="color:black"><a class="nav-item nav-link">Welcome!</a></li>
-                        <li><a asp-action="Profile" id="username" style="color:black" class="nav-item nav-link">@name</a></li>
+                        <li><a asp-action="Profile" id="username" style="color:black;width:100px;" class="nav-item nav-link">@name</a></li>
                         <li><a asp-action="LOGOUT"  style="width:300px;" class="nav-item nav-link">Log Out</a></li>
                     }
                     else
@@ -88,14 +88,14 @@
                 <p id="user-job" class="text-white"><i class="fa fa-user"></i></p>
             </div>
             <ul class="nav-news-feed">
-                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/Home/Profile">個人檔案</a></div></li>
-                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://localhost:7136/home/activitylist">活動列表</a></div></li>
-                <li><i class="fa fa-users icon2"></i><div><a href="https://localhost:7136/home/nearby">誰在附近?</a></div></li>
-                <li><i class="fa fa-user icon3"></i><div><a href="https://localhost:7136/home/friends">好友</a></div></li>
-                <li><i class="fa fa-comments icon2"></i><div><a href="https://localhost:7136/home/message">訊息</a></div></li>
-                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://localhost:7136/home/card">道具卡片</a></div></li>
-                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://localhost:7136/home/Suggestion">抽卡</a></div></li>
-                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://localhost:7136/home/LimitedTimeEvent">限時專區</a></div></li>
+                <li><i class="fa fa-list-alt icon1"></i><div"><a href="https://johnny666.online/Home/Profile">個人檔案</a></div></li>
+                <li><i class="fa fa-list-alt icon1"></i><div><a href="https://johnny666.online/home/activitylist" >活動列表</a></div></li>
+                <li><i class="fa fa-users icon2"></i><div><a href="https://johnny666.online/home/nearby">誰在附近?</a></div></li>
+                <li><i class="fa fa-user icon3"></i><div><a href="https://johnny666.online/home/friends">好友</a></div></li>
+                <li><i class="fa fa-comments icon2"></i><div><a href="https://johnny666.online/home/message">訊息</a></div></li>
+                <li><i class="fa fa-picture-o icon1"></i><div><a href="https://johnny666.online/home/card">道具卡片</a></div></li>
+                <li><i class="fa fa-user-plus icon4"></i><div><a href="https://johnny666.online/home/Suggestion">抽卡</a></div></li>
+                <li><i class="fa fa-clock-o icon6"></i><div><a href="https://johnny666.online/home/LimitedTimeEvent">限時專區</a></div></li>
             </ul>           
         </div>
         <div style="width:120vh;">
@@ -752,7 +752,7 @@
 </style>
 <style>
 
-
+   
 
 
     .menubar {
@@ -885,6 +885,7 @@
     console.log(userId)
     myFunction();
     profile();
+    getnotification();
     document.addEventListener("DOMContentLoaded", ready);
     document.getElementById("user").innerHTML = "UserId: " + userId;
     jQuery(function ($) {
@@ -984,6 +985,23 @@
             sentchatrequest(memberId);
             
         }
+
+        if (event.target.id === 'chat') {
+            var memberId = null;
+            var h4Tag = event.target.querySelector('#chatroom');
+            console.log(h4Tag);
+            if (h4Tag) {
+                memberId = h4Tag.getAttribute('data-userid');
+                console.log('Member ID:', memberId);
+                sentchatrequest(memberId);
+            }
+            memberId = event.target.getAttribute('data-userid');
+            sentchatrequest(memberId);
+
+        }
+
+
+
     });
     function sentchatrequest(memberId) 
     {
@@ -1012,7 +1030,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://localhost:7136/api/users/CreateChatRoom",requestroomid)
+        fetch("https://johnny666.online/api/users/CreateChatRoom",requestroomid)
             .then(response => response.json())
             .then(result => {
 
@@ -1021,11 +1039,11 @@
                     roomId = result.message;
                     console.log(roomId);
 
-                    window.location.href = 'https://localhost:7136/chatroom/' + roomId;
+                    window.location.href = 'https://johnny666.online/chatroom/' + roomId;
 
                     var rawvideo = JSON.stringify({
                         "articleHeading": formattedDateTime + "您有新訊息",
-                        "articleContent": "https://localhost:7136/chatroom/" + roomId,
+                        "articleContent": "https://johnny666.online/chatroom/" + roomId,
                         "userId": memberId,
                     });
                     var requestvideo = {
@@ -1035,7 +1053,7 @@
                         redirect: 'follow'
                     };
 
-                    fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
+                    fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
                         .then(response => response.json())
                         .then(result => {
 
@@ -1063,7 +1081,6 @@
             .catch(error => console.log('error', error));
             console.log(roomId);            
     }
-
     function myFunction() 
     {
         const onlineMembers = document.getElementById('onlineuser');
@@ -1083,7 +1100,7 @@
             body: raw,
             redirect: 'follow'
         };
-        fetch("https://localhost:7136/api/users/GetOnlineUser", requestOptions)
+        fetch("https://johnny666.online/api/users/GetOnlineUser", requestOptions)
             .then(response => response.json())
             .then(data => 
             {    
@@ -1124,7 +1141,6 @@
                 console.error('Error fetching team member data:', error);
             });
     }
-
     function profile(){
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -1138,7 +1154,7 @@
             body: raw,
             redirect: 'follow'
         };
-        fetch("https://localhost:7136/api/users/GetUser", requestOptions)
+        fetch("https://johnny666.online/api/users/GetUser", requestOptions)
             .then(response => response.json())
             .then(data => 
             {
@@ -1154,6 +1170,33 @@
             .catch(error => {
                 console.error('Error fetching team member data:', error);
             });
+    }
+    function getnotification(){
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "userId": userId
+        });
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch("https://johnny666.online/api/users/GetNotificationMessage", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+
+
+               
+
+            })
+            .catch(error => {
+                console.error('Error fetching team member data:', error);
+            });
+        
     }
 
     

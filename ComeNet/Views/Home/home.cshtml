@@ -3,6 +3,7 @@
     var name = ViewBag.name;
     var id = ViewBag.id;
     Layout = null;
+    var message = ViewBag.message;
 }
 <head>
     <meta charset="utf-8" />
@@ -15,6 +16,7 @@
 </head>
 <header></header>
 <body class="body">
+    <p id="info" style="display:none">@message</p>
 <div style="margin-top:0" >
         <img id="logo" src="~/picture/logo1.png">
         <div>
@@ -29,7 +31,7 @@
                 <p id="context">You’re more than just a photo. You have stories to tell, and passions to share, and things to talk about that are more interesting than the weather. Because you deserve what dating deserves: better.</p>
                 <div class="getstart">
                     <div class="container">
-                        <a href="https://localhost:7136/Home/signup" class="button button-primary">Get Start</a>
+                        <a href="https://johnny666.online/Home/Login" class="button button-primary">Get Start</a>
                     </div>
                 </div>
 
@@ -200,4 +202,15 @@
         }
 
 </style>
+
+<script>
+    var info = document.getElementById("info").textContent
+
+
+
+    if (info != "load") 
+    {
+        toastr["success"]("@message");
+    }
+</script>
 

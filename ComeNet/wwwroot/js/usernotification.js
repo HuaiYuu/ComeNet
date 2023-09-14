@@ -56,7 +56,7 @@ connection.on("sendToUser", (articleHeading, articleContent) =>
 
 
 });
-connection.on("activityinvitation", (articleHeading, articleContent,activity) => {
+connection.on("activityinvitation", (articleHeading, articleContent,activity,sender) => {
     
     var li = document.createElement("li");
     li.classList.add("dropdown-item"); 
@@ -89,7 +89,8 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
         var rawact = JSON.stringify({
             activityid: activityid.textContent,
             name: username.textContent,
-            id: userId,         
+            id: userId,     
+            sender: sender,
         });
 
         var actrequestOptions = {
@@ -99,12 +100,13 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
             redirect: 'follow'
         };
 
-        fetch("https://localhost:7136/api/users/CreateActivityPeople", actrequestOptions)
+        fetch("https://johnny666.online/api/users/CreateActivityPeople", actrequestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.message == "ok")
                 {
                     toastr["success"]("活動新增成功");
+                    window.location.reload()
                 }
                 else
                 {
@@ -121,7 +123,7 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity) =>
 
     
     var rejectButton = document.createElement("button");
-    rejectButton.innerText = "拒绝";
+    rejectButton.innerText = "拒絕";
     rejectButton.addEventListener("click", function () {
         
         p.removeChild(agreeButton);

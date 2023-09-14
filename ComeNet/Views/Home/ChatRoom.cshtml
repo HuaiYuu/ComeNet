@@ -101,7 +101,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://johnny666.online/api/users/ChatToSpecificUser", requestvideo)
+        fetch("https://localhost:7136/api/users/ChatToSpecificUser", requestvideo)
             .then(response => response.json())
             .then(result => {
                 if (result.userId != null)
@@ -134,7 +134,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://johnny666.online/api/users/GetUserChatContext", requestvideo)
+        fetch("https://localhost:7136/api/users/GetUserChatContext", requestvideo)
             .then(response => response.json())
             .then(result => 
                 {

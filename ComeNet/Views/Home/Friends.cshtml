@@ -1,5 +1,6 @@
 ﻿@{
 	var id = ViewBag.id;
+	var name = ViewBag.name;
 	ViewData["Title"] = "Friend";
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
@@ -271,7 +272,7 @@ display: inline-block;
 			redirect: 'follow'
 		};
 
-		fetch("https://johnny666.online/api/users/friendlist", requestOptions)
+		fetch("https://localhost:7136/api/users/friendlist", requestOptions)
 			.then(response => response.json())
 			.then(data => {
 
@@ -343,7 +344,7 @@ display: inline-block;
 			redirect: 'follow'
 		};
 
-		fetch("https://johnny666.online/api/users/CreateChatRoom", requestroomid)
+		fetch("https://localhost:7136/api/users/CreateChatRoom", requestroomid)
 			.then(response => response.json())
 			.then(result => {
 
@@ -351,12 +352,11 @@ display: inline-block;
 				{
 					roomId = result.message;
 					console.log(roomId);
-
-					window.location.href = 'https://johnny666.online/VideoRoom/' + roomId;
+					
 
 					var rawvideo = JSON.stringify({
-						"articleHeading": formattedDateTime + "您有新訊息",
-						"articleContent": "https://johnny666.online/VideoRoom/" + roomId,
+						"articleHeading": formattedDateTime + @name "-視訊邀請",
+						"articleContent": "https://localhost:7136/VideoRoom/" + roomId,
 						"userId": memberId,
 					});
 					var requestvideo = {
@@ -366,7 +366,7 @@ display: inline-block;
 						redirect: 'follow'
 					};
 
-					    fetch("https://johnny666.online/api/users/SendToSpecificUser", requestvideo)
+					    fetch("https://localhost:7136/api/users/SendToSpecificUser", requestvideo)
 						.then(response => response.json())
 						.then(result => {
 							if (result.message != null)
@@ -374,7 +374,7 @@ display: inline-block;
 								if (result.message != "用戶不在線上")
 								{
 									toastr["success"](result.message);
-									window.location.href = 'https://johnny666.online/VideoRoom/' + roomId;
+									window.location.href = 'https://localhost:7136/VideoRoom/' + roomId;
 								}
 								else
 								{

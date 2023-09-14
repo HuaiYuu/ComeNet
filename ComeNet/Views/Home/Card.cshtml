@@ -142,7 +142,7 @@
         redirect: 'follow'
     };
 
-    fetch("https://johnny666.online/api/users/GetToollist", requestOptions)
+    fetch("https://localhost:7136/api/users/GetToollist", requestOptions)
         .then(response => response.json())
         .then(data => {
             const teamMembersContainer = document.getElementById('toollist');
@@ -204,7 +204,7 @@
                         body: chatmember,
                         redirect: 'follow'
                     };
-                    fetch("https://johnny666.online/api/users/UseTool", requestroomid)
+                    fetch("https://localhost:7136/api/users/UseTool", requestroomid)
                         .then(response => response.json())
                         .then(result => {
 

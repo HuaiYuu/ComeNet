@@ -55,7 +55,7 @@
     }
 </style>
 <div class="limtform">
-    <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
+    <div style="justify-content: center;" class="row row-cols-1 row-cols-lg-2 row-cols-xl-4">
         <div class="col">
             <div class="card radius-15 bg-primary">
                 <div class="card-body text-center">
@@ -169,7 +169,7 @@
             redirect: 'follow'
         };
 
-        fetch("https://johnny666.online/home/LimitedTimeEvent", requestvideo)
+        fetch("https://localhost:7136/home/LimitedTimeEvent", requestvideo)
             .then(response => response.json())
             .then(result => {
                 console.log(result.message);
@@ -196,7 +196,7 @@
                         redirect: 'follow'
                     };
 
-                    fetch("https://johnny666.online/api/users/CreateToollist", requestOptions)
+                    fetch("https://localhost:7136/api/users/CreateToollist", requestOptions)
                         .then(response => response.json())
                         .then(data => {
 

@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NuGet.Protocol.Plugins;
 using System.Reflection;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace ComeNet.Controllers
 {
@@ -503,10 +504,26 @@ namespace ComeNet.Controllers
                         string accesstoken = token.access_token.ToString();
                         string username = token.user.name.ToString();
                         string email = token.user.email.ToString();
+                        string id =token.user.id.ToString();
 
                         HttpContext.Session.SetString("token", accesstoken);
                         HttpContext.Session.SetString("name", username);
                         HttpContext.Session.SetString("email", email);
+
+
+                        try
+                        {
+                            User user = await _context.User.FirstOrDefaultAsync(u => u.id == token.user.id);
+                            user.latitude = paras.latitude;
+                            user.longitude = paras.longitude;
+
+                            _context.Update(user);
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            return BadRequest(new { message = "使用者信箱已被註冊" });
+                        }
 
                         return Ok(token);
                     }
@@ -655,7 +672,7 @@ namespace ComeNet.Controllers
            .Select(f => f.friendid)
            .ToListAsync();
 
-            if(friendIds.Contains(paras.sender))
+            if (friendIds.Contains(paras.sender))
             {
 
             }
@@ -666,7 +683,20 @@ namespace ComeNet.Controllers
                 friendlist.friendid = paras.sender;
 
                 _context.Friendlist.Add(friendlist);
+            }
 
+
+			var friendsenderIds = await _context.Friendlist
+		  .Where(f => f.userid == paras.sender)
+		  .Select(f => f.friendid)
+		  .ToListAsync();
+
+			if (friendIds.Contains(paras.id))
+			{
+
+			}
+			else
+			{
                 Friendlist myfriendlist = new Friendlist();
                 myfriendlist.userid = paras.sender;
                 myfriendlist.friendid = paras.id;
@@ -674,10 +704,32 @@ namespace ComeNet.Controllers
                 _context.Friendlist.Add(myfriendlist);
 
                 await _context.SaveChangesAsync();
-
             }
 
-            ResultCreateActivity result = new ResultCreateActivity();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			ResultCreateActivity result = new ResultCreateActivity();
             result.message = "ok";
 
             return Ok(result);
@@ -943,6 +995,8 @@ namespace ComeNet.Controllers
         [HttpPost("GetActivityList")]
         public async Task<ActionResult<IEnumerable<ResultGetActivityList>>> GetActivityList(ParasGetActivityList paras)
         {
+
+            var name = HttpContext.Session.GetString("name");
             ResultGetActivityList resultGetActivityList = new ResultGetActivityList();
             List<ActivitynPeople> activityLists = new List<ActivitynPeople>();
             var activitylist = await _context.ActivityList
@@ -971,7 +1025,12 @@ namespace ComeNet.Controllers
 
                 activitynPeople.people = peopleList;
 
-                activityLists.Add(activitynPeople);
+                if(peopleList.Contains(name))
+                {
+                    activityLists.Add(activitynPeople);
+                }
+
+                
             }
 
             resultGetActivityList.activity = activityLists;
@@ -1086,37 +1145,75 @@ namespace ComeNet.Controllers
         [HttpPost("CreateAgreeFriend")]
         public async Task<ActionResult<IEnumerable<Friendlist>>> CreateAgreeFriend(ParasUserAgreeList paras)
         {
+            //Friendlist friendlist = new Friendlist();
+            //friendlist.userid = paras.userid;
+            //friendlist.friendid = paras.agreeid;
+            //_context.Friendlist.Add(friendlist);
+            //await _context.SaveChangesAsync();
 
-            Friendlist friendlist = new Friendlist();
-            friendlist.userid=paras.userid;
-            friendlist.friendid = paras.agreeid;
+               var username = await _context.User
+                .Where(f => f.id == Convert.ToInt16(paras.userid))
+                .Select(f => f.name)
+                .FirstAsync();
 
-            _context.Friendlist.Add(friendlist);
+            try
+            {
+
+                var connections = _userConnectionManager.GetUserConnections(paras.agreeid.ToString());
+                if (connections != null && connections.Count > 0)
+                {
+                    foreach (var connectionId in connections)
+                    {
+                        await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", username + "- 交友邀請", "", "", paras.userid);
+                    }
+                }
+
+            }
+            catch
+            {
+                ///用戶不在線
+            }
+
+            
+
+
+            Notification notification = new Notification();
+            notification.date = DateTime.Now;
+            notification.eventid = 0;
+            notification.title = username + "- 交友邀請";
+            notification.message = "";
+            notification.userid = paras.agreeid;
+            notification.senderid = paras.userid;
+            notification.time = "";
+            notification.alreadyread = "N";
+
+            _context.Notification.Add(notification);
+            await _context.SaveChangesAsync();
+
+
+            Rejectlist rejectlist = new Rejectlist();
+            rejectlist.userid = paras.userid;
+            rejectlist.rejectid = paras.agreeid;
+
+            _context.Rejectlist.Add(rejectlist);
             await _context.SaveChangesAsync();
 
 
             ResultCreateActivity result = new ResultCreateActivity();
-            result.message = "已成為朋友";
-
+            result.message = "已送出邀請";
             return Ok(result);
         }
-
         [HttpPost("CreateToollist")]
         public async Task<ActionResult<IEnumerable<UserToollist>>> CreateToollist(ParasCreateToollist paras)
         {
-
             UserToollist userToollist = new UserToollist();
             userToollist.userid=paras.userid;
             userToollist.toolname=paras.toolname;
             userToollist.number=paras.number;
-
             _context.UserToollist.Add(userToollist);
             await _context.SaveChangesAsync();
-
-
             ResultCreateActivity result = new ResultCreateActivity();
             result.message = "已成為朋友";
-
             return Ok(result);
         }
 
@@ -1264,7 +1361,7 @@ namespace ComeNet.Controllers
                 {
                     foreach (var connectionId in connections)
                     {
-                        await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", message.title, message.message + "," + message.date.ToString("yyyy/MM/dd") + " " + message.time, message.eventid, message.senderid);
+                         _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", message.title, message.message + "," + message.date.ToString("yyyy/MM/dd") + " " + message.time, message.eventid, message.senderid);
                     }
                 }
             }

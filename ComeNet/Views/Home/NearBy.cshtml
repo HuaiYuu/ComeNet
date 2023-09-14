@@ -640,7 +640,7 @@
                 redirect: 'follow'
             };
 
-            fetch("https://johnny666.online/api/users/CreateActivity", actrequestOptions)
+            fetch("https://localhost:7136/api/users/CreateActivity", actrequestOptions)
             .then(response => response.json())
                 .then(result => {
                     //if (result.access_token != null) {
@@ -737,7 +737,7 @@
         redirect: 'follow'
     };
 
-    fetch("https://johnny666.online/api/users/GetNearbyUser", requestOptions)
+    fetch("https://localhost:7136/api/users/GetNearbyUser", requestOptions)
         .then(response => response.json())
         .then(data => {
             const teamMembersContainer = document.getElementById('nearbyuser');

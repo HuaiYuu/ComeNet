@@ -100,23 +100,25 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity,sen
             redirect: 'follow'
         };
 
-        fetch("https://johnny666.online/api/users/CreateActivityPeople", actrequestOptions)
+        fetch("https://localhost:7136/api/users/CreateActivityPeople", actrequestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.message == "ok")
                 {
+                    
                     toastr["success"]("活動新增成功");
-                    window.location.reload()
+                    
+                    
                 }
                 else
                 {
-                    alert('登入失敗');
+                    
                     window.location.reload();
                 }
               
             })
             .catch(error => console.log('error', error));
-
+        
         p.removeChild(agreeButton);
         p.removeChild(rejectButton);
     });

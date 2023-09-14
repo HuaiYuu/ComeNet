@@ -142,7 +142,7 @@ namespace ComeNet.Controllers
                 {
                     client_id = AppId,
                     client_secret = AppSecret,
-                    redirect_uri = "https://johnny666.online/Home/Login",
+                    redirect_uri = "https://localhost:7136/Home/Login",
                     code = code,
                 };
                 var content = new StringContent(JsonConvert.SerializeObject(data), System.Text.Encoding.UTF8, "application/json");
@@ -207,6 +207,20 @@ namespace ComeNet.Controllers
                             HttpContext.Session.SetString("name", username);
                             HttpContext.Session.SetString("email", email);
                             HttpContext.Session.SetString("id", id);
+
+                            //try
+                            //{
+                            //    User userloaction = await _context.User.FirstOrDefaultAsync(u => u.id == token.user.id);
+                            //    userloaction.latitude = paras.latitude;
+                            //    userloaction.longitude = paras.longitude;
+
+                            //    _context.Update(user);
+                            //    await _context.SaveChangesAsync();
+                            //}
+                            //catch (Exception ex)
+                            //{
+                            //    return BadRequest(new { message = "使用者信箱已被註冊" });
+                            //}
 
                         }
 

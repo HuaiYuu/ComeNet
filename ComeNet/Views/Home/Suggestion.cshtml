@@ -143,7 +143,7 @@
                 redirect: 'follow'
             };
 
-            fetch("https://johnny666.online/api/users/GetSuggestionFriend", requestOptions)
+            fetch("https://localhost:7136/api/users/GetSuggestionFriend", requestOptions)
                 .then(response => response.json())
                 .then(data =>
                 {
@@ -259,7 +259,7 @@
                 body: chatmember,
                 redirect: 'follow'
             };
-            fetch("https://johnny666.online/api/users/CreateAgreeFriend", requestroomid)
+            fetch("https://localhost:7136/api/users/CreateAgreeFriend", requestroomid)
                 .then(response => response.json())
                 .then(result => {
 
@@ -289,7 +289,7 @@
                 body: chatmember,
                 redirect: 'follow'
             };
-            fetch("https://johnny666.online/api/users/CreateRejectFriend", requestroomid)
+            fetch("https://localhost:7136/api/users/CreateRejectFriend", requestroomid)
                 .then(response => response.json())
                 .then(result => {
 

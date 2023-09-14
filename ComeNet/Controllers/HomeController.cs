@@ -116,6 +116,10 @@ namespace ComeNet.Controllers
         public IActionResult Friends()
 		{
             var name = HttpContext.Session.GetString("name");
+
+           
+            
+
             var id = HttpContext.Session.GetString("id");
             if (id == null)
             {

@@ -236,7 +236,15 @@ namespace ComeNet.Controllers
         {
             var id = HttpContext.Session.GetString("id");
 
-            ResultCreateActivity resultmsg = new ResultCreateActivity();
+			if (model.articleHeading.IndexOf('#') > 0)
+			{
+				string decodedString = System.Net.WebUtility.HtmlDecode(model.articleHeading);
+				model.articleHeading = decodedString;
+			}			
+
+
+
+			ResultCreateActivity resultmsg = new ResultCreateActivity();
             try
             {
                 var connections = _userConnectionManager.GetUserConnections(model.userId);
@@ -589,7 +597,7 @@ namespace ComeNet.Controllers
                     {
                         foreach (var connectionId in connections)
                         {
-                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", person.name + "-" + paras.activityname, paras.location + "," + paras.date + " " + paras.time, getactivityid[0], sender);
+                            await _notificationUserHubContext.Clients.Client(connectionId).SendAsync("activityinvitation", user.creater + "-" + paras.activityname+"邀請", paras.location + "," + paras.date + " " + paras.time, getactivityid[0], sender);
 
                             Notification notification = new Notification();
                             notification.date = Convert.ToDateTime(paras.date);
@@ -683,13 +691,53 @@ namespace ComeNet.Controllers
                 friendlist.friendid = paras.sender;
 
                 _context.Friendlist.Add(friendlist);
-            }
+				await _context.SaveChangesAsync();
+			}
+
+
+
+			/////rejectlist
+			var friendrejectIds = await _context.Rejectlist
+		  .Where(f => f.userid == paras.id)
+		  .Select(f => f.rejectid)
+		  .ToListAsync();
+
+			if (friendrejectIds.Contains(paras.sender))
+			{
+				Rejectlist friendrejectlist = new Rejectlist();
+				friendrejectlist.userid = paras.id;
+				friendrejectlist.rejectid = paras.sender;
+
+				_context.Rejectlist.Remove(friendrejectlist);
+				await _context.SaveChangesAsync();
+
+
+			}
+			else
+			{
+				
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 			var friendsenderIds = await _context.Friendlist
-		  .Where(f => f.userid == paras.sender)
-		  .Select(f => f.friendid)
-		  .ToListAsync();
+	  .Where(f => f.userid == paras.sender)
+	  .Select(f => f.friendid)
+	  .ToListAsync();
 
 			if (friendIds.Contains(paras.id))
 			{
@@ -697,40 +745,41 @@ namespace ComeNet.Controllers
 			}
 			else
 			{
-                Friendlist myfriendlist = new Friendlist();
-                myfriendlist.userid = paras.sender;
-                myfriendlist.friendid = paras.id;
+				Friendlist myfriendlist = new Friendlist();
+				myfriendlist.userid = paras.sender;
+				myfriendlist.friendid = paras.id;
 
-                _context.Friendlist.Add(myfriendlist);
+				_context.Friendlist.Add(myfriendlist);
 
-                await _context.SaveChangesAsync();
-            }
+				await _context.SaveChangesAsync();
+			}
 
+			var friendsenderrejectIds = await _context.Rejectlist
+             .Where(f => f.userid == paras.sender)
+             .Select(f => f.rejectid)
+             .ToListAsync();
 
+			if (friendsenderrejectIds.Contains(paras.id))
+			{
+				Rejectlist myfriendrejectlist = new Rejectlist();
+				myfriendrejectlist.userid = paras.sender;
+				myfriendrejectlist.rejectid = paras.id;
 
+				_context.Rejectlist.Add(myfriendrejectlist);
 
+				await _context.SaveChangesAsync();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			}
+			else
+			{
+				
+			}
 
 
 
 
 			ResultCreateActivity result = new ResultCreateActivity();
-            result.message = "ok";
+            result.message = "成功";
 
             return Ok(result);
         }
@@ -910,11 +959,20 @@ namespace ComeNet.Controllers
         [HttpPost("GetSuggestionFriend")]
         public async Task<ActionResult<IEnumerable<ResultSuggestionFriend>>> GetSuggestionFriend(ParasUserFriendList paras)
         {
-           
+            var UserIdchecks = await _context.User
+            .Where(f => f.id == paras.userid)
+            .Select(f => f.id)
+            .ToListAsync();
+
+            
+
+
             var UserIds = await _context.User
             .Where(f => f.id != paras.userid)
             .Select(f => f.id)
             .ToListAsync();
+
+            
 
 
             var friendIds = await _context.Friendlist
@@ -922,13 +980,15 @@ namespace ComeNet.Controllers
            .Select(f => f.friendid)
            .ToListAsync();
 
+           
+
 
             var rejfriendIds = await _context.Rejectlist
            .Where(f => f.userid == paras.userid)
            .Select(f => f.rejectid)
            .ToListAsync();
 
-            var nonFriendUserIds = UserIds.Except(friendIds).Except(rejfriendIds).ToList();
+            var nonFriendUserIds = UserIds.Except(friendIds).Except(rejfriendIds).Take(1).ToList();
             List<ResultSuggestionFriend> userlist = new List<ResultSuggestionFriend>();
 
             if (nonFriendUserIds.Count > 0)

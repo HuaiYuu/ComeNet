@@ -103,10 +103,12 @@ connection.on("activityinvitation", (articleHeading, articleContent,activity,sen
         fetch("https://localhost:7136/api/users/CreateActivityPeople", actrequestOptions)
             .then(response => response.json())
             .then(result => {
+
+                toastr["success"](result.message);
                 if (result.message == "ok")
                 {
                     
-                    toastr["success"]("活動新增成功");
+                    toastr["success"](result.message);
                     
                     
                 }
